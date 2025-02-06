@@ -64,6 +64,7 @@ class FreeplayState extends MusicBeatState
 		Paths.clearUnusedMemory();
 
 		ShortcutMenuSubState.inShortcutMenu = false;
+		MusicBeatState.blockReset = true;
 
 		persistentUpdate = true;
 		PlayState.isStoryMode = false;
@@ -386,6 +387,7 @@ class FreeplayState extends MusicBeatState
 
 		if (controls.BACK && !ShortcutMenuSubState.inShortcutMenu)
 		{
+			MusicBeatState.blockReset = false;
 			persistentUpdate = false;
 			if (colorTween != null)
 			{
@@ -456,49 +458,57 @@ class FreeplayState extends MusicBeatState
 		{
 			persistentUpdate = false;
 			var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
-			var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-
-			try
+			if (songLowercase != 'erect-songs')
 			{
-				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
-			}
-			catch (e:Dynamic)
-			{
-				lime.app.Application.current.window.alert('Error loading song!\n$e');
-				return;
-			}
-			/*#if MODS_ALLOWED
-				if(!sys.FileSystem.exists(Paths.modsJson(songLowercase + '/' + poop)) && !sys.FileSystem.exists(Paths.json(songLowercase + '/' + poop))) {
-				#else
-				if(!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop))) {
-				#end
-					poop = songLowercase;
-					curDifficulty = 1;
-					trace('Couldnt find file');
-			}*/
-			trace(poop);
+				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 
-			PlayState.isStoryMode = false;
-			PlayState.storyDifficulty = curDifficulty;
+				try
+				{
+					PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+				}
+				catch (e:Dynamic)
+				{
+					lime.app.Application.current.window.alert('Error loading song!\n$e');
+					return;
+				}
+				/*#if MODS_ALLOWED
+					if(!sys.FileSystem.exists(Paths.modsJson(songLowercase + '/' + poop)) && !sys.FileSystem.exists(Paths.json(songLowercase + '/' + poop))) {
+					#else
+					if(!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop))) {
+					#end
+						poop = songLowercase;
+						curDifficulty = 1;
+						trace('Couldnt find file');
+				}*/
+				trace(poop);
 
-			trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
-			if (colorTween != null)
-			{
-				colorTween.cancel();
-			}
+				PlayState.isStoryMode = false;
+				PlayState.storyDifficulty = curDifficulty;
 
-			if (FlxG.keys.pressed.SHIFT)
-			{
-				LoadingState.loadAndSwitchState(new ChartingState());
+				trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+				if (colorTween != null)
+				{
+					colorTween.cancel();
+				}
+
+				if (FlxG.keys.pressed.SHIFT)
+				{
+					LoadingState.loadAndSwitchState(new ChartingState());
+				}
+				else
+				{
+					LoadingState.loadAndSwitchState(new PlayState());
+				}
+
+				FlxG.sound.music.volume = 0;
+
+				destroyFreeplayVocals();
 			}
 			else
 			{
-				LoadingState.loadAndSwitchState(new PlayState());
+				// insert the code that sends you to a recreation of the erect songs menu but for now:
+				FlxG.sound.play('cancelMenu');
 			}
-
-			FlxG.sound.music.volume = 0;
-
-			destroyFreeplayVocals();
 		}
 		else if (controls.RESET)
 		{
@@ -647,6 +657,28 @@ class FreeplayState extends MusicBeatState
 		if (newPos > -1)
 		{
 			curDifficulty = newPos;
+		}
+
+		if (vschar.backend.Constants.vscharLegacy_songs.contains(Paths.formatToSongPath(songs[curSelected].songName.toLowerCase())))
+		{
+			if (Paths.songFolderRedirect != 'vschar/legacy')
+				Paths.change_songFolderRedirect('vschar/legacy');
+		}
+		else if (vschar.backend.Constants.vschar_songs.contains(Paths.formatToSongPath(songs[curSelected].songName.toLowerCase())))
+		{
+			if (Paths.songFolderRedirect != 'vschar')
+				Paths.change_songFolderRedirect('vschar');
+		}
+		else
+		{
+			if (Paths.songFolderRedirect != 'basegame')
+				Paths.change_songFolderRedirect('basegame');
+		}
+
+		if (songs[curSelected].folder != '')
+		{
+			if (Paths.songFolderRedirect != '')
+				Paths.change_songFolderRedirect('');
 		}
 	}
 

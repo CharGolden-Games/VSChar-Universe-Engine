@@ -29,6 +29,8 @@ class MusicBeatState extends modchart.modcharting.ModchartMusicBeatState
 
 	public static var camBeat:FlxCamera;
 
+	public static var blockReset:Bool = false;
+
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
@@ -120,6 +122,8 @@ class MusicBeatState extends modchart.modcharting.ModchartMusicBeatState
 
 	public static function switchState(nextState:FlxState) {
 		// Custom made Trans in
+		if (!blockReset)
+			Paths.change_songFolderRedirect('basegame'); // Reset this value every state change!
 		var curState:Dynamic = FlxG.state;
 		var leState:MusicBeatState = curState;
 		if(!FlxTransitionableState.skipNextTransIn) {

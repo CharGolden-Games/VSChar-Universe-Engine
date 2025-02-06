@@ -130,6 +130,11 @@ class Fire extends BaseScript
 {
     public function new() super('fire');
 
+    /**
+     * Change this to change the title that it gets set back to duh.
+     */
+    public static var baseTitle:String = "Friday Night Funkin': Universe Engine";
+
     var fireinthehole:FlxSprite;
 
     public override function initialize() {
@@ -154,7 +159,7 @@ class Fire extends BaseScript
     public override function onDestroy() {
         super.onDestroy();
 
-        Lib.application.window.title = "Friday Night Funkin': Universe Engine";
+        Lib.application.window.title = baseTitle;
     }
 
     var fireinthehole_bye:FlxTween;
@@ -204,77 +209,79 @@ class Baldi extends BaseScript
 
         if (!isSustainNote)
         {
-            switch (totalhit)
-            {
-                case 0:
-                    playSound("baldi/oh", hitsoundvolume, "oh");
-                    totalhit = 1;
-                    stopSound("hi");
-                    stopSound("welcome");
-                    stopSound("to");
-                    stopSound("my");
-                    stopSound("school");
-                    stopSound("house");
+            if (ClientPrefs.ht == 'Baldi') { // Fun fact I forgot to do this when I finished this port of the script lmao.
+                switch (totalhit)
+                {
+                    case 0:
+                        playSound("baldi/oh", hitsoundvolume, "oh");
+                        totalhit = 1;
+                        stopSound("hi");
+                        stopSound("welcome");
+                        stopSound("to");
+                        stopSound("my");
+                        stopSound("school");
+                        stopSound("house");
 
-                case 1:
-                    playSound("baldi/hi", hitsoundvolume, "hi");
-                    totalhit = 2;
-                    stopSound("oh");
-                    stopSound("welcome");
-                    stopSound("to");
-                    stopSound("my");
-                    stopSound("school");
-                    stopSound("house");
-                
-                case 2:
-                    playSound("baldi/welcome", hitsoundvolume, "welcome");
-                    totalhit = 3;
-                    stopSound("oh");
-                    stopSound("hi");
-                    stopSound("to");
-                    stopSound("my");
-                    stopSound("school");
-                    stopSound("house");
+                    case 1:
+                        playSound("baldi/hi", hitsoundvolume, "hi");
+                        totalhit = 2;
+                        stopSound("oh");
+                        stopSound("welcome");
+                        stopSound("to");
+                        stopSound("my");
+                        stopSound("school");
+                        stopSound("house");
+                    
+                    case 2:
+                        playSound("baldi/welcome", hitsoundvolume, "welcome");
+                        totalhit = 3;
+                        stopSound("oh");
+                        stopSound("hi");
+                        stopSound("to");
+                        stopSound("my");
+                        stopSound("school");
+                        stopSound("house");
 
-                case 3:
-                    playSound("baldi/to", hitsoundvolume, "to");
-                    totalhit = 4;
-                    stopSound("oh");
-                    stopSound("hi");
-                    stopSound("welcome");
-                    stopSound("my");
-                    stopSound("school");
-                    stopSound("house");
+                    case 3:
+                        playSound("baldi/to", hitsoundvolume, "to");
+                        totalhit = 4;
+                        stopSound("oh");
+                        stopSound("hi");
+                        stopSound("welcome");
+                        stopSound("my");
+                        stopSound("school");
+                        stopSound("house");
 
-                case 4:
-                    playSound("baldi/my", hitsoundvolume, "my");
-                    totalhit = 5;
-                    stopSound("oh");
-                    stopSound("hi");
-                    stopSound("welcome");
-                    stopSound("to");
-                    stopSound("school");
-                    stopSound("house");
+                    case 4:
+                        playSound("baldi/my", hitsoundvolume, "my");
+                        totalhit = 5;
+                        stopSound("oh");
+                        stopSound("hi");
+                        stopSound("welcome");
+                        stopSound("to");
+                        stopSound("school");
+                        stopSound("house");
 
-                case 5:
-                    playSound("baldi/school", hitsoundvolume, "school");
-                    totalhit = 6;
-                    stopSound("oh");
-                    stopSound("hi");
-                    stopSound("welcome");
-                    stopSound("to");
-                    stopSound("my");
-                    stopSound("house");
+                    case 5:
+                        playSound("baldi/school", hitsoundvolume, "school");
+                        totalhit = 6;
+                        stopSound("oh");
+                        stopSound("hi");
+                        stopSound("welcome");
+                        stopSound("to");
+                        stopSound("my");
+                        stopSound("house");
 
-                case 6:
-                    playSound("baldi/house", hitsoundvolume, "house");
-                    totalhit = 0;
-                    stopSound("oh");
-                    stopSound("hi");
-                    stopSound("welcome");
-                    stopSound("to");
-                    stopSound("my");
-                    stopSound("school");
+                    case 6:
+                        playSound("baldi/house", hitsoundvolume, "house");
+                        totalhit = 0;
+                        stopSound("oh");
+                        stopSound("hi");
+                        stopSound("welcome");
+                        stopSound("to");
+                        stopSound("my");
+                        stopSound("school");
+                }
             }
         }
     }

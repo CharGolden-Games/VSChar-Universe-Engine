@@ -7,6 +7,8 @@ import vschar.backend.uescripts.Force.Baldi;
 import vschar.backend.uescripts.Force.DiscordRPCScript;
 import vschar.backend.uescripts.Force.TrailDoubleNote;
 
+import vschar.backend.uescripts.Options.UEHud as HudScript;
+
 class UEScript extends BaseScript
 {
     static var FORCE:Array<BaseScript> = [];
@@ -82,6 +84,8 @@ class UEScript extends BaseScript
             trace('INITIALIZING ${script.name}');
             script.initialize();
         }
+        if (ClientPrefs.vsCharCustomizations)
+            Fire.baseTitle = "Friday Night Funkin': Funkin' with Char!"; // VS Char customization.
         for (script in GP) {
             trace('INITIALIZING ${script.name}');
             script.initialize();
@@ -93,6 +97,9 @@ class UEScript extends BaseScript
     function getOptionScripts():Array<BaseScript>
     {
         var array:Array<BaseScript> = [];
+
+        if (UEHud)
+            array.push(new HudScript());
 
         return array;
     }
@@ -148,6 +155,17 @@ class UEScript extends BaseScript
             script.goodNoteHit(id, direction, noteType, isSustainNote);
     }
 
+    public override function onNoteMiss(id:Int, direction:Float, noteType:String, isSustainNote:Bool) {
+        super.onNoteMiss(id, direction, noteType, isSustainNote);
+
+        for (script in FORCE)
+            script.onNoteMiss(id, direction, noteType, isSustainNote);
+        for (script in OPTIONS)
+            script.onNoteMiss(id, direction, noteType, isSustainNote);
+        for (script in GP)
+            script.onNoteMiss(id, direction, noteType, isSustainNote);
+    }
+
     public override function opponentNoteHit(id:Int, direction:Float, noteType:String, isSustainNote:Bool) {
         super.opponentNoteHit(id, direction, noteType, isSustainNote);
 
@@ -197,12 +215,20 @@ class UEScript extends BaseScript
 
         for (script in FORCE)
                 script.onUpdatePost(elapsed);
+        for (script in OPTIONS)
+                script.onUpdatePost(elapsed);
+        for (script in GP)
+                script.onUpdatePost(elapsed);
     }
 
     public override function onEvent(name:String, value1:String, value2:String) {
         super.onEvent(name, value1, value2);
 
         for (script in FORCE)
+            script.onEvent(name, value1, value2);
+        for (script in OPTIONS)
+            script.onEvent(name, value1, value2);
+        for (script in GP)
             script.onEvent(name, value1, value2);
     }
 

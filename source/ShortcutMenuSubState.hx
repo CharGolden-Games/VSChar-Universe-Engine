@@ -1,5 +1,6 @@
 package;
 
+import vschar.states.CustomFreeplayState;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
@@ -22,7 +23,7 @@ class ShortcutMenuSubState extends MusicBeatSubstate
 
 	var menuItems:Array<String> = [];
 	var menuItemsOG:Array<String> = ['Title Screen', 'Menus', 'Modes', 'Options'];
-	var menuItemsSongs:Array<String> = ['Story Mode', 'Freeplay', 'Back'];
+	var menuItemsSongs:Array<String> = ['Story Mode', 'Freeplay', 'VS Char Freeplay Test', 'Back'];
 	var menuItemsMenu:Array<String> = ['Main Menu', 'Mods Menu', 'Back'];
 	var menuItemsOptions:Array<String> = ['Universe', 'Psych', 'Back'];
 
@@ -130,6 +131,10 @@ class ShortcutMenuSubState extends MusicBeatSubstate
 						inShortcutMenu = false;
 					case 'Freeplay':
 						FlxG.switchState(new FreeplayState());
+						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm));
+						inShortcutMenu = false;
+					case 'VS Char Freeplay Test':
+						FlxG.switchState(new CustomFreeplayState());
 						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm));
 						inShortcutMenu = false;
 					case 'Back':

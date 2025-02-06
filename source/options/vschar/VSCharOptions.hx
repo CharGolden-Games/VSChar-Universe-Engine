@@ -1,6 +1,8 @@
-package options;
+package options.vschar;
 
+#if desktop
 import Discord.DiscordClient;
+#end
 import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -24,13 +26,14 @@ import flixel.graphics.FlxGraphic;
 import Controls;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxGridOverlay;
-import flixel.sound.FlxSound;
 
 using StringTools;
 
-class SelectThing extends MusicBeatState
-{
-	var options:Array<String>;
+class VSCharOptions extends MusicBeatState {
+    var options:Array<String> = [
+		'Engine',
+		'Search Test'
+	];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 
 	private static var curSelected:Int = 0;
@@ -40,16 +43,12 @@ class SelectThing extends MusicBeatState
 	{
 		switch (label)
 		{
-			case 'Universe Options':
-				MusicBeatState.switchState(new options.UniverseOptionsMenu());
-			case 'Psych Options':
-				MusicBeatState.switchState(new options.OptionsState());
-			case 'VS Char Options':
-				MusicBeatState.switchState(new options.vschar.VSCharOptions());
-			case 'Mods':
-				MusicBeatState.switchState(new ModsMenuState());
-			case 'Credits':
-				MusicBeatState.switchState(new CreditsState());
+			case 'Engine':
+                trace('NOT DONE YET!');
+			case 'Search Test':
+				vschar.substates.SerarchSubstate.blockInput = true;
+				vschar.substates.SerarchSubstate.blockEnter = true;
+				openSubState(new vschar.substates.SerarchSubstate(['ATestItem1', 'BTestItem2', 'CTestItem3', 'DTestItem4', 'ETestItem5']));
 		}
 	}
 
@@ -58,20 +57,17 @@ class SelectThing extends MusicBeatState
 
 	override function create()
 	{
-		// FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(ClientPrefs.pauseMusic), "shared"), 0);
-		// FlxG.sound.music.fadeIn(4, 0, 0.7);
+		#if desktop
+		DiscordClient.changePresence("VS Char Options Menu", null);
 
-		if (ClientPrefs.moveCreditMods)
-			options = ['Universe Options', 'Psych Options', 'VS Char Options', 'Mods', 'Credits'];
-		else
-			options = ['Universe Options', 'Psych Options', 'VS Char Options'];
+		if (FlxG.random.int(0, 10) == 5)
+		{
+			DiscordClient.changePresence("SUUUUUUSSS Char Options Menu", null);
+		}
+		#end
 
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
-
-		ShortcutMenuSubState.inShortcutMenu = false;
-
-		DiscordClient.changePresence("Selecting options category", null);
 
 		if (ClientPrefs.darkmode)
 		{
@@ -136,46 +132,24 @@ class SelectThing extends MusicBeatState
 	{
 		super.update(elapsed);
 
-		if (!ShortcutMenuSubState.inShortcutMenu)
+		if (controls.UI_UP_P)
 		{
-			if (controls.UI_UP_P)
-			{
-				changeSelection(-1);
-			}
-			if (controls.UI_DOWN_P)
-			{
-				changeSelection(1);
-			}
-
-			if (controls.BACK)
-			{
-				FlxG.sound.play(Paths.sound('cancelMenu'));
-				if (PauseSubState.inPause)
-				{
-					PauseSubState.inPause = false;
-					StageData.loadDirectory(PlayState.SONG);
-					LoadingState.loadAndSwitchState(new PlayState());
-					FlxG.sound.music.volume = 0;
-				}
-				else if (ClientPrefs.fm)
-				{
-					MusicBeatState.switchState(new CoolMenuState());
-				}
-				else
-				{
-					MusicBeatState.switchState(new MainMenuState());
-				}
-			}
-			if (controls.ACCEPT)
-			{
-				openSelectedSubstate(options[curSelected]);
-			}
+			changeSelection(-1);
+		}
+		if (controls.UI_DOWN_P)
+		{
+			changeSelection(1);
 		}
 
-		if (FlxG.keys.justPressed.TAB)
+		if (controls.BACK)
 		{
-			ShortcutMenuSubState.inShortcutMenu = true;
-			openSubState(new ShortcutMenuSubState());
+			FlxG.sound.play(Paths.sound('cancelMenu'));
+			MusicBeatState.switchState(new options.SelectThing());
+		}
+
+		if (controls.ACCEPT)
+		{
+			openSelectedSubstate(options[curSelected]);
 		}
 	}
 

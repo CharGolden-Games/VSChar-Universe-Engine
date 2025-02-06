@@ -263,6 +263,7 @@ class FunkinLua
 		// ewwww cringe simplified names!!!
 		// VIDEOBOT WHY WOULD YOU EVEN SIMPLIFY THESE DAMN NAMES
 		// THEYRE HARD TO FUCKING READ
+		// I, CHAR, AGREE!
 
 		//build target, even tho windows will be the main one, until someone ports ue to linux, mac, html5 (possibly not please) or android
 		#if windows

@@ -108,6 +108,9 @@ class TitleState extends MusicBeatState
 		// Just to load a mod on start up if ya got one. For mods that change the menu music and bg
 		WeekData.loadTheFirstEnabledMod();
 
+		if (ClientPrefs.vsCharCustomizations)
+			openfl.Lib.application.window.title = "Friday Night Funkin': Funkin' with Char!";
+
 		// trace(path, FileSystem.exists(path));
 
 		/*#if (polymod && !html5)

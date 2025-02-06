@@ -75,6 +75,9 @@ class ClientPrefs
 	public static var hideOriCredits:Bool = false;
 	public static var moveCreditMods:Bool = false;
 
+	// VS CHAR SHITTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+	public static var vsCharCustomizations:Bool = true;
+
 	//offical launcherl mao
 	public static var officialLauncher:Bool = true;
 
@@ -236,6 +239,7 @@ class ClientPrefs
 		FlxG.save.data.pauseMusic = pauseMusic;
 		//FlxG.save.data.checkForUpdates = checkForUpdates;
 		FlxG.save.data.comboStacking = comboStacking;
+		FlxG.save.data.vsCharCustomizations = vsCharCustomizations;
 
 		FlxG.save.flush();
 
@@ -319,6 +323,8 @@ class ClientPrefs
 			moveCreditMods = FlxG.save.data.moveCreditMods;
 		if (FlxG.save.data.officialLauncher != null)
 			officialLauncher = FlxG.save.data.officialLauncher;
+		if (FlxG.save.data.vsCharCustomizations != null)
+			vsCharCustomizations = FlxG.save.data.vsCharCustomizations;
 
 		// Normal Psych Stuff
 		if (FlxG.save.data.arrowRGB != null)

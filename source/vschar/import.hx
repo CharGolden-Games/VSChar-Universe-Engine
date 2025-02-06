@@ -12,6 +12,7 @@ import flixel.FlxObject;
 import flixel.FlxSubState;
 import flixel.FlxCamera;
 import flixel.util.FlxTimer;
+import flixel.util.FlxColor;
 import flixel.group.FlxSpriteGroup;
 import FunkinLua.ModchartSprite;
 

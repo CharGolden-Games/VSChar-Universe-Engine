@@ -182,6 +182,9 @@ class BaseScript {
     public var UEstrumsplash(get, null):Bool;
     public var UEresultscreen(get, null):Bool;
     public var UEmisssounds(get, null):Bool;
+    public var UEhudpos(get, null):String;
+    public var UEsnTimeFollow(get, null):Bool;
+    public var UEhidetimeBar(get, null):Bool;
 
     function get_UEHud():Bool return ClientPrefs.ueHud;
     function get_UEDetachedHB():Bool return ClientPrefs.dhb;
@@ -197,6 +200,9 @@ class BaseScript {
     function get_UEstrumsplash():Bool return ClientPrefs.uess;
     function get_UEmisssounds():Bool return ClientPrefs.uems;
     function get_UEresultscreen():Bool return ClientPrefs.ueresultscreen;
+    function get_UEhudpos():String return ClientPrefs.hudPosUE;
+    function get_UEsnTimeFollow():Bool return ClientPrefs.sntf;
+    function get_UEhidetimeBar():Bool return ClientPrefs.huet;
 
     // Gameplay Settings
     public var UEplayBothSides(get, null):Bool;

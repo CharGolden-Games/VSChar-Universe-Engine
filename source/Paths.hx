@@ -33,6 +33,8 @@ class Paths
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
 	inline public static var VIDEO_EXT = "mp4";
 
+	public static var songFolderRedirect(default, null):String = 'basegame';
+
 	public static var defaultNoteSprite:FlxSprite;
 
 	public static var noteSkinFramesMap:Map<String, FlxFramesCollection> = new Map();
@@ -239,6 +241,21 @@ class Paths
 		return 'assets/videos/$key.$VIDEO_EXT';
 	}
 
+	public static function change_songFolderRedirect(name:String)
+	{
+		if (name != '')
+		{
+			var path:String = formatToSongPath(name.toLowerCase());
+			trace('New path will be will be `assets/songs/$path`');
+		songFolderRedirect = path;
+		}
+		else
+		{
+			trace('No folder given! Likely a mod.');
+			songFolderRedirect = '';
+		}
+	}
+
 	static public function sound(key:String, ?library:String):Sound
 	{
 		var sound:Sound = returnSound('sounds', key, library);
@@ -258,14 +275,14 @@ class Paths
 
 	inline static public function voices(song:String):Any
 	{
-		var songKey:String = '${formatToSongPath(song)}/Voices';
+		var songKey:String = '$songFolderRedirect/${formatToSongPath(song)}/Voices';
 		var voices = returnSound('songs', songKey);
 		return voices;
 	}
 
 	inline static public function inst(song:String):Any
 	{
-		var songKey:String = '${formatToSongPath(song)}/Inst';
+		var songKey:String = '$songFolderRedirect/${formatToSongPath(song)}/Inst';
 		var inst = returnSound('songs', songKey);
 		return inst;
 	}
