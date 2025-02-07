@@ -5,10 +5,65 @@ import vschar.backend.Constants.SongMetadata;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.ui.U as FlxU;
+import flixel.FlxState;
+
+class ErrorSubstate extends MusicBeatSubstate
+{
+    var bg:FlxSprite;
+    var error:FlxText;
+    var message:String;
+    var wasUpdated:Bool = false;
+
+    var camError:FlxCamera;
+
+    public function new(message:String, previousState:FlxState)
+    {
+        super();
+
+        this.message = message;
+        if (!previousState.persistentUpdate)
+        {
+            previousState.persistentUpdate = true;
+        }
+        else
+        {
+            wasUpdated = true;
+        }
+    }
+
+    static var closeTween:FlxTween;
+
+    override function create()
+    {
+        camError = new FlxCamera();
+        camError.bgColor.alpha = 0;
+        FlxG.cameras.add(camError, false);
+
+        bg = new FlxSprite().makeGraphic(FlxG.width * 2, FlxG.height * 2, 0xFF000000);
+        bg.alpha = 0.6;
+        bg.cameras = [camError];
+        add(bg);
+
+        error = new FlxText(0, 0, FlxG.width, 'AN ERROR OCCURED! "$message"', 12);
+        error.screenCenter(Y);
+        error.alignment = CENTER;
+        error.cameras = [camError];
+        add(error);
+
+        if (closeTween != null)
+            closeTween.cancel();
+        closeTween = FlxTween.tween(error, {alpha: 0}, 1, {ease: FlxEase.quartOut, onComplete: endTween});
+    }
+
+    function endTween(twn:FlxTween)
+    {
+        FlxG.cameras.remove(camError);
+        close();
+    }
+}
 
 class CustomFreeplayState extends MusicBeatState
 {
-    var songNameText:FlxText;
     var bg:FlxSprite;
     var songLists:Array<String> = [
         'VS Char',
@@ -24,6 +79,9 @@ class CustomFreeplayState extends MusicBeatState
 	var colorTween:FlxTween;
     var intendedColor:Int;
     var songArt:FlxSprite;
+    var grid:FlxBackdrop;
+
+    static var instance:CustomFreeplayState;
 
     public function new()
     {
@@ -33,6 +91,8 @@ class CustomFreeplayState extends MusicBeatState
     override function create():Void
     {
         super.create();
+
+        instance = this;
 
 		if (ClientPrefs.darkmode)
             {
@@ -49,7 +109,7 @@ class CustomFreeplayState extends MusicBeatState
                 bg.screenCenter();
             }
 
-        var grid:FlxBackdrop = new FlxBackdrop(FlxGridOverlay.createGrid(80, 80, 160, 160, true, 0x33FFFFFF, 0x0));
+        grid = new FlxBackdrop(FlxGridOverlay.createGrid(80, 80, 160, 160, true, 0x33FFFFFF, 0x0));
 		grid.velocity.set(20, 20);
 		grid.alpha = 0;
 		FlxTween.tween(grid, {alpha: 1}, 0.5, {ease: FlxEase.quadOut});
@@ -73,6 +133,7 @@ class CustomFreeplayState extends MusicBeatState
         add(songArt);
 
         Paths.change_songFolderRedirect('vschar');
+        MusicBeatState.blockReset = true;
         changeSelection();
     }
 
@@ -82,6 +143,7 @@ class CustomFreeplayState extends MusicBeatState
         if (controls.BACK)
         {
             FlxG.sound.play(Paths.sound('cancelMenu'));
+            MusicBeatState.blockReset = false;
             MusicBeatState.switchState(new FreeplayState());
         }
         if (controls.UI_LEFT_P)
@@ -95,6 +157,14 @@ class CustomFreeplayState extends MusicBeatState
         if (FlxG.keys.justPressed.TAB)
         {
             changeTabs();
+        }
+        if (controls.ACCEPT)
+        {
+            goToSong();
+        }
+        if (FlxG.keys.justPressed.SEVEN)
+        {
+            LoadingState.loadAndSwitchState(new editors.ChartingState());
         }
     }
 
@@ -113,7 +183,31 @@ class CustomFreeplayState extends MusicBeatState
             curSongText.text += ' Erect';
 
         FlxG.sound.play(Paths.sound('scrollMenu'));
-        bg.color = songs[curSelected].color;
+        if (songs[curSelected].songName == 'paranoia')
+        {
+            curSongText.color = 0xFFFF0000;
+            grid.color = 0x33FF0000;
+        }
+        else
+        {
+            curSongText.color = 0xFFFFFFFF;
+            grid.color = 0x33FFFFFF;
+        }
+		var newColor:Int = songs[curSelected].color;
+		if (newColor != intendedColor)
+		{
+			if (colorTween != null)
+			{
+				colorTween.cancel();
+			}
+			intendedColor = newColor;
+			colorTween = FlxTween.color(bg, 1, bg.color, intendedColor, {
+				onComplete: function(twn:FlxTween)
+				{
+					colorTween = null;
+				}
+			});
+		}
 
         change_songArt();
     }
@@ -166,5 +260,52 @@ class CustomFreeplayState extends MusicBeatState
     function updateSongList()
     {
         songs = Constants.songMetadata[songLists[curPage]];
+        for (song in songs)
+        {
+            #if debug
+            trace('song ${song.songName}\'s art is under "freeplay/songArt/${song.songArt}.png"');
+            #end
+        }
+    }
+
+    function goToSong()
+    {
+        var songFolder:String = Paths.formatToSongPath(songs[curSelected].songName.toLowerCase());
+        var songThing:String = songFolder;
+        if (songLists[curPage] == 'Erect Songs')
+        {
+            songThing += '-erect';
+        }
+        else
+        {
+            songThing += '-hard';
+        }
+        try {
+            PlayState.SONG = Song.loadFromJson(songThing, songFolder);
+        }
+        catch(e:Dynamic)
+        {
+            openSubState(new ErrorSubstate(Std.string(e), instance));
+            return;
+        }
+
+        PlayState.isStoryMode = false;
+        PlayState.storyDifficulty = 0;
+        CoolUtil.difficulties = ['hard'];
+        if (songLists[curPage] == 'Erect Songs')
+        {
+            CoolUtil.difficulties = ['erect', 'nightmare'];
+            PlayState.storyDifficulty = 0;
+        }
+        if (FlxG.keys.pressed.SHIFT)
+        {
+            LoadingState.loadAndSwitchState(new editors.ChartingState());
+        }
+        else
+        {
+            LoadingState.loadAndSwitchState(new PlayState());
+        }
+
+        FlxG.sound.music.volume = 0;
     }
 }

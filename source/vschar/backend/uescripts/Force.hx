@@ -445,4 +445,14 @@ class TrailDoubleNote extends BaseScript
             });
         }
     }
+
+    public override function onEvent(name:String, value1:String, value2:String) {
+        super.onEvent(name, value1, value2);
+
+        if (name == 'Change Character') // Add code to re-generate the trail next dual note hit since the character is different
+        {
+            boyfriendTrailExists = false;
+            dadTrailExists = false;
+        }
+    }
 }

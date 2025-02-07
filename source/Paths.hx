@@ -64,11 +64,11 @@ class Paths
 	//Function that initializes the first note. This way, we can recycle the notes
 	public static function initDefaultSkin(?noteSkin:String, ?inEditor:Bool = false)
 	{
-		trace(noteSkin);
+		//trace(noteSkin);
 		if (noteSkin.length > 0) defaultSkin = noteSkin;
 		else if (!PlayState.isPixelStage) defaultSkin = 'NOTE_assets' + Note.getNoteSkinPostfix();
 		else defaultSkin = 'NOTE_assets';
-		trace(defaultSkin);
+		//trace(defaultSkin);
 	}
 
 	public static function initNote(keys:Int = 4, ?noteSkin:String)

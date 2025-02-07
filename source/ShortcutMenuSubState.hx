@@ -24,7 +24,7 @@ class ShortcutMenuSubState extends MusicBeatSubstate
 	var menuItems:Array<String> = [];
 	var menuItemsOG:Array<String> = ['Title Screen', 'Menus', 'Modes', 'Options'];
 	var menuItemsSongs:Array<String> = ['Story Mode', 'Freeplay', 'VS Char Freeplay Test', 'Back'];
-	var menuItemsMenu:Array<String> = ['Main Menu', 'Mods Menu', 'Back'];
+	var menuItemsMenu:Array<String> = ['Main Menu', 'Mods Menu', 'Gallery', 'Back'];
 	var menuItemsOptions:Array<String> = ['Universe', 'Psych', 'Back'];
 
 	var curSelected:Int = 0;
@@ -159,6 +159,10 @@ class ShortcutMenuSubState extends MusicBeatSubstate
 						inShortcutMenu = false;
 					case 'Mods Menu':
 						FlxG.switchState(new ModsMenuState());
+						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm));
+						inShortcutMenu = false;
+					case 'Gallery':
+						FlxG.switchState(new vschar.states.GalleryState());
 						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm));
 						inShortcutMenu = false;
 					case 'Back':

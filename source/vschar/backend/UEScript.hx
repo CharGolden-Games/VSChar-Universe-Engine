@@ -134,11 +134,13 @@ class UEScript extends BaseScript
         for (script in GP)
             scriptNames_GP.push(script.name);
 
-        var scriptsLoaded:FlxText = new FlxText(0,0,0, 'Scripts Loaded: $totalScripts\nFORCE: $scriptNames_FORCE\nOPTIONS: $scriptNames_OPTIONS\nGameplay Settings: $scriptNames_GP', 10);
+        var scriptsLoaded:FlxText = new FlxText(0,0,FlxG.width, 'Scripts Loaded: $totalScripts\nFORCE: $scriptNames_FORCE\nOPTIONS: $scriptNames_OPTIONS\nGameplay Settings: $scriptNames_GP', 10);
         scriptsLoaded.alpha = 0.8;
         scriptsLoaded.cameras = [game.camHUD];
         scriptsLoaded.borderStyle = OUTLINE;
         scriptsLoaded.borderColor = 0xFF000000;
+        if (UEhudpos == 'LEFT')
+            scriptsLoaded.alignment = RIGHT; // Lets you see the HUD along with rthe loaded scripts!
         scriptsLoaded.y = FlxG.height - (scriptsLoaded.height + 5);
         add(scriptsLoaded);
         //#end
