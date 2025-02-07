@@ -52,7 +52,7 @@ class ErrorSubstate extends MusicBeatSubstate
 
         if (closeTween != null)
             closeTween.cancel();
-        closeTween = FlxTween.tween(error, {alpha: 0}, 1, {ease: FlxEase.quartOut, onComplete: endTween});
+        closeTween = FlxTween.tween(error, {alpha: 0}, 3, {ease: FlxEase.quartOut, onComplete: endTween});
     }
 
     function endTween(twn:FlxTween)

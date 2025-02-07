@@ -199,7 +199,7 @@ class PlayState extends MusicBeatState
 
 	var songPercent:Float = 0;
 
-	private var timeBarBG:AttachedSprite;
+	public var timeBarBG:AttachedSprite;
 
 	public var timeBar:FlxBar;
 
@@ -295,7 +295,7 @@ class PlayState extends MusicBeatState
 	
 	public var lerpScore:Int = 0;
 
-	var timeTxt:FlxText;
+	public var timeTxt:FlxText;
 	var scoreTxtTween:FlxTween;
 
 	public static var campaignScore:Int = 0;
@@ -349,7 +349,7 @@ class PlayState extends MusicBeatState
 	private var keysArray:Array<Dynamic>;
 	private var controlArray:Array<String>;
 
-	var precacheList:Map<String, String> = new Map<String, String>();
+	public var precacheList:Map<String, String> = new Map<String, String>();
 
 	// stores the last judgement object
 	public static var lastRating:FlxSprite;
@@ -5724,6 +5724,7 @@ class PlayState extends MusicBeatState
 
 		setOnLuas('curBeat', curBeat); // DAWGG?????
 		callOnLuas('onBeatHit', []);
+		scripter.onBeatHit();
 	}
 
 	override function sectionHit()

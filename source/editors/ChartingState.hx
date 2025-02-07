@@ -119,7 +119,15 @@ class ChartingState extends MusicBeatState
 			'Change Scroll Speed',
 			"Value 1: Scroll Speed Multiplier (1 is default)\nValue 2: Time it takes to change fully in seconds."
 		],
-		['Set Property', "Value 1: Variable name\nValue 2: New value"]
+		['Set Property', "Value 1: Variable name\nValue 2: New value"],
+		[
+			'Change RotSpeed',
+			'Changes the way the rotation bop works\nValue 1: How meany beats must hit before rotating again\nValue 2: How intense it should be (<Base Angle: 15> * intensity)'
+		],
+		[
+			'RotBop Properties',
+			'Value 1: \n      true/1 = Disable fix for HUD flickering with intensity values like 1.5. \n      Anything else = Enable the fix.\nValue 2: \n      true/1 = Allow camGame (stage camera) to rotate. \n      Anything else = Only rotate the HUD camera'
+		]
 	];
 
 	var _file:FileReference;

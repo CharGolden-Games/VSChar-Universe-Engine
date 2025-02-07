@@ -254,6 +254,16 @@ class ProfileGallerySubstate extends MusicBeatSubstate
         {
             characterName.setFormat(Paths.font('funkin.ttf'), 60, 0xFFFFFFFF, CENTER, 0xFF000000);
         }
+
+        if (characters[curSelected] == 'igni')
+        {
+            /*
+            if (hasBeatenSaloonWeek)
+            {
+                characterArt.loadGraphic(Paths.image('gallery/portraits/igni2'));
+            }
+            */
+        }
     }
 
     function idToName(id:String):String

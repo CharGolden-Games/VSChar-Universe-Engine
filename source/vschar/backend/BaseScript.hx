@@ -23,6 +23,12 @@ class BaseScript {
     var ratingFC(get, null):String;
     var songLength(get, null):Float;
     var noteOffset(get, null):Int;
+    var curBeat(get, null):Int;
+    var curStep(get, null):Int;
+
+    var camGame(get, null):FlxCamera;
+    var camHUD(get, null):FlxCamera;
+    var camOther(get, null):FlxCamera;
 
     public var name:String = 'Unnamed Script';
 
@@ -41,13 +47,17 @@ class BaseScript {
     function get_hits():Int return game.songHits;
     function get_rating():Float return game.ratingPercent;
     function get_ratingFC():String return game.ratingFC;
-
+    function get_curBeat():Int return game.curBeat;
+    function get_curStep():Int return game.curStep;
+    function get_camGame():FlxCamera return game.camGame;
+    function get_camHUD():FlxCamera return game.camHUD;
+    function get_camOther():FlxCamera return game.camOther;
 	inline private function set_game(value:MusicBeatState)
-        {
-            onPlayState = (Std.isOfType(value, PlayState));
-            game = value;
-            return value;
-        }
+	{
+		onPlayState = (Std.isOfType(value, PlayState));
+		game = value;
+		return value;
+	}
 	inline private function get_members() return game.members;
 	function add(object:FlxBasic) game.add(object);
 	function remove(object:FlxBasic) game.remove(object);
@@ -157,6 +167,13 @@ class BaseScript {
 
             return leSprite;
 		}
+
+    function debugPrint(text1:Dynamic = '', text2:Dynamic = '', text3:Dynamic = '', text4:Dynamic = '', text5:Dynamic = '', color:FlxColor = FlxColor.WHITE)
+    {
+        var text:String = '' + text1 + text2 + text3 + text4 + text5;
+        game.addTextToDebug(text, color);
+        trace(text);
+    }
 
     /**
      * Shit to do when loading (replaces onCreate)

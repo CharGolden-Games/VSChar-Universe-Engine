@@ -6,8 +6,63 @@
 				0,
 				[
 					[
-						"GF Fade",
-						"0",
+						"RotBop Properties",
+						"true",
+						"true"
+					],
+					[
+						"Change RotSpeed",
+						"4",
+						"1.2"
+					]
+				]
+			],
+			[
+				6620.68965517241,
+				[
+					[
+						"Change RotSpeed",
+						"2",
+						"1.5"
+					]
+				]
+			],
+			[
+				19862.0689655172,
+				[
+					[
+						"Change RotSpeed",
+						"4",
+						"1"
+					]
+				]
+			],
+			[
+				23172.4137931035,
+				[
+					[
+						"Change RotSpeed",
+						"1",
+						"1"
+					]
+				]
+			],
+			[
+				26482.7586206897,
+				[
+					[
+						"Change RotSpeed",
+						"2",
+						"1"
+					]
+				]
+			],
+			[
+				32275.8620689655,
+				[
+					[
+						"Change RotSpeed",
+						"4",
 						"0"
 					]
 				]
@@ -16,39 +71,9 @@
 				33103.4482758621,
 				[
 					[
-						"Flash Camera Red",
+						"Change RotSpeed",
 						"1",
-						""
-					]
-				]
-			],
-			[
-				33517.2413793104,
-				[
-					[
-						"Flash Camera Red",
-						"1",
-						""
-					]
-				]
-			],
-			[
-				33931.0344827586,
-				[
-					[
-						"Flash Camera Red",
-						"1",
-						""
-					]
-				]
-			],
-			[
-				34344.8275862069,
-				[
-					[
-						"Flash Camera Red",
-						"1",
-						""
+						"1"
 					]
 				]
 			],
@@ -56,9 +81,19 @@
 				34758.6206896552,
 				[
 					[
-						"Flash Camera Red",
+						"Change RotSpeed",
+						"2",
+						"1"
+					]
+				]
+			],
+			[
+				38068.9655172414,
+				[
+					[
+						"Change RotSpeed",
 						"1",
-						""
+						"1"
 					]
 				]
 			],
@@ -66,19 +101,19 @@
 				39724.1379310345,
 				[
 					[
-						"Flash Camera Red",
-						"1",
-						""
+						"Change RotSpeed",
+						"4",
+						"1"
 					]
 				]
 			],
 			[
-				40655.1724137931,
+				41379.3103448276,
 				[
 					[
-						"Flash Camera Red",
-						"1",
-						""
+						"Change RotSpeed",
+						"2",
+						"1"
 					]
 				]
 			],
@@ -86,99 +121,89 @@
 				44689.6551724138,
 				[
 					[
-						"Flash Camera Red",
+						"Change RotSpeed",
 						"1",
-						""
+						"1"
 					]
 				]
 			],
 			[
-				45103.4482758621,
+				46344.8275862069,
 				[
 					[
-						"Flash Camera Red",
-						"1",
-						""
+						"Change RotSpeed",
+						"4",
+						"1"
 					]
 				]
 			],
 			[
-				45517.2413793103,
+				59586.2068965517,
 				[
 					[
-						"Flash Camera Red",
-						"1",
-						""
+						"Change RotSpeed",
+						"2",
+						"1.5"
 					]
 				]
 			],
 			[
-				45931.0344827586,
+				72827.5862068965,
 				[
 					[
-						"Flash Camera Red",
-						"1",
-						""
+						"Change RotSpeed",
+						"2",
+						"1"
 					]
 				]
 			],
 			[
-				56275.8620689655,
+				77793.1034482758,
 				[
 					[
-						"Flash Camera Red",
-						"1",
-						""
+						"Change RotSpeed",
+						"4",
+						"1"
 					]
 				]
 			],
 			[
-				56689.6551724138,
+				79448.2758620689,
 				[
 					[
-						"Flash Camera Red",
-						"1",
-						""
+						"Change RotSpeed",
+						"2",
+						"1"
 					]
 				]
 			],
 			[
-				57103.4482758621,
+				84413.7931034482,
 				[
 					[
-						"Flash Camera Red",
-						"1",
-						""
+						"Change RotSpeed",
+						"4",
+						"1"
 					]
 				]
 			],
 			[
-				57517.2413793103,
+				86068.9655172413,
 				[
 					[
-						"Flash Camera Red",
-						"1",
-						""
+						"Change RotSpeed",
+						"2",
+						"1"
 					]
 				]
 			],
 			[
-				57931.0344827586,
+				99310.3448275861,
 				[
 					[
-						"Flash Camera Red",
-						"1",
-						""
-					]
-				]
-			],
-			[
-				58758.6206896552,
-				[
-					[
-						"Flash Camera Red",
-						"1",
-						""
+						"Change RotSpeed",
+						"4",
+						"0"
 					]
 				]
 			],
@@ -249,6 +274,26 @@
 						"zoom lol",
 						"2",
 						""
+					]
+				]
+			],
+			[
+				102620.689655172,
+				[
+					[
+						"Change RotSpeed",
+						"1",
+						"1"
+					]
+				]
+			],
+			[
+				105827.586206896,
+				[
+					[
+						"Change RotSpeed",
+						"4",
+						"1"
 					]
 				]
 			],
@@ -513,6 +558,36 @@
 				]
 			],
 			[
+				120827.586206896,
+				[
+					[
+						"Change RotSpeed",
+						"1",
+						"1"
+					]
+				]
+			],
+			[
+				134068.965517241,
+				[
+					[
+						"Change RotSpeed",
+						"4",
+						"1"
+					]
+				]
+			],
+			[
+				138827.586206896,
+				[
+					[
+						"Change RotSpeed",
+						"1",
+						"1"
+					]
+				]
+			],
+			[
 				138931.034482759,
 				[
 					[
@@ -536,9 +611,9 @@
 				140689.655172414,
 				[
 					[
-						"Replace stage layer",
-						"BG3",
-						"BG2"
+						"Change RotSpeed",
+						"4",
+						"1"
 					]
 				]
 			],
@@ -579,6 +654,16 @@
 						"Flash Camera Red",
 						"1",
 						""
+					]
+				]
+			],
+			[
+				147310.344827586,
+				[
+					[
+						"Change RotSpeed",
+						"2",
+						"1"
 					]
 				]
 			],
@@ -633,6 +718,16 @@
 				]
 			],
 			[
+				152275.862068965,
+				[
+					[
+						"Change RotSpeed",
+						"1",
+						"1"
+					]
+				]
+			],
+			[
 				152689.655172414,
 				[
 					[
@@ -669,6 +764,46 @@
 						"Flash Camera Red",
 						"1",
 						""
+					]
+				]
+			],
+			[
+				153931.034482758,
+				[
+					[
+						"Change RotSpeed",
+						"2",
+						"1"
+					]
+				]
+			],
+			[
+				180413.793103448,
+				[
+					[
+						"Change RotSpeed",
+						"4",
+						"0"
+					]
+				]
+			],
+			[
+				182068.965517241,
+				[
+					[
+						"Change RotSpeed",
+						"1",
+						"1.6"
+					]
+				]
+			],
+			[
+				208551.724137931,
+				[
+					[
+						"Change RotSpeed",
+						"4",
+						"0.5"
 					]
 				]
 			],
@@ -3983,6 +4118,11 @@
 						6,
 						1241.37931034483,
 						"No Animation"
+					],
+					[
+						80689.6551724138,
+						2,
+						0
 					]
 				],
 				"lengthInSteps": 16,
@@ -4636,9 +4776,9 @@
 					]
 				],
 				"lengthInSteps": 16,
-				"changeBPM": false,
 				"bpm": 118,
-				"mustHitSection": false
+				"mustHitSection": false,
+				"changeBPM": false
 			},
 			{
 				"sectionNotes": [
@@ -10035,6 +10175,56 @@
 				"sectionNotes": [],
 				"typeOfSection": 0,
 				"lengthInSteps": 16,
+				"altAnim": false,
+				"mustHitSection": true,
+				"changeBPM": false,
+				"bpm": 145
+			},
+			{
+				"typeOfSection": 0,
+				"sectionNotes": [],
+				"sectionBeats": 4,
+				"altAnim": false,
+				"gfSection": false,
+				"bpm": 145,
+				"changeBPM": false,
+				"mustHitSection": true
+			},
+			{
+				"sectionBeats": 4,
+				"sectionNotes": [],
+				"typeOfSection": 0,
+				"gfSection": false,
+				"altAnim": false,
+				"mustHitSection": true,
+				"changeBPM": false,
+				"bpm": 145
+			},
+			{
+				"sectionBeats": 4,
+				"sectionNotes": [],
+				"typeOfSection": 0,
+				"gfSection": false,
+				"altAnim": false,
+				"mustHitSection": true,
+				"changeBPM": false,
+				"bpm": 145
+			},
+			{
+				"sectionBeats": 4,
+				"sectionNotes": [],
+				"typeOfSection": 0,
+				"gfSection": false,
+				"altAnim": false,
+				"mustHitSection": true,
+				"changeBPM": false,
+				"bpm": 145
+			},
+			{
+				"sectionBeats": 4,
+				"sectionNotes": [],
+				"typeOfSection": 0,
+				"gfSection": false,
 				"altAnim": false,
 				"mustHitSection": true,
 				"changeBPM": false,

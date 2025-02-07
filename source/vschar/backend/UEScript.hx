@@ -8,6 +8,7 @@ import vschar.backend.uescripts.Force.DiscordRPCScript;
 import vschar.backend.uescripts.Force.TrailDoubleNote;
 
 import vschar.backend.uescripts.Options.UEHud as HudScript;
+import vschar.backend.uescripts.Options.RotBump;
 
 class UEScript extends BaseScript
 {
@@ -42,18 +43,21 @@ class UEScript extends BaseScript
 
             for (script in FORCE) {
                 trace('CLEARING "${script.name}".');
+                script.onDestroy();
             }
             clearedScripts += FORCE.length;
             FORCE = [];
 
             for (script in OPTIONS) {
                 trace('CLEARING "${script.name}".');
+                script.onDestroy();
             }
             clearedScripts += OPTIONS.length;
             OPTIONS = [];
 
             for (script in GP) {
                 trace('CLEARING "${script.name}".');
+                script.onDestroy();
             }
             clearedScripts += GP.length;
             GP = [];
@@ -100,6 +104,8 @@ class UEScript extends BaseScript
 
         if (UEHud)
             array.push(new HudScript());
+        //if (RotBump)
+            array.push(new RotBump());
 
         return array;
     }
@@ -232,6 +238,17 @@ class UEScript extends BaseScript
             script.onEvent(name, value1, value2);
         for (script in GP)
             script.onEvent(name, value1, value2);
+    }
+
+    public override function onBeatHit() {
+        super.onBeatHit();
+
+        for (script in FORCE)
+            script.onBeatHit();
+        for (script in OPTIONS)
+            script.onBeatHit();
+        for (script in GP)
+            script.onBeatHit();
     }
 
     function pushScripts(scripts:Array<BaseScript>, array:Array<BaseScript>):Array<BaseScript>
