@@ -1,4 +1,4 @@
-package vschar.backend.uescripts;
+package ue.uescripts;
 
 import flixel.util.FlxStringUtil;
 import flixel.math.FlxMath;
@@ -226,133 +226,117 @@ class UEHud extends BaseScript
     }
 }
 
-class RotBump extends BaseScript
+/**
+ *  This can literally just be put in PlayState, but to keep with the spirit of the other script recreations, I'll put it here.
+ */
+class IconBop extends BaseScript
 {
-    public function new() super('Rotate HUD onBeatHit');
-    public static var isInitialized:Bool = false;
+    // Generic Values
+    var funnies:Int = 1;
+    var funnies64:Float = 0.5;
+    var funnies2:Int = 50;
+    var nuhuhy:Float = 0.7;
+    var nuhuhx:Float = 1.2;
 
-    public static var frequency:Int = 2;
-    public static var intensity:Float = 1;
-    public static var allowFlickering = false;
-    public static var rotateCamGame:Bool = true;
+    // Tweens
+        // iconP1
+    var iconP1ANG:FlxTween;
+    var iconP1_1x:FlxTween;
+    var iconP1_1y:FlxTween;
+    var iconP1_2x:FlxTween;
+    var iconP1_2y:FlxTween;
 
-    var timesBopped:Int = 0;
+        // iconP2
+    var iconP2ANG:FlxTween;
+    var iconP2_1x:FlxTween;
+    var iconP2_1y:FlxTween;
+    var iconP2_2x:FlxTween;
+    var iconP2_2y:FlxTween;
 
-    public override function initialize() {
-        super.initialize();
+    public function new() super('IconBop');
 
-        frequency = 2;
-        intensity = 1;
-        allowFlickering = false;
-        rotateCamGame = true;
+    function cancelTweens()
+    {
+        if (iconP1ANG != null)
+            iconP1ANG.cancel();
+        if (iconP2ANG != null)
+            iconP2ANG.cancel();
+
+        if (iconP1_1x != null)
+            iconP1_1x.cancel();
+        if (iconP1_1y != null)
+            iconP1_1y.cancel();
+        if (iconP2_1x != null)
+            iconP2_1x.cancel();
+        if (iconP2_1y != null)
+            iconP2_1y.cancel();
+
+        if (iconP1_2x != null)
+            iconP1_2x.cancel();
+        if (iconP1_2y != null)
+            iconP1_2y.cancel();
+        if (iconP2_2x != null)
+            iconP2_2x.cancel();
+        if (iconP2_2y != null)
+            iconP2_2y.cancel();
+    }
+
+    function beat1()
+    {
+        game.iconP2.angle = funnies2;
+        iconP2ANG = FlxTween.tween(game.iconP2, {angle: 0}, funnies, {ease: FlxEase.expoOut});
+
+        game.iconP1.angle = funnies2;
+        iconP1ANG = FlxTween.tween(game.iconP1, {angle: 0}, funnies, {ease: FlxEase.expoOut});
+
+        game.iconP1.scale.x = nuhuhx;
+        game.iconP1.scale.y = nuhuhy;
+        game.iconP2.scale.x = nuhuhx;
+        game.iconP2.scale.y = nuhuhy;
+
+        iconP1_1x = FlxTween.tween(game.iconP1.scale, {x: 1}, funnies64, {ease: FlxEase.expoOut});
+        iconP1_1y = FlxTween.tween(game.iconP1.scale, {y: 1}, funnies64, {ease: FlxEase.expoOut});
+        iconP2_1x = FlxTween.tween(game.iconP2.scale, {x: 1}, funnies64, {ease: FlxEase.expoOut});
+        iconP2_1y = FlxTween.tween(game.iconP2.scale, {y: 1}, funnies64, {ease: FlxEase.expoOut});
+    }
+
+    function beat2()
+    {
+        game.iconP2.angle = -funnies2;
+        iconP2ANG = FlxTween.tween(game.iconP2, {angle: 0}, funnies, {ease: FlxEase.expoOut});
+
+        game.iconP1.angle = -funnies2;
+        iconP1ANG = FlxTween.tween(game.iconP1, {angle: 0}, funnies, {ease: FlxEase.expoOut});
+
+        game.iconP1.scale.x = nuhuhx;
+        game.iconP1.scale.y = nuhuhy;
+        game.iconP2.scale.x = nuhuhx;
+        game.iconP2.scale.y = nuhuhy;
+
+        iconP1_1x = FlxTween.tween(game.iconP1.scale, {x: 1}, funnies64, {ease: FlxEase.expoOut});
+        iconP1_1y = FlxTween.tween(game.iconP1.scale, {y: 1}, funnies64, {ease: FlxEase.expoOut});
+        iconP2_1x = FlxTween.tween(game.iconP2.scale, {x: 1}, funnies64, {ease: FlxEase.expoOut});
+        iconP2_1y = FlxTween.tween(game.iconP2.scale, {y: 1}, funnies64, {ease: FlxEase.expoOut});
     }
 
     public override function onBeatHit() {
         super.onBeatHit();
 
-        var finalAngle1:Float = -(15 * intensity);
-        var finalAngle2:Float = (15 * intensity);
-
-        // Have to int these so it doesn't flicker as it looks worse then when it's the HUD flickering.
-        var finalAngle3:Float = Std.int(7 * intensity);
-        var finalAngle4:Float = Std.int(-(7 * intensity));
-
-        if (!allowFlickering)
+        if (curBeat % 1 == 0)
         {
-            finalAngle1 = Std.int(finalAngle1);
-            finalAngle2 = Std.int(finalAngle2);
+            cancelTweens();
+            beat1();
         }
-        
-        if (curBeat % frequency == 0)
+        if (curBeat % 2 == 0)
         {
-            if (timesBopped == 0)
-            {
-                camGame.angle = finalAngle3;
-                camHUD.angle = finalAngle1;
-                timesBopped = 1;
-            }
-            else
-            {
-                camHUD.angle = finalAngle2;
-                camGame.angle = finalAngle4;
-                timesBopped = 0;
-            }
+            cancelTweens();
+            beat2();
         }
     }
 
     public override function onSongStart() {
         super.onSongStart();
 
-        isInitialized = true;
-    }
-
-    public override function onUpdate(elapsed:Float) {
-        super.onUpdate(elapsed);
-
-        if (isInitialized)
-        {
-            if (camHUD.angle != 0)
-            {
-                if (camHUD.angle < 0)
-                {
-                    camHUD.angle++;
-                }
-                else
-                {
-                    camHUD.angle += -1;
-                }
-            }
-            if (camGame.angle != 0)
-            {
-                if (camGame.angle < 0)
-                {
-                    camGame.angle++;
-                }
-                else
-                {
-                    camGame.angle += -1;
-                }
-            }
-        }
-    }
-
-    public override function onEvent(name:String, value1:String, value2:String) {
-        super.onEvent(name, value1, value2);
-		var flValue1:Null<Float> = Std.parseFloat(value1);
-		var flValue2:Null<Float> = Std.parseFloat(value2);
-		if(Math.isNaN(flValue1)) flValue1 = null;
-		if(Math.isNaN(flValue2)) flValue2 = null;
-        
-
-        if (name == 'Change RotSpeed')
-        {
-            if (flValue1 != null)
-            {
-                frequency = Std.int(flValue1);
-            }
-            if (flValue2 != null)
-            {
-                intensity = flValue2;
-            }
-        }
-        if (name == 'RotBop Properties')
-        {
-            if (value1.toLowerCase() == 'true' || value1 == '1')
-            {
-                allowFlickering = true;
-            }
-            else
-            {
-                allowFlickering = false;
-            }
-            if (value2.toLowerCase() == 'true' || value1 == '1')
-            {
-                rotateCamGame = true;
-            }
-            else
-            {
-                rotateCamGame = false;
-            }
-        }
+        beat2();
     }
 }

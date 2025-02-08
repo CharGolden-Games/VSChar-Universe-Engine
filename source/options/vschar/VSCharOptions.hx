@@ -32,7 +32,7 @@ using StringTools;
 class VSCharOptions extends MusicBeatState {
     var options:Array<String> = [
 		'Engine',
-		'Search Test'
+		'Mod Settings'
 	];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 
@@ -44,11 +44,9 @@ class VSCharOptions extends MusicBeatState {
 		switch (label)
 		{
 			case 'Engine':
-                trace('NOT DONE YET!');
-			case 'Search Test':
-				vschar.substates.SerarchSubstate.blockInput = true;
-				vschar.substates.SerarchSubstate.blockEnter = true;
-				openSubState(new vschar.substates.SerarchSubstate(['ATestItem1', 'BTestItem2', 'CTestItem3', 'DTestItem4', 'ETestItem5']));
+                openSubState(new options.vschar.EngineSubstate());
+			case 'Mod Settings':
+                openSubState(new options.vschar.ModOptionsSubstate());
 		}
 	}
 

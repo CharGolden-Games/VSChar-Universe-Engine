@@ -1,14 +1,14 @@
-package vschar.backend;
+package ue;
 
-import vschar.backend.uescripts.Force.DifficultyLVL;
-import vschar.backend.uescripts.Force.SongName;
-import vschar.backend.uescripts.Force.Fire;
-import vschar.backend.uescripts.Force.Baldi;
-import vschar.backend.uescripts.Force.DiscordRPCScript;
-import vschar.backend.uescripts.Force.TrailDoubleNote;
+import ue.uescripts.Force.DifficultyLVL;
+import ue.uescripts.Force.SongName;
+import ue.uescripts.Force.Fire;
+import ue.uescripts.Force.Baldi;
+import ue.uescripts.Force.DiscordRPCScript;
+import ue.uescripts.Force.TrailDoubleNote;
 
-import vschar.backend.uescripts.Options.UEHud as HudScript;
-import vschar.backend.uescripts.Options.RotBump;
+import ue.uescripts.Options.UEHud as HudScript;
+import ue.uescripts.Options.IconBop;
 
 class UEScript extends BaseScript
 {
@@ -37,65 +37,72 @@ class UEScript extends BaseScript
         if (FORCE.length > 0 || OPTIONS.length > 0 || GP.length > 0)
         {
             // Shouldn't be more then 0, but if it is, clear scripts!
-            trace('RESETTING LOADED SCRIPTS');
+            #if debug trace('RESETTING LOADED SCRIPTS'); #end
 
             var clearedScripts:Int = 0;
 
             for (script in FORCE) {
-                trace('CLEARING "${script.name}".');
+                #if debug trace('CLEARING "${script.name}".'); #end
                 script.onDestroy();
             }
             clearedScripts += FORCE.length;
             FORCE = [];
 
             for (script in OPTIONS) {
-                trace('CLEARING "${script.name}".');
+                #if debug trace('CLEARING "${script.name}".'); #end
                 script.onDestroy();
             }
             clearedScripts += OPTIONS.length;
             OPTIONS = [];
 
             for (script in GP) {
-                trace('CLEARING "${script.name}".');
+                #if debug trace('CLEARING "${script.name}".'); #end
                 script.onDestroy();
             }
             clearedScripts += GP.length;
             GP = [];
 
-            trace('CLEARED $clearedScripts SCRIPTS');
+            #if debug trace('CLEARED $clearedScripts SCRIPTS'); #end
         }
 
         trace('LOADING SCRIPTS INTO ARRAYS');
 
-        pushScripts([
-            new DifficultyLVL(),
-            new SongName(),
-            new Fire(),
-            new Baldi(),
-            new DiscordRPCScript(),
-            new TrailDoubleNote()
-        ], FORCE);
+        pushScripts(getForcedScripts(), FORCE);
         pushScripts(getOptionScripts(), OPTIONS);
         pushScripts(getGPScripts(), GP);
 
         trace('SCRIPTS LOADED: $totalScripts');
 
         for (script in FORCE) {
-            trace('INITIALIZING ${script.name}');
+            #if debug trace('INITIALIZING ${script.name}'); #end
             script.initialize();
         }
         for (script in OPTIONS) {
-            trace('INITIALIZING ${script.name}');
+            #if debug trace('INITIALIZING ${script.name}'); #end
             script.initialize();
         }
         if (ClientPrefs.vsCharCustomizations)
             Fire.baseTitle = "Friday Night Funkin': Funkin' with Char!"; // VS Char customization.
         for (script in GP) {
-            trace('INITIALIZING ${script.name}');
+             #if debug trace('INITIALIZING ${script.name}'); #end
             script.initialize();
         }
 
         trace ('ALL SCRIPTS INITIALIZED');
+    }
+
+    function getForcedScripts():Array<BaseScript>
+    {
+        var array:Array<BaseScript> = [
+            new DifficultyLVL(),
+            new SongName(),
+            new Fire(),
+            new Baldi(),
+            new DiscordRPCScript(),
+            new TrailDoubleNote()
+        ];
+
+        return array;
     }
 
     function getOptionScripts():Array<BaseScript>
@@ -104,8 +111,8 @@ class UEScript extends BaseScript
 
         if (UEHud)
             array.push(new HudScript());
-        //if (RotBump)
-            array.push(new RotBump());
+        if (UEiconBop)
+            array.push(new IconBop());
 
         return array;
     }
@@ -127,9 +134,8 @@ class UEScript extends BaseScript
         for (script in GP)
             script.onCreatePost();
 
-        // THIS SHIT SUCKS AND CRASHES THE GAME?????????????????????????????????????????????????????????????????????
-        // Make it not.. do that please?
-        //#if debug
+
+        #if debug
         var scriptNames_FORCE:Array<String> = [];
         for (script in FORCE)
             scriptNames_FORCE.push(script.name);
@@ -142,14 +148,14 @@ class UEScript extends BaseScript
 
         var scriptsLoaded:FlxText = new FlxText(0,0,FlxG.width, 'Scripts Loaded: $totalScripts\nFORCE: $scriptNames_FORCE\nOPTIONS: $scriptNames_OPTIONS\nGameplay Settings: $scriptNames_GP', 10);
         scriptsLoaded.alpha = 0.8;
-        scriptsLoaded.cameras = [game.camHUD];
+        scriptsLoaded.cameras = [game.camOther]; // camOther so it always stays in the game widnow!
         scriptsLoaded.borderStyle = OUTLINE;
         scriptsLoaded.borderColor = 0xFF000000;
         if (UEhudpos == 'LEFT')
-            scriptsLoaded.alignment = RIGHT; // Lets you see the HUD along with rthe loaded scripts!
+            scriptsLoaded.alignment = RIGHT; // Lets you see the HUD along with the loaded scripts!
         scriptsLoaded.y = FlxG.height - (scriptsLoaded.height + 5);
         add(scriptsLoaded);
-        //#end
+        #end
     }
 
     public override function goodNoteHit(id:Int, direction:Float, noteType:String, isSustainNote:Bool) {

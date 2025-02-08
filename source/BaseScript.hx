@@ -1,7 +1,15 @@
-package vschar.backend;
+package;
 
 import animateatlas.AtlasFrameMaker;
+import flixel.FlxBasic;
+import flixel.FlxObject;
+import flixel.FlxCamera;
+import flixel.FlxSprite;
+import flixel.FlxG;
+import flixel.util.FlxColor;
+import FunkinLua.ModchartSprite;
 
+using StringTools;
 class BaseScript {
     // These variables come from BaseStage.hx lmao.
 	private var game(default, set):Dynamic = PlayState.instance;
@@ -49,9 +57,9 @@ class BaseScript {
     function get_ratingFC():String return game.ratingFC;
     function get_curBeat():Int return game.curBeat;
     function get_curStep():Int return game.curStep;
-    function get_camGame():FlxCamera return game.camGame;
-    function get_camHUD():FlxCamera return game.camHUD;
-    function get_camOther():FlxCamera return game.camOther;
+    function get_camGame():FlxCamera return PlayState.instance.camGame;
+    function get_camHUD():FlxCamera return PlayState.instance.camHUD;
+    function get_camOther():FlxCamera return PlayState.instance.camOther;
 	inline private function set_game(value:MusicBeatState)
 	{
 		onPlayState = (Std.isOfType(value, PlayState));
@@ -82,6 +90,8 @@ class BaseScript {
     public function onSongStart():Void {}
 
     public function onDestroy():Void {}
+
+    public function onPause():Void {}
 
     public function precacheSound(name:String) CoolUtil.precacheSound(name);
 
@@ -202,6 +212,7 @@ class BaseScript {
     public var UEhudpos(get, null):String;
     public var UEsnTimeFollow(get, null):Bool;
     public var UEhidetimeBar(get, null):Bool;
+    public var rotBop(get, null):Bool;
 
     function get_UEHud():Bool return ClientPrefs.ueHud;
     function get_UEDetachedHB():Bool return ClientPrefs.dhb;
@@ -220,6 +231,7 @@ class BaseScript {
     function get_UEhudpos():String return ClientPrefs.hudPosUE;
     function get_UEsnTimeFollow():Bool return ClientPrefs.sntf;
     function get_UEhidetimeBar():Bool return ClientPrefs.huet;
+    function get_rotBop():Bool return ClientPrefs.rotBop;
 
     // Gameplay Settings
     public var UEplayBothSides(get, null):Bool;

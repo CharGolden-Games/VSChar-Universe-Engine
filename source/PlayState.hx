@@ -65,7 +65,8 @@ import modchart.modcharting.ModchartFuncs;
 import modchart.modcharting.NoteMovement;
 import modchart.modcharting.PlayfieldRenderer;
 import modchart.modcharting.ModchartEditorState;
-import vschar.backend.UEScript;
+// To make this ONLY Universe Engine scripts, change this to `import ue.UEScript`!
+import vschar.backend.scripting.VSCharScript as UEScript;
 #if !flash
 import flixel.addons.display.FlxRuntimeShader;
 import openfl.filters.ShaderFilter;

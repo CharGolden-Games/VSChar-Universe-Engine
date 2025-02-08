@@ -3391,7 +3391,7 @@ class FunkinLua
 		});
 		Lua_helper.add_callback(lua, "changeDiffLevel", function(lvl:Float)
 			{
-				vschar.backend.uescripts.Force.DifficultyLVL.diffNumText = '$lvl';
+				ue.uescripts.Force.DifficultyLVL.diffNumText = '$lvl';
 			});
 
 		call('onCreate', []);

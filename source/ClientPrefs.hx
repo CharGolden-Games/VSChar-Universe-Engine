@@ -77,6 +77,8 @@ class ClientPrefs
 
 	// VS CHAR SHITTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 	public static var vsCharCustomizations:Bool = true;
+	public static var rotBop:Bool = true;
+	public static var placeHolder:Bool = false;
 
 	//offical launcherl mao
 	public static var officialLauncher:Bool = true;
@@ -240,6 +242,7 @@ class ClientPrefs
 		//FlxG.save.data.checkForUpdates = checkForUpdates;
 		FlxG.save.data.comboStacking = comboStacking;
 		FlxG.save.data.vsCharCustomizations = vsCharCustomizations;
+		FlxG.save.data.rotBop = rotBop;
 
 		FlxG.save.flush();
 
@@ -325,6 +328,8 @@ class ClientPrefs
 			officialLauncher = FlxG.save.data.officialLauncher;
 		if (FlxG.save.data.vsCharCustomizations != null)
 			vsCharCustomizations = FlxG.save.data.vsCharCustomizations;
+		if (FlxG.save.data.rotBop != null)
+			rotBop = FlxG.save.data.rotBop;
 
 		// Normal Psych Stuff
 		if (FlxG.save.data.arrowRGB != null)

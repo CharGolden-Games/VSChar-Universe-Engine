@@ -127,6 +127,10 @@ class ChartingState extends MusicBeatState
 		[
 			'RotBop Properties',
 			'Value 1: \n      true/1 = Disable fix for HUD flickering with intensity values like 1.5. \n      Anything else = Enable the fix.\nValue 2: \n      true/1 = Allow camGame (stage camera) to rotate. \n      Anything else = Only rotate the HUD camera'
+		],
+		[
+			'Universal Triggers',
+			"MARIO'S MADNESS EVENT BABY WAHOOOOOOOOOOOO\nValue 1: The trigger\nValue 2: The value for that trigger"
 		]
 	];
 

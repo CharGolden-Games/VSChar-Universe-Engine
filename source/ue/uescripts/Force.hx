@@ -1,4 +1,4 @@
-package vschar.backend.uescripts;
+package ue.uescripts;
 
 import flixel.util.FlxStringUtil;
 import openfl.Lib;
