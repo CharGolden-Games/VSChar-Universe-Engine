@@ -26,6 +26,11 @@ class RotBop extends BaseScript
     public override function onBeatHit() {
         super.onBeatHit();
 
+        doBop();
+    }
+
+    function doBop()
+    {
         var finalAngle1:Float = -(15 * intensity);
         var finalAngle2:Float = (15 * intensity);
 
@@ -60,6 +65,7 @@ class RotBop extends BaseScript
         super.onSongStart();
 
         isInitialized = true;
+        doBop();
     }
 
     public override function onUpdate(elapsed:Float) {
