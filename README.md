@@ -3,4 +3,23 @@
 
 # VS Char: A Mod in the works for at least 2 years!
 
-oof.
+> ***oof.***
+
+
+### Engine Details:
+
+- Name: `Char Engine`
+
+- Based On: `Universe Engine 0.5.5 | Psych 0.6.3`
+
+- Version: v`Unreleased`
+
+- DOR: `N/A`
+
+### Mod Details
+
+- Name `VS Char | Friday Night Funkin': Funkin' With Char!`
+
+- Version: v`Unreleased`
+
+- DOR: `N/A`
