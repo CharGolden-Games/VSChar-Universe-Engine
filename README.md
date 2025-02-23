@@ -10,7 +10,9 @@
 
 ### Mod Details
 
-- Name `VS Char | Friday Night Funkin': Funkin' With Char!`
+- Name: `VS Char | Friday Night Funkin': Funkin' With Char!`
+
+- Description: `After x years in development hopefully it will be worth the wait`
 
 - Version: v`Unreleased`
 
@@ -19,6 +21,8 @@
 ### Engine Details:
 
 - Name: `Char Engine`
+
+- Description: `The engine originally made for VS Char.`
 
 - Based On: `Universe Engine 0.5.5 | Psych 0.6.3`
 
