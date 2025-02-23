@@ -47,7 +47,7 @@ Use sprites/songs from this mod in Covers, Remixes, etc. without crediting the o
 You may:
 Modify given assets given they are in a transformative manner (Recolors do not count) and have the proper credit assosciated with them
 
-
+Most other Assets not made for this mod either are protected under the Funkin' Asset License (https://github.com/FunkinCrew/funkin.assets/blob/main/LICENSE.md) or are governed by other licenses not present here.
 
 This License will change Consistently as new ways to define what you may or may not do are found
 ```
