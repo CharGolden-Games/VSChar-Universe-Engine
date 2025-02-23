@@ -29,3 +29,25 @@
 - Version: v`Unreleased`
 
 - DOR: `N/A`
+
+# Assets License
+
+```
+VS Char Custom Asset License:
+
+All Assets made for the VS Char Mod, including but not limited to Artwork, Spritesheets, and Music are under the sole copyright of CharGolden Games unless otherwise stated.
+
+If you wish to use the assets used here you must adhere to the following guidelines:
+
+You may NOT:
+Redistribute original or unmodified copies without proper credit (I.e reuploading Char's sprite to another website without crediting either Char (Username of owner of CharGolden Games) or CharGolden Games directly or if they were done by another person, properly crediting them).
+Profit from any assets made for VS Char (I.e selling any gallery artwork on another site)
+Use sprites/songs from this mod in Covers, Remixes, etc. without crediting the original creators.
+
+You may:
+Modify given assets given they are in a transformative manner (Recolors do not count) and have the proper credit assosciated with them
+
+
+
+This License will change Consistently as new ways to define what you may or may not do are found
+```
