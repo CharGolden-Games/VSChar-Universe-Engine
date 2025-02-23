@@ -219,7 +219,7 @@ class EngineSubstate extends BaseOptionsMenu {
 				scoreTxt.size = 16;
 				var curAccuracy:Float = 69.69;
 				if (ClientPrefs.data.floorRating)
-					curAccuracy = 69;
+					curAccuracy = Math.floor(69.69);
 				scoreTxt.text = 'How SICK you are: 12345 | Messed Up 420 Times\nAccuracy: $curAccuracy% | Rating: Hehe, Funny Number (Actually you kinda fucking suck)';
 				scoreTxt.addFormat(scoreTxtFormat, 0, 1);
 		}
