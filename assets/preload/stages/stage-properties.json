@@ -1,0 +1,12 @@
+{
+    "name": "Stage",
+    "description": "Week 1's Stage",
+
+    "versions": [
+        {
+            "name": "Stage (Erect Remixes)",
+            "description": "Week 1's Erect remixes stage",
+            "path": "erect"
+        }
+    ]
+}

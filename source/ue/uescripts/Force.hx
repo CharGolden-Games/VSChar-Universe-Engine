@@ -115,8 +115,8 @@ class SongName extends BaseScript {
         });
     }
 
-    public override function onEvent(name:String, value1:String, value2:String) {
-        super.onEvent(name, value1, value2);
+    public override function onEvent(name:String, value1:String, value2:String, strumTime:Float) {
+        super.onEvent(name, value1, value2, strumTime);
 
         if (name == "Song Name Info")
             {
@@ -143,7 +143,7 @@ class Fire extends BaseScript
         Paths.returnGraphic('normal');
 
         fireinthehole = new FlxSprite(1200, 1200).loadGraphic(Paths.image('normal'));
-        if (ClientPrefs.cm)
+        if (ClientPrefs.data.cm)
             fireinthehole.loadGraphic(Paths.image('hehehehehhe'));
         fireinthehole.cameras = [game.camOther];
         fireinthehole.scale.set(0.25, 0.25);
@@ -151,7 +151,7 @@ class Fire extends BaseScript
         fireinthehole.screenCenter();
         add(fireinthehole);
 
-        if (ClientPrefs.hitsoundVolume > 0 && ClientPrefs.ht == 'Fire in the hole') {
+        if (ClientPrefs.data.hitsoundVolume > 0 && ClientPrefs.data.ht == 'Fire in the hole') {
             Lib.application.window.title = 'FIRE IN THE HOLE';
         }
     }
@@ -168,13 +168,13 @@ class Fire extends BaseScript
 
         if (!isSustainNote)
         {
-            if (ClientPrefs.ht == 'Fire in the hole')
+            if (ClientPrefs.data.ht == 'Fire in the hole')
             {
                 if(fireinthehole_bye != null)
                 {
                     fireinthehole_bye.cancel();
                 }
-                fireinthehole.alpha = ClientPrefs.hitsoundVolume;
+                fireinthehole.alpha = ClientPrefs.data.hitsoundVolume;
                 fireinthehole_bye = FlxTween.tween(fireinthehole, {alpha: 0}, 1, {ease: FlxEase.linear});
             }
         }
@@ -205,11 +205,11 @@ class Baldi extends BaseScript
     public override function goodNoteHit(id:Int, direction:Float, noteType:String, isSustainNote:Bool) {
         super.goodNoteHit(id, direction, noteType, isSustainNote);
 
-        var hitsoundvolume = ClientPrefs.hitsoundVolume;
+        var hitsoundvolume = ClientPrefs.data.hitsoundVolume;
 
         if (!isSustainNote)
         {
-            if (ClientPrefs.ht == 'Baldi') { // Fun fact I forgot to do this when I finished this port of the script lmao.
+            if (ClientPrefs.data.ht == 'Baldi') { // Fun fact I forgot to do this when I finished this port of the script lmao.
                 switch (totalhit)
                 {
                     case 0:
@@ -446,8 +446,8 @@ class TrailDoubleNote extends BaseScript
         }
     }
 
-    public override function onEvent(name:String, value1:String, value2:String) {
-        super.onEvent(name, value1, value2);
+    public override function onEvent(name:String, value1:String, value2:String, strumTime:Float) {
+        super.onEvent(name, value1, value2, strumTime);
 
         if (name == 'Change Character') // Add code to re-generate the trail next dual note hit since the character is different
         {

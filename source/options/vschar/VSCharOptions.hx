@@ -67,12 +67,12 @@ class VSCharOptions extends MusicBeatState {
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
 
-		if (ClientPrefs.darkmode)
+		if (ClientPrefs.data.darkmode)
 		{
 			var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image("aboutMenu", "preload"));
 			bg.color = 0xFFea71fd;
 			bg.screenCenter();
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
+			bg.antialiasing = ClientPrefs.data.globalAntialiasing;
 			bg.updateHitbox();
 			add(bg);
 
@@ -87,7 +87,7 @@ class VSCharOptions extends MusicBeatState {
 			var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 			bg.color = 0xFFea71fd;
 			bg.screenCenter();
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
+			bg.antialiasing = ClientPrefs.data.globalAntialiasing;
 			bg.updateHitbox();
 			add(bg);
 

@@ -31,8 +31,12 @@ class MainMenuState extends MusicBeatState
 {
 	public static var ueVersion:String = '0.5.5';
 	public static var psychEngineVersion:String = '0.6.3'; // This is also used for Discord RPC
-	public static var vsCharVersion:String = '0.0.1b-DevBuild';
-	public static var charEngineVersion:String = '0.1.0b - UE Engine Move';
+	public static var vsCharVersion:String = 'Unreleased';
+	public static var charEngineVersion:String = 'Unreleased';
+
+	public static var versionShitString_ModVersion:String = 'VS Char v$vsCharVersion';
+	public static var versionShitString_EngineDetails:String = 'Char Engine v$charEngineVersion (Based on Universe Engine 0.5.5, Psych 0.6.3)';
+	public static var versionShitString_FunkinVersion:String = '';
 	public static var curSelected:Int = 0;
 
 	var reset = controls.RESET;
@@ -51,7 +55,7 @@ class MainMenuState extends MusicBeatState
 
 	override function create()
 	{
-		if (ClientPrefs.moveCreditMods)
+		if (ClientPrefs.data.moveCreditMods)
 			optionShit = ['story_mode', 'freeplay', 'options'];
 		else
 			optionShit = ['story_mode', 'freeplay', 'mods', 'credits', 'options'];
@@ -74,7 +78,7 @@ class MainMenuState extends MusicBeatState
 
 		if (FlxG.sound.music == null)
 		{
-			FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm), 0.7);
+			FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.data.mmm), 0.7);
 		}
 
 		camGame = new FlxCamera();
@@ -92,7 +96,7 @@ class MainMenuState extends MusicBeatState
 
 		var yScroll:Float = Math.max(0.25 - (0.05 * (optionShit.length - 4)), 0.1);
 
-		if (ClientPrefs.darkmode)
+		if (ClientPrefs.data.darkmode)
 		{
 			var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image("aboutMenu", "preload"));
 			bg.color = 0xFFFDE871;
@@ -100,17 +104,17 @@ class MainMenuState extends MusicBeatState
 			bg.setGraphicSize(Std.int(bg.width * 1.175));
 			bg.updateHitbox();
 			bg.screenCenter();
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
+			bg.antialiasing = ClientPrefs.data.globalAntialiasing;
 			add(bg);
 		}
-		else if (ClientPrefs.cm)
+		else if (ClientPrefs.data.cm)
 		{
 			var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('menuDesat'));
 			bg.scrollFactor.set(0, yScroll);
 			bg.setGraphicSize(Std.int(bg.width * 1.175));
 			bg.updateHitbox();
 			bg.screenCenter();
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
+			bg.antialiasing = ClientPrefs.data.globalAntialiasing;
 			bg.color = 0xFFfd719b;
 			add(bg);
 		}
@@ -121,7 +125,7 @@ class MainMenuState extends MusicBeatState
 			bg.setGraphicSize(Std.int(bg.width * 1.175));
 			bg.updateHitbox();
 			bg.screenCenter();
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
+			bg.antialiasing = ClientPrefs.data.globalAntialiasing;
 			add(bg);
 		}
 
@@ -130,7 +134,7 @@ class MainMenuState extends MusicBeatState
 		add(camFollow);
 		add(camFollowPos);
 
-		if (ClientPrefs.darkmode)
+		if (ClientPrefs.data.darkmode)
 		{
 			magenta = new FlxSprite(0, 0).loadGraphic(Paths.image("aboutMenu", "preload"));
 			magenta.scrollFactor.set(0, yScroll);
@@ -138,7 +142,7 @@ class MainMenuState extends MusicBeatState
 			magenta.updateHitbox();
 			magenta.screenCenter();
 			magenta.visible = false;
-			magenta.antialiasing = ClientPrefs.globalAntialiasing;
+			magenta.antialiasing = ClientPrefs.data.globalAntialiasing;
 			magenta.color = 0xFFfd719b;
 			add(magenta);
 		}
@@ -150,7 +154,7 @@ class MainMenuState extends MusicBeatState
 			magenta.updateHitbox();
 			magenta.screenCenter();
 			magenta.visible = false;
-			magenta.antialiasing = ClientPrefs.globalAntialiasing;
+			magenta.antialiasing = ClientPrefs.data.globalAntialiasing;
 			magenta.color = 0xFFfd719b;
 			add(magenta);
 		}
@@ -182,22 +186,21 @@ class MainMenuState extends MusicBeatState
 			if (optionShit.length < 6)
 				scr = 0;
 			menuItem.scrollFactor.set(0, scr);
-			menuItem.antialiasing = ClientPrefs.globalAntialiasing;
+			menuItem.antialiasing = ClientPrefs.data.globalAntialiasing;
 			// menuItem.setGraphicSize(Std.int(menuItem.width * 0.58));
 			menuItem.updateHitbox();
 		}
 
 		FlxG.camera.follow(camFollowPos, null, 1);
-
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 92, 0, 'Universe Engine v: $ueVersion | Psych Engine v $psychEngineVersion', 12);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 92, 0, versionShitString_ModVersion, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat(Paths.font('funkin.ttf'), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 72, 0, 'VS Char v: $vsCharVersion | Char Engine v: $charEngineVersion', 12);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 72, 0, versionShitString_EngineDetails, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat(Paths.font('funkin.ttf'), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 52, 0, "Friday Night Funkin' v: " + Application.current.meta.get('version'), 12);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 52, 0, versionShitString_FunkinVersion, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat(Paths.font('funkin.ttf'), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
@@ -218,10 +221,10 @@ class MainMenuState extends MusicBeatState
 		arrow.screenCenter(Y);
 		arrow.angle = 90;
 		arrow.scale.set(0.75, 0.75);
-		arrow.antialiasing = ClientPrefs.globalAntialiasing;
+		arrow.antialiasing = ClientPrefs.data.globalAntialiasing;
 		arrow.scrollFactor.set();
 		add(arrow);
-		if (ClientPrefs.disable2ndpage)
+		if (ClientPrefs.data.disable2ndpage)
 			arrow.alpha = 0;
 
 		// NG.core.calls.event.logEvent('swag').send();
@@ -285,7 +288,7 @@ class MainMenuState extends MusicBeatState
 				FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
 			}
 
-			if (!ClientPrefs.disable2ndpage)
+			if (!ClientPrefs.data.disable2ndpage)
 			{
 				if (controls.UI_RIGHT_P)
 				{
@@ -332,7 +335,7 @@ class MainMenuState extends MusicBeatState
 					selectedSomethin = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 
-					if (ClientPrefs.flashing)
+					if (ClientPrefs.data.flashing)
 						FlxFlicker.flicker(magenta, 1.1, 0.15, false);
 
 					menuItems.forEach(function(spr:FlxSprite)

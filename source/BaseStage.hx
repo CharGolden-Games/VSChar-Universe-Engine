@@ -1,4 +1,4 @@
-package backend;
+package;
 
 import flixel.FlxBasic;
 import flixel.FlxObject;
@@ -8,6 +8,37 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 
 import Note.EventNote;
+
+using StringTools;
+
+typedef StagePropertiesFile = {
+	public var name:String;
+	public var description:String;
+	/**
+	 * Determines what path to use as `./assets/(path)`
+	 */
+	@:optional public var path:String;
+	/**
+	 * Determines what path to use as `./assets/(path)/(subPath)`
+	 * 
+	 * useful if you have multiple versions and plan on making the global stage also use a subFolder
+	 */
+	@:optional public var subPath:String;
+	@:optional public var overrideNoteskin:String;
+	@:optional public var versions:Array<StageVersion>;
+}
+
+typedef StageVersion = {
+	public var name:String;
+	public var description:String;
+	/**
+	 * Determines what path to use as `./assets/(properties.json path)/(stage version path)`
+	 *
+	 * If the main path properties.json variable does not specify a week directory, will be done as `./assets/(stage version path)`
+	 */
+	@:optional public var path:String;
+	@:optional public var overrideNoteskin:String;
+}
 
 enum Countdown
 {
@@ -48,10 +79,13 @@ class BaseStage extends FlxBasic
 
 	public var defaultCamZoom(get, set):Float;
 	public var camFollow(get, never):FlxObject;
+	public var properties:Null<StagePropertiesFile>;
+	public var subStage(get, never):String;
 
-	public function new()
+	public function new(?properties:Null<StagePropertiesFile> = null)
 	{
 		this.game = MusicBeatState.getState();
+		this.properties = properties;
 		if(this.game == null)
 		{
 			FlxG.log.warn('Invalid state for the stage added!');
@@ -86,14 +120,53 @@ class BaseStage extends FlxBasic
 	public function openSubState(SubState:FlxSubState) {}
 
 	// Events
-	public function eventCalled(eventName:String, value1:String, value2:String, flValue1:Null<Float>, flValue2:Null<Float>, strumTime:Float) {}
+	public function eventCalled(eventName:String, value1:String, value2:String, flValue1:Null<Float>, flValue2:Null<Float>) {}
 	public function eventPushed(event:EventNote) {}
 	public function eventPushedUnique(event:EventNote) {}
+    public function goodNoteHit(id:Int, direction:Float, noteType:String, isSustainNote:Bool):Void {}
+    public function opponentNoteHit(id:Int, direction:Float, noteType:String, isSustainNote:Bool):Void {}
+    public function onNoteMiss(id:Int, direction:Float, noteType:String, isSustainNote:Bool):Void {}
+    public function startSong():Void {}
 
 	// Things to replace FlxGroup stuff and inject sprites directly into the state
 	function add(object:FlxBasic) game.add(object);
 	function remove(object:FlxBasic) game.remove(object);
 	function insert(position:Int, object:FlxBasic) game.insert(position, object);
+	/**
+	 * Using the current stagename this function makes and adds a sprite to current state instance, then returns that sprite.
+	 * @param x 
+	 * @param y 
+	 * @param image The image (or color to use.)
+	 * @param width 
+	 * @param height 
+	 * @return BGSprite
+	 */
+	public function newSprite(x:Float, y:Float, image:String, ?width:Float, ?height:Float):BGSpriteAlt
+	{
+		var stage:Null<String> = null;
+		if (game.curStage != null)
+			stage = game.curStage;
+
+		if(properties != null)
+		{
+			if (subStage.trim() != '')
+			{
+				for (version in properties.versions)
+				{
+					if (version.name == subStage && version.path != null)
+						image = version.path + '/$image';
+					trace(image);
+				}
+			}
+			else
+			{
+				trace('Skipping sub stage check, song does not use sub stage!');
+			}
+		}
+		var sprite:BGSpriteAlt = new BGSpriteAlt(x, y, stage).newSprite(image, width, height);
+		add(sprite);
+		return sprite;
+	}
 	
 	public function addBehindGF(obj:FlxBasic) insert(members.indexOf(game.gfGroup), obj);
 	public function addBehindBF(obj:FlxBasic) insert(members.indexOf(game.boyfriendGroup), obj);
@@ -177,4 +250,10 @@ class BaseStage extends FlxBasic
 		return game.defaultCamZoom;
 	}
 	inline private function get_camFollow():FlxObject return game.camFollow;
+	function get_subStage():String {
+		if (PlayState.SONG.subStage != null)
+			return PlayState.SONG.subStage;
+		else
+			return '';
+	}
 }

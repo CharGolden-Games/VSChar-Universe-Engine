@@ -66,11 +66,11 @@ class MainMenuUselessState extends MusicBeatState
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
 		#end
-		// debugKeys = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('debug_1'));
+		// debugKeys = ClientPrefs.data.copyKey(ClientPrefs.data.keyBinds.get('debug_1'));
 
 		if (FlxG.sound.music == null)
 		{
-			FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm), 0.7);
+			FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.data.mmm), 0.7);
 		}
 
 		camGame = new FlxCamera();
@@ -88,7 +88,7 @@ class MainMenuUselessState extends MusicBeatState
 
 		var yScroll:Float = Math.max(0.25 - (0.05 * (optionShit.length - 4)), 0.1);
 
-		if (ClientPrefs.darkmode)
+		if (ClientPrefs.data.darkmode)
 		{
 			var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image("aboutMenu", "preload"));
 			bg.color = 0xFFFDE871;
@@ -96,17 +96,17 @@ class MainMenuUselessState extends MusicBeatState
 			bg.setGraphicSize(Std.int(bg.width * 1.175));
 			bg.updateHitbox();
 			bg.screenCenter();
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
+			bg.antialiasing = ClientPrefs.data.globalAntialiasing;
 			add(bg);
 		}
-		else if (ClientPrefs.cm)
+		else if (ClientPrefs.data.cm)
 		{
 			var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('menuDesat'));
 			bg.scrollFactor.set(0, yScroll);
 			bg.setGraphicSize(Std.int(bg.width * 1.175));
 			bg.updateHitbox();
 			bg.screenCenter();
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
+			bg.antialiasing = ClientPrefs.data.globalAntialiasing;
 			bg.color = 0xFFfd719b;
 			add(bg);
 		}
@@ -117,7 +117,7 @@ class MainMenuUselessState extends MusicBeatState
 			bg.setGraphicSize(Std.int(bg.width * 1.175));
 			bg.updateHitbox();
 			bg.screenCenter();
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
+			bg.antialiasing = ClientPrefs.data.globalAntialiasing;
 			add(bg);
 		}
 
@@ -126,7 +126,7 @@ class MainMenuUselessState extends MusicBeatState
 		add(camFollow);
 		add(camFollowPos);
 
-		if (ClientPrefs.darkmode)
+		if (ClientPrefs.data.darkmode)
 		{
 			magenta = new FlxSprite(0, 0).loadGraphic(Paths.image("aboutMenu", "preload"));
 			magenta.scrollFactor.set(0, yScroll);
@@ -134,7 +134,7 @@ class MainMenuUselessState extends MusicBeatState
 			magenta.updateHitbox();
 			magenta.screenCenter();
 			magenta.visible = false;
-			magenta.antialiasing = ClientPrefs.globalAntialiasing;
+			magenta.antialiasing = ClientPrefs.data.globalAntialiasing;
 			magenta.color = 0xFFfd719b;
 			add(magenta);
 		}
@@ -146,7 +146,7 @@ class MainMenuUselessState extends MusicBeatState
 			magenta.updateHitbox();
 			magenta.screenCenter();
 			magenta.visible = false;
-			magenta.antialiasing = ClientPrefs.globalAntialiasing;
+			magenta.antialiasing = ClientPrefs.data.globalAntialiasing;
 			magenta.color = 0xFFfd719b;
 			add(magenta);
 		}
@@ -178,22 +178,22 @@ class MainMenuUselessState extends MusicBeatState
 			if (optionShit.length < 6)
 				scr = 0;
 			menuItem.scrollFactor.set(0, scr);
-			menuItem.antialiasing = ClientPrefs.globalAntialiasing;
+			menuItem.antialiasing = ClientPrefs.data.globalAntialiasing;
 			// menuItem.setGraphicSize(Std.int(menuItem.width * 0.58));
 			menuItem.updateHitbox();
 		}
 
 		FlxG.camera.follow(camFollowPos, null, 1);
 
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 92, 0, 'Universe Engine v: $ueVersion | Psych Engine v $psychEngineVersion', 12);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 92, 0, MainMenuState.versionShitString_ModVersion, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat(Paths.font('funkin.ttf'), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 72, 0, 'VS Char v: $vsCharVersion | Char Engine v: $charEngineVersion', 12);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 72, 0, MainMenuState.versionShitString_EngineDetails, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat(Paths.font('funkin.ttf'), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 52, 0, "Friday Night Funkin' v: " + Application.current.meta.get('version'), 12);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 52, 0, MainMenuState.versionShitString_FunkinVersion, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat(Paths.font('funkin.ttf'), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
@@ -215,7 +215,7 @@ class MainMenuUselessState extends MusicBeatState
 		arrow.screenCenter(Y);
 		arrow.angle = -90;
 		arrow.scale.set(0.75,0.75);
-		arrow.antialiasing = ClientPrefs.globalAntialiasing;
+		arrow.antialiasing = ClientPrefs.data.globalAntialiasing;
 		arrow.scrollFactor.set();
 		add(arrow);
 
@@ -325,7 +325,7 @@ class MainMenuUselessState extends MusicBeatState
 					selectedSomethin = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 
-					if (ClientPrefs.flashing)
+					if (ClientPrefs.data.flashing)
 						FlxFlicker.flicker(magenta, 1.1, 0.15, false);
 
 					menuItems.forEach(function(spr:FlxSprite)

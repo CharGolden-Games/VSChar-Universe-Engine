@@ -24,8 +24,19 @@ class Conductor
 	public static var lastSongPos:Float;
 	public static var offset:Float = 0;
 
-	//public static var safeFrames:Int = 10;
-	public static var safeZoneOffset:Float = (ClientPrefs.safeFrames / 60) * 1000; // is calculated in create(), is safeFrames in milliseconds
+	public static var safeFrames(get, never):Float;
+	static function get_safeFrames():Float
+	{
+		if (ClientPrefs.data != null) // Crash fix
+			return ClientPrefs.data.safeFrames;
+		else
+			return 10;
+	}
+	public static var safeZoneOffset(get, default):Float; // is calculated in create(), is safeFrames in milliseconds
+	static function get_safeZoneOffset():Float
+	{
+		return (safeFrames / 60) * 1000;
+	}
 
 	public static var bpmChangeMap:Array<BPMChangeEvent> = [];
 
@@ -170,7 +181,7 @@ class Rating
 		this.name = name;
 		this.image = name;
 		this.counter = name + 's';
-		this.hitWindow = Reflect.field(ClientPrefs, name + 'Window');
+		this.hitWindow = Reflect.field(ClientPrefs.data, name + 'Window');
 		if(hitWindow == null)
 		{
 			hitWindow = 0;

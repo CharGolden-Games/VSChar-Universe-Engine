@@ -9,9 +9,16 @@ import flixel.FlxG;
 import flixel.util.FlxColor;
 import FunkinLua.ModchartSprite;
 
+#if sys
+import sys.FileSystem;
+import sys.io.File;
+#end
+
+import lime.utils.Assets as FlAssets;
+
 using StringTools;
 class BaseScript {
-    // These variables come from BaseStage.hx lmao.
+    // BaseScript is basically BaseStage but cooler.
 	private var game(default, set):Dynamic = PlayState.instance;
 	public var onPlayState:Bool = false;
 	public var members(get, never):Array<FlxBasic>;
@@ -26,6 +33,15 @@ class BaseScript {
     var songPosition(get, null):Float;
     var score(get, null):Int;
     var misses(get, null):Int;
+    /**
+     * The Accuracy after turning it into a percentage value.
+     */
+    var accuracy(get, null):Float;
+    var ratingName(get, null):String;
+    /**
+     * The raw rating percent
+     */
+    var ratingPercent(get, null):Float;
     var hits(get, null):Int;
     var rating(get, null):Float;
     var ratingFC(get, null):String;
@@ -33,6 +49,11 @@ class BaseScript {
     var noteOffset(get, null):Int;
     var curBeat(get, null):Int;
     var curStep(get, null):Int;
+
+    var hudStyle(get, null):String;
+
+    var totalPlayed(get, null):Int;
+    var totalNotesHit(get, null):Float;
 
     var camGame(get, null):FlxCamera;
     var camHUD(get, null):FlxCamera;
@@ -48,18 +69,24 @@ class BaseScript {
     function get_bpm():Float return PlayState.SONG.bpm;
 
     function get_songPosition():Float return Conductor.songPosition;
-    function get_score():Int return game.songScore;
+    function get_score():Int return game.lerpScore;
     function get_misses():Int return game.songMisses;
+    function get_accuracy():Float return Highscore.floorDecimal(game.ratingPercent * 100, 2);
+    function get_ratingName():String return game.ratingName;
+    function get_ratingPercent():Float return game.ratingPercent;
     function get_songLength():Float return FlxG.sound.music.length;
-    function get_noteOffset():Int return ClientPrefs.noteOffset;
+    function get_noteOffset():Int return ClientPrefs.data.noteOffset;
     function get_hits():Int return game.songHits;
     function get_rating():Float return game.ratingPercent;
     function get_ratingFC():String return game.ratingFC;
     function get_curBeat():Int return game.curBeat;
     function get_curStep():Int return game.curStep;
+    function get_totalPlayed():Int return game.totalPlayed;
+    function get_totalNotesHit():Float return game.totalNotesHit;
     function get_camGame():FlxCamera return PlayState.instance.camGame;
     function get_camHUD():FlxCamera return PlayState.instance.camHUD;
     function get_camOther():FlxCamera return PlayState.instance.camOther;
+    function get_hudStyle():String return ClientPrefs.data.hudStyle;
 	inline private function set_game(value:MusicBeatState)
 	{
 		onPlayState = (Std.isOfType(value, PlayState));
@@ -92,6 +119,23 @@ class BaseScript {
     public function onDestroy():Void {}
 
     public function onPause():Void {}
+
+    public function onResume():Void {}
+
+    public function runLuaCode(code:String):Void
+    {
+        #if sys
+        // Idiot prevention plan :3
+        if (!FileSystem.exists('assets/embed/script.lua'))
+        {
+            if (!FileSystem.exists('assets/embed'))
+                FileSystem.createDirectory('assets/embed');
+
+            File.saveContent('assets/embed/script.lua', '-- This Script (while empty) is important to a function in the game.');
+        }
+        FunkinLua.runLuaCode(code);
+        #end
+    }
 
     public function precacheSound(name:String) CoolUtil.precacheSound(name);
 
@@ -172,7 +216,7 @@ class BaseScript {
 			var leSprite:ModchartSprite = new ModchartSprite(x, y);
 
 			loadFrames(leSprite, image, spriteType);
-			leSprite.antialiasing = ClientPrefs.globalAntialiasing;
+			leSprite.antialiasing = ClientPrefs.data.globalAntialiasing;
 			PlayState.instance.modchartSprites.set(tag, leSprite);
 
             return leSprite;
@@ -190,7 +234,7 @@ class BaseScript {
      */
     public function initialize():Void {}
 
-    public function onEvent(name:String, value1:String, value2:String):Void {}
+    public function onEvent(name:String, value1:String, value2:String, strumTime:Float):Void {}
 
     public function new(?name:String) if (name != null) this.name = name;
 
@@ -212,26 +256,33 @@ class BaseScript {
     public var UEhudpos(get, null):String;
     public var UEsnTimeFollow(get, null):Bool;
     public var UEhidetimeBar(get, null):Bool;
-    public var rotBop(get, null):Bool;
 
-    function get_UEHud():Bool return ClientPrefs.ueHud;
-    function get_UEDetachedHB():Bool return ClientPrefs.dhb;
-    function get_UEhudZoomOut():Bool return ClientPrefs.hudZoomOut;
-    function get_UEkeystrokes():Bool return ClientPrefs.keystrokes;
-    function get_UEcCounter():Bool return ClientPrefs.cc;
-    function get_UESmoothHP():Bool return ClientPrefs.sh;
-    function get_UEe100C():Bool return ClientPrefs.ec;
-    function get_UEiconBop():Bool return ClientPrefs.ib;
-    function get_UEtauntGo():Bool return ClientPrefs.tng;
-    function get_UEshakeMiss():Bool return ClientPrefs.snm;
-    function get_UEdarkenCamGame():Bool return ClientPrefs.dcm;
-    function get_UEstrumsplash():Bool return ClientPrefs.uess;
-    function get_UEmisssounds():Bool return ClientPrefs.uems;
-    function get_UEresultscreen():Bool return ClientPrefs.ueresultscreen;
-    function get_UEhudpos():String return ClientPrefs.hudPosUE;
-    function get_UEsnTimeFollow():Bool return ClientPrefs.sntf;
-    function get_UEhidetimeBar():Bool return ClientPrefs.huet;
-    function get_rotBop():Bool return ClientPrefs.rotBop;
+    //VS Char Settings
+    public var rotBop(get, null):Bool;
+    public var floorRating(get, null):Bool;
+    public var forceTimeBar(get, null):Bool;
+
+    function get_UEHud():Bool return ClientPrefs.data.ueHud;
+    function get_UEDetachedHB():Bool return ClientPrefs.data.dhb;
+    function get_UEhudZoomOut():Bool return ClientPrefs.data.hudZoomOut;
+    function get_UEkeystrokes():Bool return ClientPrefs.data.keystrokes;
+    function get_UEcCounter():Bool return ClientPrefs.data.cc;
+    function get_UESmoothHP():Bool return ClientPrefs.data.sh;
+    function get_UEe100C():Bool return ClientPrefs.data.ec;
+    function get_UEiconBop():Bool return ClientPrefs.data.ib;
+    function get_UEtauntGo():Bool return ClientPrefs.data.tng;
+    function get_UEshakeMiss():Bool return ClientPrefs.data.snm;
+    function get_UEdarkenCamGame():Bool return ClientPrefs.data.dcm;
+    function get_UEstrumsplash():Bool return ClientPrefs.data.uess;
+    function get_UEmisssounds():Bool return ClientPrefs.data.uems;
+    function get_UEresultscreen():Bool return ClientPrefs.data.ueresultscreen;
+    function get_UEhudpos():String return ClientPrefs.data.hudPosUE;
+    function get_UEsnTimeFollow():Bool return ClientPrefs.data.sntf;
+    function get_UEhidetimeBar():Bool return ClientPrefs.data.huet;
+
+    function get_rotBop():Bool return ClientPrefs.data.rotBop;
+    function get_floorRating():Bool return ClientPrefs.data.floorRating;
+    function get_forceTimeBar():Bool return ClientPrefs.data.forceTimeBar;
 
     // Gameplay Settings
     public var UEplayBothSides(get, null):Bool;
@@ -241,10 +292,10 @@ class BaseScript {
     public var UEhealthdrainp2(get, null):Bool;
     public var UEIncreasePBR(get, null):Bool;
 
-    function get_UEplayBothSides():Bool return ClientPrefs.gameplaySettings.get('pbs');
-    function get_UEhealthDrain():Bool return ClientPrefs.gameplaySettings.get('hd');
-    function get_UEsustainOneNote():Bool return ClientPrefs.gameplaySettings.get('sn');
-    function get_UEsd():Bool return ClientPrefs.gameplaySettings.get('sd');
-    function get_UEhealthdrainp2():Bool return ClientPrefs.gameplaySettings.get('hdp2');
-    function get_UEIncreasePBR():Bool return ClientPrefs.gameplaySettings.get('ipbr');
+    function get_UEplayBothSides():Bool return ClientPrefs.data.gameplaySettings.get('pbs');
+    function get_UEhealthDrain():Bool return ClientPrefs.data.gameplaySettings.get('hd');
+    function get_UEsustainOneNote():Bool return ClientPrefs.data.gameplaySettings.get('sn');
+    function get_UEsd():Bool return ClientPrefs.data.gameplaySettings.get('sd');
+    function get_UEhealthdrainp2():Bool return ClientPrefs.data.gameplaySettings.get('hdp2');
+    function get_UEIncreasePBR():Bool return ClientPrefs.data.gameplaySettings.get('ipbr');
 }

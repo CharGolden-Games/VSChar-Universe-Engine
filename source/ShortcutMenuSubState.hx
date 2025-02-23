@@ -82,7 +82,7 @@ class ShortcutMenuSubState extends MusicBeatSubstate
 				ease: FlxEase.quadOut,
 				onComplete: function(twn:FlxTween)
 				{
-					FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm));
+					FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.data.mmm));
 					close();
 				}
 			});
@@ -95,14 +95,14 @@ class ShortcutMenuSubState extends MusicBeatSubstate
 		{
 			changeSelection(1);
 		}
-		if (accepted && !ClientPrefs.controllerMode)
+		if (accepted && !ClientPrefs.data.controllerMode)
 		{
 			var daSelected:String = menuItems[curSelected];
 			switch (daSelected)
 			{
 				case 'Title Screen':
 					FlxG.switchState(new TitleState());
-					FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm));
+					FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.data.mmm));
 					inShortcutMenu = false;
 				case 'Menus':
 					menuItems = menuItemsMenu;
@@ -120,7 +120,7 @@ class ShortcutMenuSubState extends MusicBeatSubstate
 				switch (daSelected)
 				{
 					case 'Story Mode':
-						if (ClientPrefs.fm)
+						if (ClientPrefs.data.fm)
 						{
 							FlxG.switchState(new CoolStoryState());
 						}
@@ -131,11 +131,11 @@ class ShortcutMenuSubState extends MusicBeatSubstate
 						inShortcutMenu = false;
 					case 'Freeplay':
 						FlxG.switchState(new FreeplayState());
-						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm));
+						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.data.mmm));
 						inShortcutMenu = false;
 					case 'VS Char Freeplay Test':
 						FlxG.switchState(new CustomFreeplayState());
-						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm));
+						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.data.mmm));
 						inShortcutMenu = false;
 					case 'Back':
 						menuItems = menuItemsOG;
@@ -147,7 +147,7 @@ class ShortcutMenuSubState extends MusicBeatSubstate
 				switch (daSelected)
 				{
 					case 'Main Menu':
-						if (ClientPrefs.fm)
+						if (ClientPrefs.data.fm)
 						{
 							MusicBeatState.switchState(new CoolMenuState());
 						}
@@ -155,15 +155,15 @@ class ShortcutMenuSubState extends MusicBeatSubstate
 						{
 							MusicBeatState.switchState(new MainMenuState());
 						}
-						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm));
+						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.data.mmm));
 						inShortcutMenu = false;
 					case 'Mods Menu':
 						FlxG.switchState(new ModsMenuState());
-						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm));
+						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.data.mmm));
 						inShortcutMenu = false;
 					case 'Gallery':
 						FlxG.switchState(new vschar.states.GalleryState());
-						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm));
+						FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.data.mmm));
 						inShortcutMenu = false;
 					case 'Back':
 						menuItems = menuItemsOG;

@@ -72,21 +72,21 @@ class UniversalTriggers extends BaseScript {
         songTitle.cameras = [camOther];
         add(songTitle);
 
-        songTitleFadeIn = FlxTween.tween(songTitle, {alpha: 1}, 1.5, {ease: FlxEase.linear, onComplete: function(twn:FlxTween){
-            var timer:FlxTimer = new FlxTimer().start(0.05, function(tmr:FlxTimer){
-                songTitleFadeOut = FlxTween.tween(songTitle, {alpha: 0}, 3, {ease: FlxEase.linear, onComplete: function(twn:FlxTween) songTitle.destroy()});
+        songTitleFadeIn = FlxTween.tween(songTitle, {alpha: 1}, 0.5, {ease: FlxEase.linear, onComplete: function(twn:FlxTween){
+            var timer:FlxTimer = new FlxTimer().start(5, function(tmr:FlxTimer){
+                songTitleFadeOut = FlxTween.tween(songTitle, {alpha: 0}, 1, {ease: FlxEase.linear, onComplete: function(twn:FlxTween) songTitle.destroy()});
             });
         }});
     }
 
-    public override function onEvent(name:String, value1:String, value2:String) {
-        super.onEvent(name, value1, value2);
+    public override function onEvent(name:String, value1:String, value2:String, strumTime:Float) {
+        super.onEvent(name, value1, value2, strumTime);
 		var flValue1:Null<Float> = Std.parseFloat(value1);
 		var flValue2:Null<Float> = Std.parseFloat(value2);
 		if(Math.isNaN(flValue1)) flValue1 = null;
 		if(Math.isNaN(flValue2)) flValue2 = null;
 
-        if (name == 'Universal Triggers')
+        if (name == 'Song Triggers')
         {
             switch (getSongTriggers(songName))
             {

@@ -92,4 +92,33 @@ class StageData {
 		}
 		return cast Json.parse(rawJson);
 	}
+
+	public static function getStageProperties(stage:String):BaseStage.StagePropertiesFile
+	{
+		var rawJson:String = null;
+		var path:String = Paths.getPreloadPath('stages/${Paths.formatToSongPath(stage.toLowerCase())}-properties.json');
+
+		#if MODS_ALLOWED
+		var modPath:String = Paths.modFolders('stages/${Paths.formatToSongPath(stage.toLowerCase())}-properties.json');
+		if(FileSystem.exists(modPath)) {
+			rawJson = File.getContent(modPath);
+		} else if(FileSystem.exists(path)) {
+			rawJson = File.getContent(path);
+		}
+		#else
+		if(Assets.exists(path)) {
+			rawJson = Assets.getText(path);
+		}
+		#end
+		else
+		{
+			trace('`stages/${Paths.formatToSongPath(stage.toLowerCase())}-properties.json` EITHER DOES NOT EXIST OR IS NULL!');
+			return null;
+		}
+
+		var properties:BaseStage.StagePropertiesFile = cast Json.parse(rawJson);
+		if (properties.versions != null)
+			trace('The sub stages for `$stage` are ${properties.versions}');
+		return cast Json.parse(rawJson);
+	}
 }

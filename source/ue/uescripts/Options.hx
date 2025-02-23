@@ -6,7 +6,7 @@ import flixel.math.FlxMath;
 class Options extends BaseScript {}
 class UEHud extends BaseScript
 {
-    public function new() super('Hud');
+    public function new() super('UEHud');
     var UEsong:FlxText;
     var UEtimetxt:FlxText;
     var UEmiss:FlxText;
@@ -45,10 +45,10 @@ class UEHud extends BaseScript
         UErating.cameras = [game.camHUD];
         add(UErating);
 
-        game.scoreTxt.visible = false;
-        game.timeBarBG.visible = false;
-        game.timeBar.visible = false;
-        game.timeTxt.visible = false;
+            game.scoreTxt.visible = false;
+            game.timeBarBG.visible = false;
+            game.timeBar.visible = false;
+            game.timeTxt.visible = false;
         UEtimetxt.x = UEsong.x;
 
         if (UEhudpos == 'CENTER')
@@ -281,6 +281,58 @@ class IconBop extends BaseScript
             iconP2_2y.cancel();
     }
 
+    function pauseTweens()
+    {
+        if (iconP1ANG != null)
+            iconP1ANG.active = false;
+        if (iconP2ANG != null)
+            iconP2ANG.active = false;
+
+        if (iconP1_1x != null)
+            iconP1_1x.active = false;
+        if (iconP1_1y != null)
+            iconP1_1y.active = false;
+        if (iconP2_1x != null)
+            iconP2_1x.active = false;
+        if (iconP2_1y != null)
+            iconP2_1y.active = false;
+
+        if (iconP1_2x != null)
+            iconP1_2x.active = false;
+        if (iconP1_2y != null)
+            iconP1_2y.active = false;
+        if (iconP2_2x != null)
+            iconP2_2x.active = false;
+        if (iconP2_2y != null)
+            iconP2_2y.active = false;
+    }
+
+    function resumeTweens()
+    {
+        if (iconP1ANG != null)
+            iconP1ANG.active = true;
+        if (iconP2ANG != null)
+            iconP2ANG.active = true;
+
+        if (iconP1_1x != null)
+            iconP1_1x.active = true;
+        if (iconP1_1y != null)
+            iconP1_1y.active = true;
+        if (iconP2_1x != null)
+            iconP2_1x.active = true;
+        if (iconP2_1y != null)
+            iconP2_1y.active = true;
+
+        if (iconP1_2x != null)
+            iconP1_2x.active = true;
+        if (iconP1_2y != null)
+            iconP1_2y.active = true;
+        if (iconP2_2x != null)
+            iconP2_2x.active = true;
+        if (iconP2_2y != null)
+            iconP2_2y.active = true;
+    }
+
     function beat1()
     {
         game.iconP2.angle = funnies2;
@@ -338,5 +390,17 @@ class IconBop extends BaseScript
         super.onSongStart();
 
         beat2();
+    }
+
+    public override function onPause() {
+        super.onPause();
+
+        pauseTweens();
+    }
+
+    public override function onResume() {
+        super.onResume();
+
+        resumeTweens();
     }
 }

@@ -1,5 +1,6 @@
 package;
 
+import ue.uescripts.Force.DifficultyLVL;
 import animateatlas.AtlasFrameMaker;
 import flixel.math.FlxPoint;
 import flixel.graphics.frames.FlxFrame.FlxFrameAngle;
@@ -273,9 +274,16 @@ class Paths
 		return file;
 	}
 
-	inline static public function voices(song:String):Any
+	inline static public function voices(song:String, isOpponent:Bool = false, difficulty:String = ''):Any
 	{
-		var songKey:String = '$songFolderRedirect/${formatToSongPath(song)}/Voices';
+		var key:String = 'Voices';
+		if (isOpponent)
+		{
+			key += '-opponent';
+		}
+		if (difficulty != '')
+			key += '-' + difficulty;
+		var songKey:String = '$songFolderRedirect/${formatToSongPath(song)}/$key';
 		var voices = returnSound('songs', songKey);
 		return voices;
 	}

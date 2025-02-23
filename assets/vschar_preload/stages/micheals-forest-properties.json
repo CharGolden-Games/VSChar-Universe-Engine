@@ -1,0 +1,39 @@
+{
+    "name": "Micheal's Forest Stage",
+    "description": "Micheal's Forest is an odd case. I literally don't even know how to describe it!",
+    "path": "micheals_forest",
+    "subPath": "forest_crisp",
+    "overrideNoteskin": "NOTE_assets-micheal",
+
+    "versions": [
+        {
+            "name": "Micheal's Virtual Forest Stage",
+            "description": "Micheal has gone a little crazy with the decorations here.",
+            "path": "paranoia",
+            "overrideNoteskin": "NOTE_assets-paranoia"
+        },
+        {
+            "name": "Too Slow Stage",
+            "description": "Ugh, my old covers.",
+            "path": "tooSlow",
+            "overrideNoteskin": "NOTE_assets-charOld"
+        },
+        {
+            "name": "You Can't Run Stage",
+            "description": "Ugh, my old covers.",
+            "path": "forest_crisp_old",
+            "overrideNoteskin": "NOTE_assets-charOld"
+        },
+        {
+            "name": "Trio Stage Old",
+            "description": "Ugh, my old covers.",
+            "path": "tt_forest_old",
+            "overrideNoteskin": "NOTE_assets-charOld"
+        },
+        {
+            "name": "Trio Stage",
+            "description": "Basic BI- stage. Micheal's Forest before he repainted everything a weird purple hue.",
+            "path": "tt_forest"
+        }
+    ]
+}

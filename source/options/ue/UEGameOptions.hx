@@ -53,7 +53,7 @@ class UEGameOptions extends BaseOptionsMenu
 		var option:Option = new Option('Fancy Title', 'Title bounce', 'ft', 'bool', false);
 		addOption(option);
 
-		var option:Option = new Option('Cute Mode', if (ClientPrefs.cm == true)
+		var option:Option = new Option('Cute Mode', if (ClientPrefs.data.cm == true)
 		{
 			'i coded this UwU';
 		} else
@@ -97,10 +97,10 @@ class UEGameOptions extends BaseOptionsMenu
 
 	function onChangePauseMusic()
 	{
-		if (ClientPrefs.pauseMusic == 'None')
+		if (ClientPrefs.data.pauseMusic == 'None')
 			FlxG.sound.music.volume = 0;
 		else
-			FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(ClientPrefs.pauseMusic)));
+			FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(ClientPrefs.data.pauseMusic)));
 
 		changedMusic = true;
 	}
@@ -108,7 +108,7 @@ class UEGameOptions extends BaseOptionsMenu
 	override function destroy()
 	{
 		if (changedMusic)
-			FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm));
+			FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.data.mmm));
 		super.destroy();
 	}
 
@@ -116,7 +116,7 @@ class UEGameOptions extends BaseOptionsMenu
 	function onChangeFPSCounter()
 	{
 		if (Main.fpsVar != null)
-			Main.fpsVar.visible = ClientPrefs.showFPS;
+			Main.fpsVar.visible = ClientPrefs.data.showFPS;
 	}
 	#end
 
@@ -132,12 +132,12 @@ class UEGameOptions extends BaseOptionsMenu
 
 	function onChangeHitSound()
 	{
-		FlxG.sound.play(Paths.sound("hitsound-" + ClientPrefs.ht), ClientPrefs.hitsoundVolume);
+		FlxG.sound.play(Paths.sound("hitsound-" + ClientPrefs.data.ht), ClientPrefs.data.hitsoundVolume);
 	}
 
 	function changeSong()
 	{
-		FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm), 0.7);
+		FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.data.mmm), 0.7);
 	}
 
 	function restart()

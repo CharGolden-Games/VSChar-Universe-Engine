@@ -1,5 +1,6 @@
 package ue;
 
+import ue.uescripts.Events;
 import ue.uescripts.Force.DifficultyLVL;
 import ue.uescripts.Force.SongName;
 import ue.uescripts.Force.Fire;
@@ -12,12 +13,12 @@ import ue.uescripts.Options.IconBop;
 
 class UEScript extends BaseScript
 {
-    static var FORCE:Array<BaseScript> = [];
-    static var OPTIONS:Array<BaseScript> = [];
-    static var GP:Array<BaseScript> = [];
+    public static var FORCE:Array<BaseScript> = [];
+    public static var OPTIONS:Array<BaseScript> = [];
+    public static var GP:Array<BaseScript> = [];
 
-    public var totalScripts(get, null):Int = 0;
-    function get_totalScripts():Int
+    public static var totalScripts(get, null):Int = 0;
+    static function get_totalScripts():Int
     {
         return FORCE.length + OPTIONS.length + GP.length;
     }
@@ -81,8 +82,6 @@ class UEScript extends BaseScript
             #if debug trace('INITIALIZING ${script.name}'); #end
             script.initialize();
         }
-        if (ClientPrefs.vsCharCustomizations)
-            Fire.baseTitle = "Friday Night Funkin': Funkin' with Char!"; // VS Char customization.
         for (script in GP) {
              #if debug trace('INITIALIZING ${script.name}'); #end
             script.initialize();
@@ -99,7 +98,8 @@ class UEScript extends BaseScript
             new Fire(),
             new Baldi(),
             new DiscordRPCScript(),
-            new TrailDoubleNote()
+            new TrailDoubleNote(),
+            new Events()
         ];
 
         return array;
@@ -109,8 +109,8 @@ class UEScript extends BaseScript
     {
         var array:Array<BaseScript> = [];
 
-        if (UEHud)
-            array.push(new HudScript());
+        /*if (UEHud)
+            array.push(new HudScript()); */
         if (UEiconBop)
             array.push(new IconBop());
 
@@ -124,6 +124,8 @@ class UEScript extends BaseScript
         return array;
     }
 
+    static var scriptsLoaded:FlxText;
+
     public override function onCreatePost() {
         super.onCreatePost();
 
@@ -135,27 +137,33 @@ class UEScript extends BaseScript
             script.onCreatePost();
 
 
-        #if debug
-        var scriptNames_FORCE:Array<String> = [];
-        for (script in FORCE)
-            scriptNames_FORCE.push(script.name);
-        var scriptNames_OPTIONS:Array<String> = [];
-        for (script in OPTIONS)
-            scriptNames_OPTIONS.push(script.name);
-        var scriptNames_GP:Array<String> = [];
-        for (script in GP)
-            scriptNames_GP.push(script.name);
+        
+        if (ClientPrefs.data.showLoadedScripts)
+        {
+            var FORCE:Array<BaseScript> = UEScript.FORCE;
+            var OPTIONS:Array<BaseScript> = UEScript.OPTIONS;
+            var GP:Array<BaseScript> = UEScript.GP;
+            
+            var scriptNames_FORCE:Array<String> = [];
+            for (script in FORCE)
+                scriptNames_FORCE.push(script.name);
+            var scriptNames_OPTIONS:Array<String> = [];
+            for (script in OPTIONS)
+                scriptNames_OPTIONS.push(script.name);
+            var scriptNames_GP:Array<String> = [];
+            for (script in GP)
+                scriptNames_GP.push(script.name);
 
-        var scriptsLoaded:FlxText = new FlxText(0,0,FlxG.width, 'Scripts Loaded: $totalScripts\nFORCE: $scriptNames_FORCE\nOPTIONS: $scriptNames_OPTIONS\nGameplay Settings: $scriptNames_GP', 10);
-        scriptsLoaded.alpha = 0.8;
-        scriptsLoaded.cameras = [game.camOther]; // camOther so it always stays in the game widnow!
-        scriptsLoaded.borderStyle = OUTLINE;
-        scriptsLoaded.borderColor = 0xFF000000;
-        if (UEhudpos == 'LEFT')
-            scriptsLoaded.alignment = RIGHT; // Lets you see the HUD along with the loaded scripts!
-        scriptsLoaded.y = FlxG.height - (scriptsLoaded.height + 5);
-        add(scriptsLoaded);
-        #end
+            scriptsLoaded = new FlxText(0,0,FlxG.width, 'Scripts Loaded: $totalScripts\nFORCE: $scriptNames_FORCE\nOPTIONS: $scriptNames_OPTIONS\nGameplay Settings: $scriptNames_GP', 10);
+            scriptsLoaded.alpha = 0.8;
+            scriptsLoaded.cameras = [game.camOther]; // camOther so it always stays in the game widnow!
+            scriptsLoaded.borderStyle = OUTLINE;
+            scriptsLoaded.borderColor = 0xFF000000;
+            if (UEhudpos == 'LEFT')
+                scriptsLoaded.alignment = RIGHT; // Lets you see the HUD along with the loaded scripts!
+            scriptsLoaded.y = FlxG.height - (scriptsLoaded.height + 5);
+            add(scriptsLoaded);
+        }
     }
 
     public override function goodNoteHit(id:Int, direction:Float, noteType:String, isSustainNote:Bool) {
@@ -235,15 +243,15 @@ class UEScript extends BaseScript
                 script.onUpdatePost(elapsed);
     }
 
-    public override function onEvent(name:String, value1:String, value2:String) {
-        super.onEvent(name, value1, value2);
+    public override function onEvent(name:String, value1:String, value2:String, strumTime:Float) {
+        super.onEvent(name, value1, value2, strumTime);
 
         for (script in FORCE)
-            script.onEvent(name, value1, value2);
+            script.onEvent(name, value1, value2, strumTime);
         for (script in OPTIONS)
-            script.onEvent(name, value1, value2);
+            script.onEvent(name, value1, value2, strumTime);
         for (script in GP)
-            script.onEvent(name, value1, value2);
+            script.onEvent(name, value1, value2, strumTime);
     }
 
     public override function onBeatHit() {
@@ -257,6 +265,30 @@ class UEScript extends BaseScript
             script.onBeatHit();
     }
 
+    public override function onPause() {
+        super.onPause();
+
+        
+        for (script in FORCE)
+            script.onPause();
+        for (script in OPTIONS)
+            script.onPause();
+        for (script in GP)
+            script.onPause();
+    }
+
+    public override function onResume() {
+        super.onResume();
+
+        
+        for (script in FORCE)
+            script.onResume();
+        for (script in OPTIONS)
+            script.onResume();
+        for (script in GP)
+            script.onResume();
+    }
+
     function pushScripts(scripts:Array<BaseScript>, array:Array<BaseScript>):Array<BaseScript>
     {
         for (script in scripts)
@@ -268,7 +300,7 @@ class UEScript extends BaseScript
         return array;
     }
 
-    function removeScript(name:String):Void
+    public static function removeScript(name:String):Void
     {
         var totalScripts:Array<Array<BaseScript>> = [
             FORCE,
@@ -277,10 +309,10 @@ class UEScript extends BaseScript
         ];
 
         var pos:Int = -1;
+        var found:Bool = false;
 
         for (scripts in totalScripts)
         {
-            var found:Bool = false;
             pos++;
 
             var arrayName:String = '';
@@ -302,9 +334,10 @@ class UEScript extends BaseScript
             {
                 if (script.name == name)
                 {
-                    found = true;
                     trace('SCRIPT "${script.name}" FOUND, REMOVING');
+                    trace('OLD ARRAY FOR "$arrayName" `$scripts`');
                     scripts.remove(script);
+                    script.onDestroy();
                     var errored:Bool = false;
                     for (script2 in scripts)
                     {
@@ -318,23 +351,59 @@ class UEScript extends BaseScript
                     if (!errored)
                     {
                         trace('SUCCESSFULLY REMOVED ${script.name}');
-                    }
                         trace('NEW ARRAY FOR "$arrayName" `$scripts`');
+                    }
                 }
             }
 
-            if (!found)
-            {
-                trace('COULD NOT FIND A SCRIPT WITH THE NAME OF "$name", CHECK THAT IS SPELLED CORRECTLY.');
-            }
         }
-
+        if (!found)
+        {
+            trace('COULD NOT FIND A SCRIPT WITH THE NAME OF "$name", CHECK THAT IS SPELLED CORRECTLY.');
+        }
+        if (ClientPrefs.data.showLoadedScripts)
+        {
+            try
+            {
+                var scriptNames_FORCE:Array<String> = [];
+                for (script in FORCE)
+                    scriptNames_FORCE.push(script.name);
+                var scriptNames_OPTIONS:Array<String> = [];
+                for (script in OPTIONS)
+                    scriptNames_OPTIONS.push(script.name);
+                var scriptNames_GP:Array<String> = [];
+                for (script in GP)
+                    scriptNames_GP.push(script.name);
+                scriptsLoaded.text = 'Scripts Loaded: $totalScripts\nFORCE: $scriptNames_FORCE\nOPTIONS: $scriptNames_OPTIONS\nGameplay Settings: $scriptNames_GP';
+            }
+            catch(e:Dynamic){}
+        }
     }
 
-    function pushScript(script:BaseScript, array:Array<BaseScript>):Array<BaseScript>
+    public static function pushScript(script:BaseScript, array:Array<BaseScript>):Array<BaseScript>
     {
         array.push(script);
         trace('LOADED SCRIPT: "${script.name}".');
+
+        trace('THE NEW ARRAYS ARE `$FORCE` `$OPTIONS` `$GP`');
+        
+        if (ClientPrefs.data.showLoadedScripts)
+        {
+            try
+            {
+                var scriptNames_FORCE:Array<String> = [];
+                for (script in FORCE)
+                    scriptNames_FORCE.push(script.name);
+                var scriptNames_OPTIONS:Array<String> = [];
+                for (script in OPTIONS)
+                    scriptNames_OPTIONS.push(script.name);
+                var scriptNames_GP:Array<String> = [];
+                for (script in GP)
+                    scriptNames_GP.push(script.name);
+                scriptsLoaded.text = 'Scripts Loaded: $totalScripts\nFORCE: $scriptNames_FORCE\nOPTIONS: $scriptNames_OPTIONS\nGameplay Settings: $scriptNames_GP';
+            }
+            catch(e:Dynamic){}
+        }
 
         return array;
     }

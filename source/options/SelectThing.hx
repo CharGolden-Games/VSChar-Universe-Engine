@@ -61,7 +61,7 @@ class SelectThing extends MusicBeatState
 		// FlxG.sound.playMusic(Paths.music(Paths.formatToSongPath(ClientPrefs.pauseMusic), "shared"), 0);
 		// FlxG.sound.music.fadeIn(4, 0, 0.7);
 
-		if (ClientPrefs.moveCreditMods)
+		if (ClientPrefs.data.moveCreditMods)
 			options = ['Universe Options', 'Psych Options', 'VS Char Options', 'Mods', 'Credits'];
 		else
 			options = ['Universe Options', 'Psych Options', 'VS Char Options'];
@@ -73,12 +73,12 @@ class SelectThing extends MusicBeatState
 
 		DiscordClient.changePresence("Selecting options category", null);
 
-		if (ClientPrefs.darkmode)
+		if (ClientPrefs.data.darkmode)
 		{
 			var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image("aboutMenu", "preload"));
 			bg.color = 0xFFea71fd;
 			bg.screenCenter();
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
+			bg.antialiasing = ClientPrefs.data.globalAntialiasing;
 			bg.updateHitbox();
 			add(bg);
 
@@ -93,7 +93,7 @@ class SelectThing extends MusicBeatState
 			var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 			bg.color = 0xFFea71fd;
 			bg.screenCenter();
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
+			bg.antialiasing = ClientPrefs.data.globalAntialiasing;
 			bg.updateHitbox();
 			add(bg);
 
@@ -157,7 +157,7 @@ class SelectThing extends MusicBeatState
 					LoadingState.loadAndSwitchState(new PlayState());
 					FlxG.sound.music.volume = 0;
 				}
-				else if (ClientPrefs.fm)
+				else if (ClientPrefs.data.fm)
 				{
 					MusicBeatState.switchState(new CoolMenuState());
 				}

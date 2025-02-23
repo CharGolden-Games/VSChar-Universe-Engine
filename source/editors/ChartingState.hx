@@ -129,6 +129,10 @@ class ChartingState extends MusicBeatState
 			'Value 1: \n      true/1 = Disable fix for HUD flickering with intensity values like 1.5. \n      Anything else = Enable the fix.\nValue 2: \n      true/1 = Allow camGame (stage camera) to rotate. \n      Anything else = Only rotate the HUD camera'
 		],
 		[
+			'Song Triggers',
+			"MARIO'S MADNESS EVENT BABY WAHOOOOOOOOOOOO\nValue 1: The trigger\nValue 2: The value for that trigger"
+		],
+		[
 			'Universal Triggers',
 			"MARIO'S MADNESS EVENT BABY WAHOOOOOOOOOOOO\nValue 1: The trigger\nValue 2: The value for that trigger"
 		]
@@ -261,12 +265,12 @@ class ChartingState extends MusicBeatState
 
 		vortex = FlxG.save.data.chart_vortex;
 		ignoreWarnings = FlxG.save.data.ignoreWarnings;
-		if (ClientPrefs.darkmode)
+		if (ClientPrefs.data.darkmode)
 		{
 			var bg:FlxSprite = new FlxSprite(0, 0).loadGraphic(Paths.image("aboutMenu", "preload"));
 			bg.color = 0xFF222222;
 			bg.scrollFactor.set();
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
+			bg.antialiasing = ClientPrefs.data.globalAntialiasing;
 			add(bg);
 		}
 		else
@@ -274,7 +278,7 @@ class ChartingState extends MusicBeatState
 			var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 			bg.scrollFactor.set();
 			bg.color = 0xFF222222;
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
+			bg.antialiasing = ClientPrefs.data.globalAntialiasing;
 			add(bg);
 		}
 
@@ -674,11 +678,14 @@ class ChartingState extends MusicBeatState
 		for (i in 0...stageFile.length)
 		{ // Prevent duplicates
 			var stageToCheck:String = stageFile[i];
-			if (!tempMap.exists(stageToCheck))
+			if (!stageToCheck.contains('-properties'))
 			{
-				stages.push(stageToCheck);
+				if (!tempMap.exists(stageToCheck))
+				{
+					stages.push(stageToCheck);
+				}
+				tempMap.set(stageToCheck, true);
 			}
-			tempMap.set(stageToCheck, true);
 		}
 		#if MODS_ALLOWED
 		for (i in 0...directories.length)
@@ -692,10 +699,13 @@ class ChartingState extends MusicBeatState
 					if (!FileSystem.isDirectory(path) && file.endsWith('.json'))
 					{
 						var stageToCheck:String = file.substr(0, file.length - 5);
-						if (!tempMap.exists(stageToCheck))
+						if (!stageToCheck.contains('-properties'))
 						{
-							tempMap.set(stageToCheck, true);
-							stages.push(stageToCheck);
+							if (!tempMap.exists(stageToCheck))
+							{
+								tempMap.set(stageToCheck, true);
+								stages.push(stageToCheck);
+							}
 						}
 					}
 				}
@@ -2100,7 +2110,7 @@ class ChartingState extends MusicBeatState
 			{
 				PlayState.chartingMode = false;
 				MusicBeatState.switchState(new editors.MasterEditorMenu());
-				FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.mmm));
+				FlxG.sound.playMusic(Paths.music("freakyMenu-" + ClientPrefs.data.mmm));
 				FlxG.mouse.visible = false;
 				return;
 			}
@@ -2494,7 +2504,7 @@ class ChartingState extends MusicBeatState
 					{
 						if ((playSoundBf.checked && note.mustPress) || (playSoundDad.checked && !note.mustPress))
 						{
-							var soundToPlay = "hitsound-" + (ClientPrefs.ht);
+							var soundToPlay = "hitsound-" + (ClientPrefs.data.ht);
 							if (_song.player1 == 'gf')
 							{ // Easter egg
 								soundToPlay = 'GF_' + Std.string(data + 1);
@@ -2507,7 +2517,7 @@ class ChartingState extends MusicBeatState
 						data = note.noteData;
 						if (note.mustPress && lilBuddiesBox.checked)
 						{
-							if (ClientPrefs.enableColorShader || ClientPrefs.showNotes && ClientPrefs.enableColorShader)
+							if (ClientPrefs.data.enableColorShader || ClientPrefs.data.showNotes && ClientPrefs.data.enableColorShader)
 							{
 								lilBf.color = note.rgbShader.r;
 							}
@@ -2515,7 +2525,7 @@ class ChartingState extends MusicBeatState
 						}
 						if (!note.mustPress && lilBuddiesBox.checked)
 						{
-							if (ClientPrefs.enableColorShader || ClientPrefs.showNotes && ClientPrefs.enableColorShader)
+							if (ClientPrefs.data.enableColorShader || ClientPrefs.data.showNotes && ClientPrefs.data.enableColorShader)
 							{
 								lilOpp.color = note.rgbShader.r;
 							}

@@ -22,17 +22,17 @@ class GalleryState extends MusicBeatState {
         camFollow.screenCenter(X);
         camMenu.follow(camFollow, LOCKON, 0.06);
 
-		if (ClientPrefs.darkmode)
+		if (ClientPrefs.data.darkmode)
             {
                 bg = new FlxSprite(0, 0).loadGraphic(Paths.image("aboutMenu", "preload"));
-                bg.antialiasing = ClientPrefs.globalAntialiasing;
+                bg.antialiasing = ClientPrefs.data.globalAntialiasing;
                 add(bg);
                 bg.screenCenter();
             }
             else
             {
                 bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-                bg.antialiasing = ClientPrefs.globalAntialiasing;
+                bg.antialiasing = ClientPrefs.data.globalAntialiasing;
                 add(bg);
                 bg.screenCenter();
             }
