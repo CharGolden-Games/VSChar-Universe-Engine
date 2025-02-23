@@ -216,6 +216,17 @@ class UEHud extends BaseScript
         {
             UEtimetext_s = FlxTween.tween(UEtimetxt, {alpha: 1}, 1, {ease: FlxEase.linear});
         }
+        lerpTypeString('$songName - $difficultyName');
+    }
+
+    public function lerpTypeString(s:String)
+    {
+        for (letter in 0...s.length)
+        {
+            new FlxTimer().start(0.1 * letter, function(tmr:FlxTimer){
+                UEsong.text += s.charAt(letter);
+            });
+        }
     }
 
     function formatTime(milliseconds:Float):String
@@ -402,5 +413,178 @@ class IconBop extends BaseScript
         super.onResume();
 
         resumeTweens();
+    }
+}
+
+class Keystrokes extends BaseScript
+{
+    public function new() super('UE Show Keystrokes');
+
+    public var coolkeystrokeanimation:Bool = true;
+    public var keystrokegoanim:Int = 10;
+    public var keystrokecomebackanim:Float = 1.5;
+
+    /**
+     * Seperated by direction
+     * 
+     * 0 - Left / 1 - Up / 2 - Down / 3 - Right
+     */
+    public var keyColors:Array<Int> = [
+        0xFFC24B99,
+        0xFF12FA05,
+        0xFF00FFFF,
+        0xFFF9393F
+    ];
+    
+    public var leftButton:FlxSprite;
+    public var upButton:FlxSprite;
+    public var downButton:FlxSprite;
+    public var rightButton:FlxSprite;
+
+    public override function onCreatePost() {
+        super.onCreatePost();
+
+        upButton = new FlxSprite(UEkeyXPos, UEkeyYPos).makeGraphic(44, 44, keyColors[1]);
+        upButton.cameras = [camOther];
+        upButton.alpha = UEkeyA;
+        add(upButton);
+
+        downButton = new FlxSprite(UEkeyXPos, UEkeyYPos + 47).makeGraphic(44, 44, keyColors[2]);
+        downButton.cameras = [camOther];
+        downButton.alpha = UEkeyA;
+        add(downButton);
+
+        leftButton = new FlxSprite(UEkeyXPos - 47, UEkeyYPos + 47).makeGraphic(44, 44, keyColors[0]);
+        leftButton.cameras = [camOther];
+        leftButton.alpha = UEkeyA;
+        add(leftButton);
+
+        rightButton = new FlxSprite(UEkeyXPos + 47, UEkeyYPos + 47).makeGraphic(44, 44, keyColors[3]);
+        rightButton.cameras = [camOther];
+        rightButton.alpha = UEkeyA;
+        add(rightButton);
+    }
+
+
+    public var KSleftButtonthingx:FlxTween;
+    public var KSupButtonthingy:FlxTween;
+    public var KSdownButtonthingy:FlxTween;
+    public var KSrightButtonthingx:FlxTween;
+
+    public var leftFade:FlxTween;
+    public var upFade:FlxTween;
+    public var downFade:FlxTween;
+    public var rightFade:FlxTween;
+
+    public var leftFadeBot:FlxTween;
+    public var upFadeBot:FlxTween;
+    public var downFadeBot:FlxTween;
+    public var rightFadeBot:FlxTween;
+    public override function onUpdate(elapsed:Float) {
+        super.onUpdate(elapsed);
+
+        if (controls.NOTE_LEFT)
+        {
+            leftButton.alpha = 1;
+            if (leftFade != null)
+                leftFade.cancel();
+
+            if (coolkeystrokeanimation)
+            {
+                if (KSleftButtonthingx != null)
+                    KSleftButtonthingx.cancel();
+
+                leftButton.x = UEkeyXPos - 47 - keystrokegoanim;
+                KSleftButtonthingx = FlxTween.tween(leftButton, {x: UEkeyXPos - 47}, keystrokecomebackanim, {ease: FlxEase.expoOut});
+            }
+        }
+        else
+        {
+            if (leftFade != null)
+                leftFade.cancel();
+            leftFade = FlxTween.tween(leftButton, {alpha: UEkeyA}, UEkeyFT, {ease: FlxEase.linear});
+        }
+
+        if (controls.NOTE_RIGHT)
+        {
+            rightButton.alpha = 1;
+            if (rightFade != null)
+                rightFade.cancel();
+
+            if (coolkeystrokeanimation)
+            {
+                if (KSrightButtonthingx != null)
+                    KSrightButtonthingx.cancel();
+
+                rightButton.x = UEkeyXPos + 47 + keystrokegoanim;
+                KSrightButtonthingx = FlxTween.tween(rightButton, {x: UEkeyXPos + 47}, keystrokecomebackanim, {ease: FlxEase.expoOut});
+            }
+        }
+        else
+        {
+            if (rightFade != null)
+                rightFade.cancel();
+            rightFade = FlxTween.tween(rightButton, {alpha: UEkeyA}, UEkeyFT, {ease: FlxEase.linear});
+        }
+
+        if (controls.NOTE_UP)
+        {
+            upButton.alpha = 1;
+            if (upFade != null)
+                upFade.cancel();
+
+            if (coolkeystrokeanimation)
+            {
+                if (KSupButtonthingy != null)
+                    KSupButtonthingy.cancel();
+
+                upButton.y = UEkeyYPos - keystrokegoanim;
+                KSupButtonthingy = FlxTween.tween(upButton, {y: UEkeyYPos}, keystrokecomebackanim, {ease: FlxEase.expoOut});
+            }
+        }
+        else
+        {
+            if (upFade != null)
+                upFade.cancel();
+            upFade = FlxTween.tween(upButton, {alpha: UEkeyA}, UEkeyFT, {ease: FlxEase.linear});
+        }
+
+        if (controls.NOTE_DOWN)
+        {
+            downButton.alpha = 1;
+            if (downFade != null)
+                downFade.cancel();
+
+            if (coolkeystrokeanimation)
+            {
+                if (KSdownButtonthingy != null)
+                    KSdownButtonthingy.cancel();
+
+                downButton.y = UEkeyYPos + 47 + keystrokegoanim;
+                KSdownButtonthingy = FlxTween.tween(downButton, {y: UEkeyYPos + 47}, keystrokecomebackanim, {ease: FlxEase.expoOut});
+            }
+        }
+        else
+        {
+            if (downFade != null)
+                downFade.cancel();
+            downFade = FlxTween.tween(downButton, {alpha: UEkeyA}, UEkeyFT, {ease: FlxEase.linear});
+        }
+
+        if (!PlayState.instance.cpuControlled)
+        {
+            if (leftFadeBot != null)
+                leftFadeBot.cancel();
+            leftFadeBot = FlxTween.tween(leftButton, {alpha: UEkeyFT}, 0.5, {ease: FlxEase.linear});
+            if (upFadeBot != null)
+                upFadeBot.cancel();
+            upFadeBot = FlxTween.tween(upButton, {alpha: UEkeyFT}, 0.5, {ease: FlxEase.linear});
+            if (downFadeBot != null)
+                downFadeBot.cancel();
+            downFadeBot = FlxTween.tween(downButton, {alpha: UEkeyFT}, 0.5, {ease: FlxEase.linear});
+            if (rightFadeBot != null)
+                rightFadeBot.cancel();
+            rightFadeBot = FlxTween.tween(rightButton, {alpha: UEkeyFT}, 0.5, {ease: FlxEase.linear});
+        }
     }
 }

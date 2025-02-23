@@ -145,7 +145,6 @@ class RotBop extends BaseScript
 class HudType extends BaseScript
 {
     // Main variables
-    public static var ueHud_instance:UEHud_Script;
     public function new() super('VSChar Hud Type');
 
     // Codename Engine Hud
@@ -180,13 +179,10 @@ class HudType extends BaseScript
     public override function onCreatePost() {
         super.onCreatePost();
 
+        PlayState.instance.healthBarBG.loadGraphic(Paths.image('old-healthBar'));
+
         switch (hudStyle)
         {
-            case 'Universe Engine':
-                UEScript.pushScript(new UEHud_Script(), UEScript.OPTIONS);
-                UEScript.removeScript('VSChar Hud Type'); // Remove this script if using UE HUD
-                return;
-                
             case 'Codename Engine':
                 PlayState.instance.scoreTxt.setFormat(Paths.font('vcr.ttf'), 16, 0xFFFFFFFF, RIGHT, OUTLINE, 0xFF000000);
                 PlayState.instance.scoreTxt.alignment = RIGHT;

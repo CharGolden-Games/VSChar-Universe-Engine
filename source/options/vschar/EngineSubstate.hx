@@ -85,8 +85,7 @@ class EngineSubstate extends BaseOptionsMenu {
 
 		FlxG.cameras.add(camHUD, false);
 
-		healthBarBG = new AttachedSprite('healthBar');
-		healthBarBG = new AttachedSprite('healthBar');
+		healthBarBG = new AttachedSprite('old-healthBar');
 		healthBarBG.y = FlxG.height * 0.89;
 		healthBarBG.screenCenter(X);
 		healthBarBG.scrollFactor.set();
@@ -177,6 +176,7 @@ class EngineSubstate extends BaseOptionsMenu {
 		scoreTxt.fieldWidth = FlxG.width;
 		healthBar.createFilledBar(0xFFAF66CE, 0xFF00CCFF);
 		healthBar.updateBar();
+		healthBarBG.loadGraphic(Paths.image('old-healthBar'));
 		try
 		{
 			scoreTxt.removeFormat(scoreTxtFormat);
@@ -191,6 +191,7 @@ class EngineSubstate extends BaseOptionsMenu {
 				UEscore.visible = true;
 				UEmiss.visible = true;
 				UErating.visible = true;
+				healthBarBG.loadGraphic(Paths.image('healthBar'));
 			
 			case 'Codename Engine':
 				scoreTxt.setFormat(Paths.font('vcr.ttf'), 16, 0xFFFFFFFF, RIGHT, OUTLINE, 0xFF000000);

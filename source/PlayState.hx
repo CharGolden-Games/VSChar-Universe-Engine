@@ -1648,6 +1648,8 @@ class PlayState extends MusicBeatState
 		{
 			if (vocals != null)
 				vocals.pitch = value;
+			if (oppVocals != null)
+				oppVocals.pitch = value;
 			FlxG.sound.music.pitch = value;
 		}
 		playbackRate = value;
@@ -2582,6 +2584,7 @@ class PlayState extends MusicBeatState
 
 		FlxG.sound.music.pause();
 		vocals.pause();
+		oppVocals.pause();
 
 		FlxG.sound.music.time = time;
 		FlxG.sound.music.pitch = playbackRate;
@@ -2592,7 +2595,13 @@ class PlayState extends MusicBeatState
 			vocals.time = time;
 			vocals.pitch = playbackRate;
 		}
+		if (Conductor.songPosition <= oppVocals.length)
+		{
+			oppVocals.time = time;
+			oppVocals.pitch = playbackRate;
+		}
 		vocals.play();
+		oppVocals.play();
 		Conductor.songPosition = time;
 		songTime = time;
 	}
@@ -2623,6 +2632,7 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.pitch = playbackRate;
 		FlxG.sound.music.onComplete = finishSong.bind();
 		vocals.play();
+		oppVocals.play();
 
 		if (startOnTime > 0)
 		{
@@ -2635,6 +2645,7 @@ class PlayState extends MusicBeatState
 			// trace('Oopsie doopsie! Paused sound');
 			FlxG.sound.music.pause();
 			vocals.pause();
+			oppVocals.pause();
 		}
 
 		// Song duration in a float, useful for the time left feature

@@ -19,7 +19,6 @@ class VSCharScript extends UEScript {
         var array:Array<BaseScript> = super.getForcedScripts();
 
         array.push(new UniversalTriggers());
-        array.push(new HudType());
 
         return array;
     }
@@ -29,6 +28,8 @@ class VSCharScript extends UEScript {
 
         if (rotBop)
             array.push(new RotBop());
+        if (hudStyle != 'Universe Engine')
+            array.push(new HudType());
 
         return array;
     }

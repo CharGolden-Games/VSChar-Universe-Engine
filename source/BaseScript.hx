@@ -22,6 +22,11 @@ class BaseScript {
 	private var game(default, set):Dynamic = PlayState.instance;
 	public var onPlayState:Bool = false;
 	public var members(get, never):Array<FlxBasic>;
+    
+	private var controls(get, never):Controls;
+    
+	inline function get_controls():Controls
+		return PlayerSettings.player1.controls;
 
     public var boyfriend(get, null):Boyfriend;
     public var dad(get, null):Character;
@@ -30,6 +35,7 @@ class BaseScript {
     var difficultyName(get, null):String;
     var bpm(get, null):Float;
 
+    var crochet:Float;
     var songPosition(get, null):Float;
     var score(get, null):Int;
     var misses(get, null):Int;
@@ -68,6 +74,7 @@ class BaseScript {
     function get_songName():String return PlayState.SONG.song;
     function get_bpm():Float return PlayState.SONG.bpm;
 
+    function get_crochet():Float return Conductor.crochet;
     function get_songPosition():Float return Conductor.songPosition;
     function get_score():Int return game.lerpScore;
     function get_misses():Int return game.songMisses;
@@ -229,6 +236,27 @@ class BaseScript {
         trace(text);
     }
 
+    function formatSong(song:String, diff:Int):String return Paths.formatToSongPath(song) + CoolUtil.getDifficultyFilePath(diff);
+
+    function keyPressed(name:String)
+		{
+			var key:Bool = false;
+			switch (name)
+			{
+				case 'left':
+					key = PlayState.instance.getControl('NOTE_LEFT');
+				case 'down':
+					key = PlayState.instance.getControl('NOTE_DOWN');
+				case 'up':
+					key = PlayState.instance.getControl('NOTE_UP');
+				case 'right':
+					key = PlayState.instance.getControl('NOTE_RIGHT');
+				case 'space':
+					key = FlxG.keys.pressed.SPACE; // an extra key for convinience
+			}
+			return key;
+		}
+
     /**
      * Shit to do when loading (replaces onCreate)
      */
@@ -256,6 +284,10 @@ class BaseScript {
     public var UEhudpos(get, null):String;
     public var UEsnTimeFollow(get, null):Bool;
     public var UEhidetimeBar(get, null):Bool;
+    public var UEkeyFT(get, null):Float;
+    public var UEkeyA(get, null):Float;
+    public var UEkeyXPos(get, null):Float;
+    public var UEkeyYPos(get, null):Float;
 
     //VS Char Settings
     public var rotBop(get, null):Bool;
@@ -279,6 +311,10 @@ class BaseScript {
     function get_UEhudpos():String return ClientPrefs.data.hudPosUE;
     function get_UEsnTimeFollow():Bool return ClientPrefs.data.sntf;
     function get_UEhidetimeBar():Bool return ClientPrefs.data.huet;
+    function get_UEkeyFT():Float return ClientPrefs.data.keyFT;
+    function get_UEkeyA():Float return ClientPrefs.data.keyA;
+    function get_UEkeyXPos():Float return ClientPrefs.data.keyXPos;
+    function get_UEkeyYPos():Float return ClientPrefs.data.keyYPos;
 
     function get_rotBop():Bool return ClientPrefs.data.rotBop;
     function get_floorRating():Bool return ClientPrefs.data.floorRating;

@@ -10,6 +10,7 @@ import ue.uescripts.Force.TrailDoubleNote;
 
 import ue.uescripts.Options.UEHud as HudScript;
 import ue.uescripts.Options.IconBop;
+import ue.uescripts.Options.Keystrokes;
 
 class UEScript extends BaseScript
 {
@@ -109,10 +110,12 @@ class UEScript extends BaseScript
     {
         var array:Array<BaseScript> = [];
 
-        /*if (UEHud)
-            array.push(new HudScript()); */
+        if (hudStyle == 'Universe Engine') //if (UEHud)
+            array.push(new HudScript());
         if (UEiconBop)
             array.push(new IconBop());
+        if (UEkeystrokes)
+            array.push(new Keystrokes());
 
         return array;
     }
