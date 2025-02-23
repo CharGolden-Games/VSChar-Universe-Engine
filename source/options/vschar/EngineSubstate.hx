@@ -172,7 +172,7 @@ class EngineSubstate extends BaseOptionsMenu {
 		UEmiss.visible = false;
 		UErating.visible = false;
 		scoreTxt.x = 0;
-		scoreTxt.text = 'Score: 12345 | Misses: 420 | Rating: 69% - Clear';
+		scoreTxt.text = 'Score: 12345 | Misses: 420 | Rating: 69.69% - Clear';
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.fieldWidth = FlxG.width;
 		healthBar.createFilledBar(0xFFAF66CE, 0xFF00CCFF);
@@ -204,7 +204,7 @@ class EngineSubstate extends BaseOptionsMenu {
 				healthBar.updateBar();
 
 			case 'Kade Engine':
-				scoreTxt.text = 'Score:12345 | Combo Breaks:420 | Accuracy:69 % | Rating: C';
+				scoreTxt.text = 'Score:12345 | Combo Breaks:420 | Accuracy:69.69 % | Rating: C';
 				ratingTxt.visible = true;
 
 			case "Funkin'":
