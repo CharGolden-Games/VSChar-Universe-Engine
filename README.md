@@ -35,7 +35,7 @@
 ```
 VS Char Custom Asset License:
 
-All Assets made for the VS Char Mod, including but not limited to Artwork, Spritesheets, and Music are under the sole copyright of CharGolden Games unless otherwise stated.
+All Assets made for the VS Char Mod, including but not limited to Artwork, Spritesheets, and Music are under the sole copyright of CharGolden Games unless otherwise stated, and are thus subject to this license unless otherwise stated.
 
 If you wish to use the assets used here you must adhere to the following guidelines:
 
