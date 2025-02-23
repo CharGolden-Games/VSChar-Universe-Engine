@@ -5,6 +5,8 @@
 
 > ***oof.***
 
+> [!NOTE]
+> DOR = "Date of Release"
 
 ### Engine Details:
 
