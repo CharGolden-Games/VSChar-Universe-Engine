@@ -40,7 +40,7 @@ All Assets made for the VS Char Mod, including but not limited to Artwork, Sprit
 If you wish to use the assets used here you must adhere to the following guidelines:
 
 You may NOT:
-Redistribute original or unmodified copies without proper credit (I.e reuploading Char's sprite to another website without crediting either Char (Username of owner of CharGolden Games) or CharGolden Games directly or if they were done by another person, properly crediting them).
+Redistribute original or unmodified copies without proper credit (I.e reuploading Char's sprite to another website without crediting either Char (Username of owner of CharGolden Games) or CharGolden Games directly or if they were done by another person, reuploaded without properly crediting them).
 Profit from any assets made for VS Char (I.e selling any gallery artwork on another site)
 Use sprites/songs from this mod in Covers, Remixes, etc. without crediting the original creators.
 
