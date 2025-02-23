@@ -8,19 +8,19 @@
 > [!NOTE]
 > DOR = "Date of Release"
 
-### Engine Details:
+### Mod Details
 
-- Name: `Char Engine`
-
-- Based On: `Universe Engine 0.5.5 | Psych 0.6.3`
+- Name `VS Char | Friday Night Funkin': Funkin' With Char!`
 
 - Version: v`Unreleased`
 
 - DOR: `N/A`
 
-### Mod Details
+### Engine Details:
 
-- Name `VS Char | Friday Night Funkin': Funkin' With Char!`
+- Name: `Char Engine`
+
+- Based On: `Universe Engine 0.5.5 | Psych 0.6.3`
 
 - Version: v`Unreleased`
 
