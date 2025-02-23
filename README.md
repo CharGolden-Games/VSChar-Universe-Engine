@@ -51,3 +51,5 @@ Most other Assets not made for this mod either are protected under the Funkin' A
 
 This License will change Consistently as new ways to define what you may or may not do are found
 ```
+
+> This license has not been checked/written by a lawyer but you should use common sense to know I basically mean don't be an arse.
