@@ -778,7 +778,8 @@ class CharacterEditorState extends MusicBeatState
 	{
 		if (value)
 			{
-				leHealthIcon.frames = Paths.getSparrowAtlas('icons/${healthIconInputText.text}');
+				
+				leHealthIcon.frames = Paths.getSparrowAtlas(leHealthIcon.imageFile);
 				leHealthIcon.animation.addByPrefix('idle', 'idle0', 24, true);
 				leHealthIcon.animation.play('idle');
 				leHealthIcon.offset.set(0, 0);

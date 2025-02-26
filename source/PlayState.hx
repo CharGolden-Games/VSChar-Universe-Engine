@@ -1500,7 +1500,7 @@ class PlayState extends MusicBeatState
 		{
 			if (dad.hasAnimatedIcon)
 				{
-					iconP2.frames = Paths.getSparrowAtlas('icons/${dad.healthIcon}');
+					iconP2.frames = Paths.getSparrowAtlas(iconP2.imageFile);
 					iconP2.animation.addByPrefix('idle', 'idle0', 24, true);
 					iconP2.animation.addByPrefix('losing', 'losing0', 24, true);
 					iconP2.animation.play('idle');
@@ -1518,7 +1518,7 @@ class PlayState extends MusicBeatState
 		{
 			if (boyfriend.hasAnimatedIcon)
 				{
-					iconP1.frames = Paths.getSparrowAtlas('icons/${boyfriend.healthIcon}');
+					iconP1.frames = Paths.getSparrowAtlas(iconP1.imageFile);
 					iconP1.animation.addByPrefix('idle', 'idle0', 24, true);
 					iconP1.animation.addByPrefix('losing', 'losing0', 24, true);
 					iconP1.animation.play('idle');

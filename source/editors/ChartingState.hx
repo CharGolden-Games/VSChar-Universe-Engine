@@ -3032,7 +3032,7 @@ class ChartingState extends MusicBeatState
 		{
 			if (mustHit)
 			{
-				leftIcon.frames = Paths.getSparrowAtlas('icons/${loadHealthIconFromCharacter(_song.player1);}');
+				leftIcon.frames = Paths.getSparrowAtlas(leftIcon.imageFile);
 				leftIcon.animation.addByPrefix('idle', 'idle0', 24, true);
 				leftIcon.animation.play('idle');
 				leftIcon.offset.set(0, 0);
@@ -3042,7 +3042,7 @@ class ChartingState extends MusicBeatState
 			}
 			else
 			{
-				rightIcon.frames = Paths.getSparrowAtlas('icons/${loadHealthIconFromCharacter(_song.player1);}');
+				rightIcon.frames = Paths.getSparrowAtlas(rightIcon.imageFile);
 				rightIcon.animation.addByPrefix('idle', 'idle0', 24, true);
 				rightIcon.animation.play('idle');
 				rightIcon.offset.set(0, 0);
@@ -3056,7 +3056,7 @@ class ChartingState extends MusicBeatState
 		{
 			if (!mustHit)
 			{
-				leftIcon.frames = Paths.getSparrowAtlas('icons/${loadHealthIconFromCharacter(_song.player2);}');
+				leftIcon.frames = Paths.getSparrowAtlas(leftIcon.imageFile);
 				leftIcon.animation.addByPrefix('idle', 'idle0', 24, true);
 				leftIcon.animation.play('idle');
 				leftIcon.offset.set(0, 0);
@@ -3066,7 +3066,7 @@ class ChartingState extends MusicBeatState
 			}
 			else
 			{
-				rightIcon.frames = Paths.getSparrowAtlas('icons/${loadHealthIconFromCharacter(_song.player2);}');
+				rightIcon.frames = Paths.getSparrowAtlas(rightIcon.imageFile);
 				rightIcon.animation.addByPrefix('idle', 'idle0', 24, true);
 				rightIcon.animation.play('idle');
 				rightIcon.offset.set(0, 0);
