@@ -3009,6 +3009,74 @@ class ChartingState extends MusicBeatState
 		updateHeads();
 	}
 
+	/**
+	 * 
+		if (value)
+			{
+				leHealthIcon.frames = Paths.getSparrowAtlas('icons/${healthIconInputText.text}');
+				leHealthIcon.animation.addByPrefix('idle', 'idle0', 24, true);
+				leHealthIcon.animation.play('idle');
+				leHealthIcon.offset.set(0, 0);
+				@:privateAccess {
+					leHealthIcon.iconOffsets = [0, 0];
+				}
+			}
+			else
+			{
+				leHealthIcon.changeIcon(healthIconInputText.text);
+			}
+	 */
+	function animIconCallback(p1Anim:Bool, p2Anim:Bool, mustHit:Bool)
+	{
+		if (p1Anim)
+		{
+			if (mustHit)
+			{
+				leftIcon.frames = Paths.getSparrowAtlas('icons/${loadHealthIconFromCharacter(_song.player1);}');
+				leftIcon.animation.addByPrefix('idle', 'idle0', 24, true);
+				leftIcon.animation.play('idle');
+				leftIcon.offset.set(0, 0);
+				@:privateAccess {
+					leftIcon.iconOffsets = [0, 0];
+				}
+			}
+			else
+			{
+				rightIcon.frames = Paths.getSparrowAtlas('icons/${loadHealthIconFromCharacter(_song.player1);}');
+				rightIcon.animation.addByPrefix('idle', 'idle0', 24, true);
+				rightIcon.animation.play('idle');
+				rightIcon.offset.set(0, 0);
+				@:privateAccess {
+					rightIcon.iconOffsets = [0, 0];
+				}
+			}
+		}
+
+		if (p2Anim)
+		{
+			if (!mustHit)
+			{
+				leftIcon.frames = Paths.getSparrowAtlas('icons/${loadHealthIconFromCharacter(_song.player2);}');
+				leftIcon.animation.addByPrefix('idle', 'idle0', 24, true);
+				leftIcon.animation.play('idle');
+				leftIcon.offset.set(0, 0);
+				@:privateAccess {
+					leftIcon.iconOffsets = [0, 0];
+				}
+			}
+			else
+			{
+				rightIcon.frames = Paths.getSparrowAtlas('icons/${loadHealthIconFromCharacter(_song.player2);}');
+				rightIcon.animation.addByPrefix('idle', 'idle0', 24, true);
+				rightIcon.animation.play('idle');
+				rightIcon.offset.set(0, 0);
+				@:privateAccess {
+					rightIcon.iconOffsets = [0, 0];
+				}
+			}
+		}
+	}
+
 	function updateHeads():Void
 	{
 		var healthIconP1:String = loadHealthIconFromCharacter(_song.player1);
@@ -3028,10 +3096,13 @@ class ChartingState extends MusicBeatState
 			if (_song.notes[curSec].gfSection)
 				leftIcon.changeIcon('gf');
 		}
+
+		animIconCallback(hasAnimatedIcon(_song.player1), hasAnimatedIcon(_song.player2), _song.notes[curSec].mustHitSection);
 	}
 
-	function loadHealthIconFromCharacter(char:String)
+	function loadCharacterJson(char:String):Character.CharacterFile
 	{
+		
 		var characterPath:String = 'characters/' + char + '.json';
 		#if MODS_ALLOWED
 		var path:String = Paths.modFolders(characterPath);
@@ -3056,8 +3127,17 @@ class ChartingState extends MusicBeatState
 		var rawJson = OpenFlAssets.getText(path);
 		#end
 
-		var json:Character.CharacterFile = cast Json.parse(rawJson);
-		return json.healthicon;
+		return cast Json.parse(rawJson);
+	}
+
+	function hasAnimatedIcon(char:String):Bool
+	{
+		return loadCharacterJson(char).hasAnimatedIcon;
+	}
+
+	function loadHealthIconFromCharacter(char:String)
+	{
+		return loadCharacterJson(char).healthicon;
 	}
 
 	function updateNoteUI():Void

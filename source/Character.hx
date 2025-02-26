@@ -33,6 +33,7 @@ typedef CharacterFile = {
 	var flip_x:Bool;
 	var no_antialiasing:Bool;
 	var healthbar_colors:Array<Int>;
+	var hasAnimatedIcon:Bool;
 }
 
 typedef AnimArray = {
@@ -64,6 +65,7 @@ class Character extends FlxSprite
 	public var skipDance:Bool = false;
 
 	public var healthIcon:String = 'face';
+	public var hasAnimatedIcon:Bool = false;
 	public var animationsArray:Array<AnimArray> = [];
 
 	public var positionArray:Array<Float> = [0, 0];
@@ -212,6 +214,7 @@ class Character extends FlxSprite
 				} else {
 					quickAnimAdd('idle', 'BF idle dance');
 				}
+				hasAnimatedIcon = json.hasAnimatedIcon;
 				//trace('Loaded file to character ' + curCharacter);
 		}
 		originalFlipX = flipX;

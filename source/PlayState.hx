@@ -1223,12 +1223,14 @@ class PlayState extends MusicBeatState
 		}
 
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
+		animIconCheck();
 		iconP1.y = healthBar.y - 75;
 		iconP1.visible = !ClientPrefs.hideHud;
 		iconP1.alpha = ClientPrefs.healthBarAlpha;
 		add(iconP1);
 
 		iconP2 = new HealthIcon(dad.healthIcon, false);
+		animIconCheck(true);
 		iconP2.y = healthBar.y - 75;
 		iconP2.visible = !ClientPrefs.hideHud;
 		iconP2.alpha = ClientPrefs.healthBarAlpha;
@@ -1490,6 +1492,46 @@ class PlayState extends MusicBeatState
 		}
 
 		CustomFadeTransition.nextCamera = camOther;
+	}
+
+	function animIconCheck(isOpponent:Bool = false)
+	{
+		if (isOpponent)
+		{
+			if (dad.hasAnimatedIcon)
+				{
+					iconP2.frames = Paths.getSparrowAtlas('icons/${dad.healthIcon}');
+					iconP2.animation.addByPrefix('idle', 'idle0', 24, true);
+					iconP2.animation.addByPrefix('losing', 'losing0', 24, true);
+					iconP2.animation.play('idle');
+					iconP2.offset.set(0, 0);
+					@:privateAccess {
+						iconP2.iconOffsets = [0, 0];
+					}
+				}
+				else
+				{
+					iconP2.changeIcon(dad.healthIcon);
+				}
+		}
+		else
+		{
+			if (boyfriend.hasAnimatedIcon)
+				{
+					iconP1.frames = Paths.getSparrowAtlas('icons/${boyfriend.healthIcon}');
+					iconP1.animation.addByPrefix('idle', 'idle0', 24, true);
+					iconP1.animation.addByPrefix('losing', 'losing0', 24, true);
+					iconP1.animation.play('idle');
+					iconP1.offset.set(0, 0);
+					@:privateAccess {
+						iconP1.iconOffsets = [0, 0];
+					}
+				}
+				else
+				{
+					iconP1.changeIcon(boyfriend.healthIcon);
+				}
+		}
 	}
 
 	public function changeTheSettingsBitch()
@@ -3366,15 +3408,55 @@ class PlayState extends MusicBeatState
 		if (health > 2)
 			health = 2;
 
-		if (healthBar.percent < 20)
-			iconP1.animation.curAnim.curFrame = 1;
+		if (boyfriend.hasAnimatedIcon)
+		{
+			if (healthBar.percent < 20)
+			{
+				if (iconP1.animation.name != 'losing')
+				{
+					iconP1.animation.play('losing');
+				}
+			}
+			else
+			{
+				if (iconP1.animation.name != 'idle')
+				{
+					iconP1.animation.play('idle');
+				}
+			}
+		}
 		else
-			iconP1.animation.curAnim.curFrame = 0;
+		{
+			if (healthBar.percent < 20)
+				iconP1.animation.curAnim.curFrame = 1;
+			else
+				iconP1.animation.curAnim.curFrame = 0;
+		}
 
-		if (healthBar.percent > 80)
-			iconP2.animation.curAnim.curFrame = 1;
+		if (dad.hasAnimatedIcon)
+		{
+			if (healthBar.percent > 80)
+			{
+				if (iconP2.animation.name != 'losing')
+				{
+					iconP2.animation.play('losing');
+				}
+			}
+			else
+			{
+				if (iconP2.animation.name != 'idle')
+				{
+					iconP2.animation.play('idle');
+				}
+			}
+		}
 		else
-			iconP2.animation.curAnim.curFrame = 0;
+		{
+			if (healthBar.percent > 80)
+				iconP2.animation.curAnim.curFrame = 1;
+			else
+				iconP2.animation.curAnim.curFrame = 0;
+		}
 
 		if (FlxG.keys.anyJustPressed(debugKeysCharacter) && !endingSong && !inCutscene)
 		{
@@ -4139,6 +4221,7 @@ class PlayState extends MusicBeatState
 							boyfriend = boyfriendMap.get(value2);
 							boyfriend.alpha = lastAlpha;
 							iconP1.changeIcon(boyfriend.healthIcon);
+							animIconCheck();
 						}
 						setOnLuas('boyfriendName', boyfriend.curCharacter);
 
@@ -4167,6 +4250,7 @@ class PlayState extends MusicBeatState
 							}
 							dad.alpha = lastAlpha;
 							iconP2.changeIcon(dad.healthIcon);
+							animIconCheck(true);
 						}
 						setOnLuas('dadName', dad.curCharacter);
 

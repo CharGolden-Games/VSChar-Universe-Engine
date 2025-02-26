@@ -179,6 +179,7 @@ class CharacterEditorState extends MusicBeatState
 		var tabs = [
 			{name: 'Character', label: 'Character'},
 			{name: 'Animations', label: 'Animations'},
+			{name: "Icon Settings", label: "Icon Settings"}
 		];
 		UI_characterbox = new FlxUITabMenu(null, tabs, true);
 		UI_characterbox.cameras = [camMenu];
@@ -196,6 +197,7 @@ class CharacterEditorState extends MusicBeatState
 
 		addCharacterUI();
 		addAnimationsUI();
+		addIconUI();
 		UI_characterbox.selected_tab_id = 'Character';
 
 		FlxG.mouse.visible = true;
@@ -756,12 +758,47 @@ class CharacterEditorState extends MusicBeatState
 		UI_characterbox.addGroup(tab_group);
 	}
 
+	var hasAnimatedIcon:FlxUICheckBox;
+	function addIconUI()
+	{
+		var tab_group = new FlxUI(null, UI_box);
+		tab_group.name = "Icon Settings";
+
+		hasAnimatedIcon = new FlxUICheckBox(0, 0, null, null, "Has animated Icon?", 100);
+		hasAnimatedIcon.callback = function() {
+			animIconCallback(hasAnimatedIcon.checked);
+			char.hasAnimatedIcon = hasAnimatedIcon.checked;
+		}
+
+		tab_group.add(hasAnimatedIcon);
+		UI_characterbox.addGroup(tab_group);
+	}
+
+	function animIconCallback(value:Bool)
+	{
+		if (value)
+			{
+				leHealthIcon.frames = Paths.getSparrowAtlas('icons/${healthIconInputText.text}');
+				leHealthIcon.animation.addByPrefix('idle', 'idle0', 24, true);
+				leHealthIcon.animation.play('idle');
+				leHealthIcon.offset.set(0, 0);
+				@:privateAccess {
+					leHealthIcon.iconOffsets = [0, 0];
+				}
+			}
+			else
+			{
+				leHealthIcon.changeIcon(healthIconInputText.text);
+			}
+	}
+
 	override function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>) {
 		if(id == FlxUIInputText.CHANGE_EVENT && (sender is FlxUIInputText)) {
 			if(sender == healthIconInputText) {
 				leHealthIcon.changeIcon(healthIconInputText.text);
 				char.healthIcon = healthIconInputText.text;
 				updatePresence();
+				animIconCallback(hasAnimatedIcon.checked);
 			}
 			else if(sender == imageInputText) {
 				char.imageFile = imageInputText.text;
@@ -988,6 +1025,7 @@ class CharacterEditorState extends MusicBeatState
 			noAntialiasingCheckBox.checked = char.noAntialiasing;
 			resetHealthBarColor();
 			leHealthIcon.changeIcon(healthIconInputText.text);
+			animIconCallback(char.hasAnimatedIcon);
 			positionXStepper.value = char.positionArray[0];
 			positionYStepper.value = char.positionArray[1];
 			positionCameraXStepper.value = char.cameraPosition[0];
@@ -1284,7 +1322,8 @@ class CharacterEditorState extends MusicBeatState
 
 			"flip_x": char.originalFlipX,
 			"no_antialiasing": char.noAntialiasing,
-			"healthbar_colors": char.healthColorArray
+			"healthbar_colors": char.healthColorArray,
+			"hasAnimatedIcon": char.hasAnimatedIcon
 		};
 
 		var data:String = Json.stringify(json, "\t");
