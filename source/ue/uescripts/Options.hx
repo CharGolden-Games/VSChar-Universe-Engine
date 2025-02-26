@@ -1,9 +1,18 @@
 package ue.uescripts;
 
+import ue.UEScript.MasterScript;
 import flixel.util.FlxStringUtil;
 import flixel.math.FlxMath;
+class Options extends MasterScript
+{
+    public function new(?script:String)
+    {
+        super('Options Master Class');
 
-class Options extends BaseScript {}
+        if (script != null)
+            callScript(script);
+    }
+}
 class UEHud extends BaseScript
 {
     public function new() super('UEHud');
@@ -586,5 +595,70 @@ class Keystrokes extends BaseScript
                 rightFadeBot.cancel();
             rightFadeBot = FlxTween.tween(rightButton, {alpha: UEkeyFT}, 0.5, {ease: FlxEase.linear});
         }
+    }
+}
+
+class TauntOnGo extends BaseScript
+{
+    public function new() super('Taunt on go');
+
+	public override function onCountdownTick(tick:Int) {
+        super.onCountdownTick(tick);
+
+        if (tick == 3)
+        {
+            try {
+                if (boyfriend.animation.exists('hey'))
+                    boyfriend.playAnim('hey');
+                else if (boyfriend.animation.exists('cheer'))
+                    boyfriend.playAnim('cheer');
+                else if (boyfriend.animation.exists('singUP'))
+                    boyfriend.playAnim('singUP');
+            }
+            catch(e:Dynamic) {}
+
+            try {
+                if (gf.animation.exists('hey'))
+                    gf.playAnim('hey');
+                else if (gf.animation.exists('cheer'))
+                    gf.playAnim('cheer');
+                else if (gf.animation.exists('singUP'))
+                    gf.playAnim('singUP');
+            }
+            catch(e:Dynamic) {}
+
+            try {
+                if (dad.animation.exists('hey'))
+                    dad.playAnim('hey');
+                else if (dad.animation.exists('cheer'))
+                    dad.playAnim('cheer');
+                else if (dad.animation.exists('singUP'))
+                    dad.playAnim('singUP');
+            }
+            catch(e:Dynamic) {}
+        }
+    }
+
+    public override function onSongStart() {
+        super.onSongStart();
+
+        try
+        {
+            boyfriend.playAnim('idle');
+        }
+        catch(e:Dynamic) {}
+
+        try
+        {
+            gf.playAnim('idle');
+        }
+        catch(e:Dynamic) {}
+
+        try
+        {
+            dad.playAnim('idle');
+        }
+        catch(e:Dynamic) {}
+            
     }
 }

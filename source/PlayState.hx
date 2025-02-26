@@ -2490,6 +2490,7 @@ class PlayState extends MusicBeatState
 				});
 				stagesFunc(function(stage:BaseStage) stage.countdownTick(tick, swagCounter));
 				callOnLuas('onCountdownTick', [swagCounter]);
+				scripter.onCountdownTick(swagCounter);
 
 				swagCounter += 1;
 				// generateSong('fresh');

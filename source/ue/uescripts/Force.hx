@@ -1,11 +1,21 @@
 package ue.uescripts;
 
+import ue.UEScript.MasterScript;
 import flixel.util.FlxStringUtil;
 import openfl.Lib;
 import flixel.math.FlxMath;
 import animateatlas.AtlasFrameMaker;
 
-class Force extends BaseScript {}
+class Force extends MasterScript
+{
+    public function new(?script:String)
+    {
+        super('Force Master Class');
+
+        if (script != null)
+            callScript(script);
+    }
+}
 
 class DifficultyLVL extends BaseScript
 {

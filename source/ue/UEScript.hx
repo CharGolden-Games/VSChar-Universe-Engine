@@ -11,6 +11,12 @@ import ue.uescripts.Force.TrailDoubleNote;
 import ue.uescripts.Options.UEHud as HudScript;
 import ue.uescripts.Options.IconBop;
 import ue.uescripts.Options.Keystrokes;
+import ue.uescripts.Options.TauntOnGo;
+
+import ue.uescripts.GP.CrashOnMiss;
+import ue.uescripts.GP.SusAsOneNote;
+import ue.uescripts.GP.HealthDrain;
+import ue.uescripts.GP.HealthDrainPT2;
 
 class UEScript extends BaseScript
 {
@@ -116,6 +122,8 @@ class UEScript extends BaseScript
             array.push(new IconBop());
         if (UEkeystrokes)
             array.push(new Keystrokes());
+        if (UEtauntGo)
+            array.push(new TauntOnGo());
 
         return array;
     }
@@ -124,6 +132,15 @@ class UEScript extends BaseScript
     {
         var array:Array<BaseScript> = [];
         
+        if (UEsd)
+            array.push(new CrashOnMiss());
+        if (UEsustainOneNote)
+            array.push(new SusAsOneNote());
+        if (UEhealthDrain)
+            array.push(new HealthDrain());
+        if (UEhealthdrainp2)
+            array.push(new HealthDrainPT2());
+
         return array;
     }
 
@@ -162,9 +179,7 @@ class UEScript extends BaseScript
             scriptsLoaded.cameras = [game.camOther]; // camOther so it always stays in the game widnow!
             scriptsLoaded.borderStyle = OUTLINE;
             scriptsLoaded.borderColor = 0xFF000000;
-            if (UEhudpos == 'LEFT')
-                scriptsLoaded.alignment = RIGHT; // Lets you see the HUD along with the loaded scripts!
-            scriptsLoaded.y = FlxG.height - (scriptsLoaded.height + 5);
+            scriptsLoaded.screenCenter(Y);
             add(scriptsLoaded);
         }
     }
@@ -292,6 +307,18 @@ class UEScript extends BaseScript
             script.onResume();
     }
 
+    public override function onCountdownTick(tick:Int)
+    {
+        super.onCountdownTick(tick);
+
+        for (script in FORCE)
+            script.onCountdownTick(tick);
+        for (script in OPTIONS)
+            script.onCountdownTick(tick);
+        for (script in GP)
+            script.onCountdownTick(tick);
+    }
+
     function pushScripts(scripts:Array<BaseScript>, array:Array<BaseScript>):Array<BaseScript>
     {
         for (script in scripts)
@@ -409,5 +436,22 @@ class UEScript extends BaseScript
         }
 
         return array;
+    }
+}
+
+class MasterScript extends BaseScript
+{
+    public function new(name:String = 'Unnamed Script') super(name);
+
+    public function callScript(?script:String) {
+        if (path != null)
+            executeScript('scripts/$script.hx');
+
+        UEScript.removeScript(name);
+    }
+
+    function executeScript(path:String)
+    {
+        trace('NOT DONE YET');
     }
 }

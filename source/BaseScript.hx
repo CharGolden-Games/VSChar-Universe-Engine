@@ -29,6 +29,7 @@ class BaseScript {
 		return PlayerSettings.player1.controls;
 
     public var boyfriend(get, null):Boyfriend;
+    public var gf(get, null):Character;
     public var dad(get, null):Character;
 
     var songName(get, null):String;
@@ -39,6 +40,9 @@ class BaseScript {
     var songPosition(get, null):Float;
     var score(get, null):Int;
     var misses(get, null):Int;
+    var health(get, set):Float;
+    var healthLossMult(get, null):Float;
+    var healthGainMult(get, null):Float;
     /**
      * The Accuracy after turning it into a percentage value.
      */
@@ -68,6 +72,7 @@ class BaseScript {
     public var name:String = 'Unnamed Script';
 
     function get_boyfriend():Boyfriend return game.boyfriend;
+    function get_gf():Character return game.gf;
     function get_dad():Character return game.dad;
 
     function get_difficultyName():String return CoolUtil.difficulties[PlayState.storyDifficulty];
@@ -94,6 +99,10 @@ class BaseScript {
     function get_camHUD():FlxCamera return PlayState.instance.camHUD;
     function get_camOther():FlxCamera return PlayState.instance.camOther;
     function get_hudStyle():String return ClientPrefs.data.hudStyle;
+    function get_health():Float return PlayState.instance.health;
+    function set_health(value:Float):Float return PlayState.instance.health = value;
+    function get_healthLossMult():Float return PlayState.instance.healthLoss;
+    function get_healthGainMult():Float return PlayState.instance.healthGain;
 	inline private function set_game(value:MusicBeatState)
 	{
 		onPlayState = (Std.isOfType(value, PlayState));
@@ -128,6 +137,8 @@ class BaseScript {
     public function onPause():Void {}
 
     public function onResume():Void {}
+
+    public function onCountdownTick(tick:Int):Void {}
 
     public function runLuaCode(code:String):Void
     {
