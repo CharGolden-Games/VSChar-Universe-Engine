@@ -1,5 +1,6 @@
 package;
 
+import flixel.math.FlxPoint;
 import animateatlas.AtlasFrameMaker;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -33,7 +34,17 @@ typedef CharacterFile = {
 	var flip_x:Bool;
 	var no_antialiasing:Bool;
 	var healthbar_colors:Array<Int>;
+
 	var hasAnimatedIcon:Bool;
+	var iconOffsets:Array<Float>;
+	var iconScale:Array<Float>;
+	var iconFrameNames:IconFrameNames;
+	var iconFramerate:Null<Int>;
+}
+
+typedef IconFrameNames = {
+	var idle:String;
+	var losing:String;
 }
 
 typedef AnimArray = {
@@ -65,13 +76,18 @@ class Character extends FlxSprite
 	public var skipDance:Bool = false;
 
 	public var healthIcon:String = 'face';
-	public var hasAnimatedIcon:Bool = false;
 	public var animationsArray:Array<AnimArray> = [];
 
 	public var positionArray:Array<Float> = [0, 0];
 	public var cameraPosition:Array<Float> = [0, 0];
 
 	public var hasMissAnimations:Bool = false;
+
+	public var hasAnimatedIcon:Bool = false;
+	public var iconOffsets:Array<Float> = [0, 0, 0, 0];
+	public var iconScale:Array<Float> = [1, 1];
+	public var iconFrameNames:IconFrameNames = {idle: "idle0", losing: "losing0"};
+	public var iconFramerate:Null<Int> = 24;
 
 	//Used on Character Editor
 	public var imageFile:String = '';
@@ -215,6 +231,33 @@ class Character extends FlxSprite
 					quickAnimAdd('idle', 'BF idle dance');
 				}
 				hasAnimatedIcon = json.hasAnimatedIcon;
+
+				if (json.iconOffsets == null || json.iconOffsets.length < 2)
+					json.iconOffsets = [0, 0, 0, 0];
+				else if (json.iconOffsets.length < 4)
+					json.iconOffsets[2] = 0;
+					json.iconOffsets[3] = 0;
+
+				iconOffsets = json.iconOffsets;
+
+				if (json.iconFrameNames == null)
+					json.iconFrameNames = {idle: 'idle0', losing: 'losing0'};
+
+				if (json.iconFrameNames.idle.length < 1)
+					json.iconFrameNames.idle = 'idle0';
+
+				if (json.iconFrameNames.losing.length < 1)
+					json.iconFrameNames.losing = 'idle0';
+				
+				iconFrameNames = json.iconFrameNames;
+				if (json.iconFramerate == null || json.iconFramerate == 0)
+					json.iconFramerate = 24;
+				iconFramerate = json.iconFramerate;
+
+				if (json.iconScale == null || json.iconScale.length < 2)
+					json.iconScale = [1, 1];
+				
+				iconScale = json.iconScale;
 				//trace('Loaded file to character ' + curCharacter);
 		}
 		originalFlipX = flipX;

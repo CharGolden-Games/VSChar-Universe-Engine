@@ -1223,14 +1223,12 @@ class PlayState extends MusicBeatState
 		}
 
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
-		animIconCheck();
 		iconP1.y = healthBar.y - 75;
 		iconP1.visible = !ClientPrefs.hideHud;
 		iconP1.alpha = ClientPrefs.healthBarAlpha;
 		add(iconP1);
 
 		iconP2 = new HealthIcon(dad.healthIcon, false);
-		animIconCheck(true);
 		iconP2.y = healthBar.y - 75;
 		iconP2.visible = !ClientPrefs.hideHud;
 		iconP2.alpha = ClientPrefs.healthBarAlpha;
@@ -1472,6 +1470,9 @@ class PlayState extends MusicBeatState
 		}
 		ModchartFuncs.loadLuaFunctions();
 		callOnLuas('onCreatePost', []);
+		
+		animIconCheck();
+		animIconCheck(true);
 
 		super.create();
 
@@ -1501,13 +1502,17 @@ class PlayState extends MusicBeatState
 			if (dad.hasAnimatedIcon)
 				{
 					iconP2.frames = Paths.getSparrowAtlas(iconP2.imageFile);
-					iconP2.animation.addByPrefix('idle', 'idle0', 24, true);
-					iconP2.animation.addByPrefix('losing', 'losing0', 24, true);
+					iconP2.animation.addByPrefix('idle', dad.iconFrameNames.idle, dad.iconFramerate, true);
+					iconP2.animation.addByPrefix('losing', dad.iconFrameNames.losing, dad.iconFramerate, true);
 					iconP2.animation.play('idle');
-					iconP2.offset.set(0, 0);
+					iconP2.offset.set(dad.iconOffsets[0], dad.iconOffsets[1]);
 					@:privateAccess {
-						iconP2.iconOffsets = [0, 0];
+						iconP2.iconOffsets = [dad.iconOffsets[0], dad.iconOffsets[1]];
 					}
+					trace('Dad Icon Scale: ${dad.iconScale}');
+					iconP2.scale.x = dad.iconScale[0];
+					iconP2.scale.y = dad.iconScale[1];
+					iconP2.updateHitbox();
 				}
 				else
 				{
@@ -1519,13 +1524,17 @@ class PlayState extends MusicBeatState
 			if (boyfriend.hasAnimatedIcon)
 				{
 					iconP1.frames = Paths.getSparrowAtlas(iconP1.imageFile);
-					iconP1.animation.addByPrefix('idle', 'idle0', 24, true);
-					iconP1.animation.addByPrefix('losing', 'losing0', 24, true);
+					iconP1.animation.addByPrefix('idle', boyfriend.iconFrameNames.idle, boyfriend.iconFramerate, true, true);
+					iconP1.animation.addByPrefix('losing', boyfriend.iconFrameNames.losing, boyfriend.iconFramerate, true, true);
 					iconP1.animation.play('idle');
-					iconP1.offset.set(0, 0);
+					iconP1.offset.set(boyfriend.iconOffsets[0], boyfriend.iconOffsets[1]);
 					@:privateAccess {
-						iconP1.iconOffsets = [0, 0];
+						iconP1.iconOffsets = [boyfriend.iconOffsets[0], boyfriend.iconOffsets[1]];
 					}
+					trace('BF Icon Scale: ${boyfriend.iconScale}');
+					iconP1.scale.x = boyfriend.iconScale[0];
+					iconP1.scale.y = boyfriend.iconScale[1];
+					iconP1.updateHitbox();
 				}
 				else
 				{
@@ -3387,11 +3396,11 @@ class PlayState extends MusicBeatState
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 
 		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
-		iconP1.scale.set(mult, mult);
+		iconP1.scale.set(mult * boyfriend.iconScale[0], mult * boyfriend.iconScale[1]);
 		iconP1.updateHitbox();
 
 		var mult:Float = FlxMath.lerp(1, iconP2.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
-		iconP2.scale.set(mult, mult);
+		iconP2.scale.set(mult * dad.iconScale[0], mult * dad.iconScale[1]);
 		iconP2.updateHitbox();
 
 		var iconOffset:Int = 26;
@@ -3416,12 +3425,14 @@ class PlayState extends MusicBeatState
 				{
 					iconP1.animation.play('losing');
 				}
+				iconP1.offset.set(boyfriend.iconOffsets[3], boyfriend.iconOffsets[4]);
 			}
 			else
 			{
 				if (iconP1.animation.name != 'idle')
 				{
 					iconP1.animation.play('idle');
+					iconP1.updateHitbox();
 				}
 			}
 		}
@@ -3441,12 +3452,14 @@ class PlayState extends MusicBeatState
 				{
 					iconP2.animation.play('losing');
 				}
+				iconP2.offset.set(dad.iconOffsets[3], dad.iconOffsets[4]);
 			}
 			else
 			{
 				if (iconP2.animation.name != 'idle')
 				{
 					iconP2.animation.play('idle');
+					iconP2.updateHitbox();
 				}
 			}
 		}

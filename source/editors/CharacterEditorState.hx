@@ -1,5 +1,7 @@
 package editors;
 
+import flixel.addons.ui.FlxUIButton;
+import flixel.math.FlxPoint;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -759,18 +761,113 @@ class CharacterEditorState extends MusicBeatState
 	}
 
 	var hasAnimatedIcon:FlxUICheckBox;
+	var animIconIdleName:FlxUIInputText;
+	var animIconLosingName:FlxUIInputText;
+	var animIconOffsetX:FlxUINumericStepper;
+	var animIconOffsetY:FlxUINumericStepper;
+	var animIconLoseOffsetX:FlxUINumericStepper;
+	var animIconLoseOffsetY:FlxUINumericStepper;
+	var animIconScaleX:FlxUINumericStepper;
+	var animIconScaleY:FlxUINumericStepper;
+	var animIconFramerate:FlxUINumericStepper;
+	var previewIdle:FlxUIButton;
+	var previewLose:FlxUIButton;
+	var curIconAnim:String = 'idle';
+
+	var grpTexts:FlxTypedGroup<FlxText>;
+	var grpUI:FlxTypedGroup<FlxSprite>;
 	function addIconUI()
 	{
 		var tab_group = new FlxUI(null, UI_box);
 		tab_group.name = "Icon Settings";
 
-		hasAnimatedIcon = new FlxUICheckBox(0, 0, null, null, "Has animated Icon?", 100);
+		grpTexts = new FlxTypedGroup<FlxText>();
+		grpUI = new FlxTypedGroup<FlxSprite>();
+
+		animIconIdleName = new FlxUIInputText(15, 40, 150, '', 8);
+		animIconIdleName.callback = function(name:String, idk:String) {
+			char.iconFrameNames.idle = animIconIdleName.text;
+			leHealthIcon.animation.addByPrefix('idle', animIconIdleName.text, 24, true);
+		}
+
+		animIconLosingName = new FlxUIInputText(15, 70, 150, '', 8);
+		animIconLosingName.callback = function(name:String, idk:String) {
+			char.iconFrameNames.losing = animIconLosingName.text;
+		}
+
+		animIconOffsetX = new FlxUINumericStepper(15, 100, 10, 0, -9000, 9000, 0);
+		animIconOffsetY = new FlxUINumericStepper(15, 130, 10, 0, -9000, 9000, 0);
+		animIconLoseOffsetX = new FlxUINumericStepper(85, 100, 10, 0, -9000, 9000, 0);
+		animIconLoseOffsetY = new FlxUINumericStepper(85, 130, 10, 0, -9000, 9000, 0);
+		animIconScaleX = new FlxUINumericStepper(180, 100, 0.1, 1.0, 0.05, 10, 1);
+		animIconScaleY = new FlxUINumericStepper(180, 130, 0.1, 1.0, 0.05, 10, 1);
+		animIconFramerate = new FlxUINumericStepper(15, 160, 1, 24, -9000, 9000, 0);
+
+		hasAnimatedIcon = new FlxUICheckBox(15, 10, null, null, "Has animated Icon?", 100);
 		hasAnimatedIcon.callback = function() {
 			animIconCallback(hasAnimatedIcon.checked);
 			char.hasAnimatedIcon = hasAnimatedIcon.checked;
+
+			for (option in grpUI)
+				option.visible = hasAnimatedIcon.checked;
+
+			for (text in grpTexts)
+				text.visible = hasAnimatedIcon.checked;
 		}
+		hasAnimatedIcon.checked = char.hasAnimatedIcon;
+
+		previewIdle = new FlxUIButton(animIconIdleName.x + 160, animIconIdleName.y - 3, 'Play Idle', function() {
+			try {
+				leHealthIcon.animation.play('idle');
+				leHealthIcon.updateHitbox(); // Resets the offset so might as well.
+				curIconAnim = 'idle';
+			}
+			catch(e:Dynamic)
+			{
+				trace('Could not play idle!');
+			}
+		});
+		
+		previewLose = new FlxUIButton(animIconIdleName.x + 160, animIconLosingName.y - 3, 'Play Losing', function() {
+			try {
+				leHealthIcon.animation.play('losing');
+				leHealthIcon.offset.set(animIconLoseOffsetX.value, animIconLoseOffsetY.value);
+				curIconAnim = 'losing';
+			}
+			catch(e:Dynamic)
+			{
+				trace('Could not play lose anim!');
+			}
+		});
+		
+		grpTexts.add(new FlxText(15, 25, 0, "Idle Icon Animation Name:"));
+		grpTexts.add(new FlxText(15, 55, 0, "Losing Icon Animation Name:"));
+		grpTexts.add(new FlxText(15, 85, 0, "Icon Offset X:"));
+		grpTexts.add(new FlxText(15, 115, 0, "Icon Offset Y:"));
+		grpTexts.add(new FlxText(85, 85, 0, "Lose Icon Offset X:"));
+		grpTexts.add(new FlxText(85, 115, 0, "Lose Icon Offset Y:"));
+		grpTexts.add(new FlxText(180, 85, 0, "Icon Scale X:"));
+		grpTexts.add(new FlxText(180, 115, 0, "Icon Scale Y:"));
+		grpTexts.add(new FlxText(15, 145, 0, "Icon Framerate:"));
 
 		tab_group.add(hasAnimatedIcon);
+		grpUI.add(animIconIdleName);
+		grpUI.add(animIconLosingName);
+		grpUI.add(animIconOffsetX);
+		grpUI.add(animIconOffsetY);
+		grpUI.add(animIconLoseOffsetX);
+		grpUI.add(animIconLoseOffsetY);
+		grpUI.add(animIconScaleX);
+		grpUI.add(animIconScaleY);
+		grpUI.add(animIconFramerate);
+		grpUI.add(previewIdle);
+		grpUI.add(previewLose);
+
+		for (option in grpUI)
+			tab_group.add(option);
+		for (text in grpTexts)
+			tab_group.add(text); // Stupid workaround.
+
 		UI_characterbox.addGroup(tab_group);
 	}
 
@@ -778,18 +875,41 @@ class CharacterEditorState extends MusicBeatState
 	{
 		if (value)
 			{
-				
-				leHealthIcon.frames = Paths.getSparrowAtlas(leHealthIcon.imageFile);
-				leHealthIcon.animation.addByPrefix('idle', 'idle0', 24, true);
-				leHealthIcon.animation.play('idle');
-				leHealthIcon.offset.set(0, 0);
-				@:privateAccess {
-					leHealthIcon.iconOffsets = [0, 0];
+				try
+				{
+					@:privateAccess{ leHealthIcon.char = ''; } // Stupid bugfix pt.2
+					leHealthIcon.changeIcon(healthIconInputText.text);
+					leHealthIcon.frames = Paths.getSparrowAtlas(leHealthIcon.imageFile);
+					leHealthIcon.animation.addByPrefix('idle', char.iconFrameNames.idle, char.iconFramerate, true);
+					leHealthIcon.animation.addByPrefix('losing', char.iconFrameNames.losing, char.iconFramerate, true);
+					leHealthIcon.animation.play('idle');
+					curIconAnim = 'idle';
+					leHealthIcon.offset.set(animIconOffsetX.value, animIconOffsetY.value);
+					@:privateAccess {
+						leHealthIcon.iconOffsets = [animIconOffsetX.value, animIconOffsetY.value];
+					}
+
+					if (!hasAnimatedIcon.checked)
+						{ // Stupid bugfix.
+							@:privateAccess{ leHealthIcon.char = ''; } // Stupid bugfix pt.2
+							leHealthIcon.changeIcon(healthIconInputText.text);
+							leHealthIcon.animation.play(healthIconInputText.text);
+						}
+						
+				}
+				catch(e:Dynamic)
+				{
+					trace('Icon does not have an XML!');
+					@:privateAccess{ leHealthIcon.char = ''; } // Stupid bugfix pt.2
+					leHealthIcon.changeIcon(healthIconInputText.text);
+					leHealthIcon.animation.play(healthIconInputText.text);
 				}
 			}
 			else
 			{
+				@:privateAccess{ leHealthIcon.char = ''; } // Stupid bugfix pt.2
 				leHealthIcon.changeIcon(healthIconInputText.text);
+				leHealthIcon.animation.play(healthIconInputText.text);
 			}
 	}
 
@@ -803,6 +923,20 @@ class CharacterEditorState extends MusicBeatState
 			}
 			else if(sender == imageInputText) {
 				char.imageFile = imageInputText.text;
+			}
+			else if (sender == animIconIdleName)
+			{
+				char.iconFrameNames.idle = animIconIdleName.text;
+				leHealthIcon.animation.addByPrefix('idle', animIconIdleName.text, char.iconFramerate);
+				if (curIconAnim == 'idle')
+					leHealthIcon.animation.play('idle');
+			}
+			else if (sender == animIconLosingName)
+			{
+				char.iconFrameNames.losing = animIconLosingName.text;
+				leHealthIcon.animation.addByPrefix('losing', animIconLosingName.text, char.iconFramerate);
+				if (curIconAnim == 'losing')
+					leHealthIcon.animation.play('losing');
 			}
 		} else if(id == FlxUINumericStepper.CHANGE_EVENT && (sender is FlxUINumericStepper)) {
 			if (sender == scaleStepper)
@@ -825,6 +959,43 @@ class CharacterEditorState extends MusicBeatState
 				char.positionArray[0] = positionXStepper.value;
 				char.x = char.positionArray[0] + OFFSET_X + 100;
 				updatePointerPos();
+			}
+			else if (sender == animIconOffsetX)
+			{
+				char.iconOffsets[0] = animIconOffsetX.value;
+				leHealthIcon.offset.x = animIconOffsetX.value;
+			}
+			else if (sender == animIconOffsetY)
+			{
+				char.iconOffsets[1] = animIconOffsetY.value;
+				leHealthIcon.offset.y = animIconOffsetY.value;
+			}
+			else if (sender == animIconLoseOffsetX)
+			{
+				char.iconOffsets[2] = animIconOffsetX.value;
+				if (curIconAnim == 'losing')
+					leHealthIcon.offset.x = animIconLoseOffsetX.value;
+			}
+			else if (sender == animIconLoseOffsetY)
+			{
+				char.iconOffsets[3] = animIconOffsetY.value;
+				if (curIconAnim == 'losing')
+					leHealthIcon.offset.y = animIconLoseOffsetY.value;
+			}
+			else if (sender == animIconScaleX)
+			{
+				char.iconScale[0] = animIconScaleX.value;
+				leHealthIcon.scale.x = animIconScaleX.value;
+			}
+			else if (sender == animIconScaleY)
+			{
+				char.iconScale[1] = animIconScaleY.value;
+				leHealthIcon.scale.y = animIconScaleY.value;
+			}
+			else if (sender == animIconFramerate)
+			{
+				char.iconFramerate = Math.floor(animIconFramerate.value);
+				leHealthIcon.animation.curAnim.frameRate = animIconFramerate.value;
 			}
 			else if(sender == singDurationStepper)
 			{
@@ -1025,8 +1196,29 @@ class CharacterEditorState extends MusicBeatState
 			flipXCheckBox.checked = char.originalFlipX;
 			noAntialiasingCheckBox.checked = char.noAntialiasing;
 			resetHealthBarColor();
+
 			leHealthIcon.changeIcon(healthIconInputText.text);
+			if (char.iconOffsets != null)
+			{
+				animIconOffsetX.value = char.iconOffsets[0];
+				animIconOffsetY.value = char.iconOffsets[1];
+			}
+			if (char.iconScale != null)
+			{
+				animIconScaleX.value = char.iconScale[0];
+				animIconScaleY.value = char.iconScale[1];
+
+				leHealthIcon.scale.set(char.iconScale[0], char.iconScale[1]);
+			}
+			if (char.iconFrameNames != null)
+			{
+				animIconIdleName.text = char.iconFrameNames.idle;
+				animIconLosingName.text = char.iconFrameNames.losing;
+			}
+			animIconFramerate.value = char.iconFramerate;
+			hasAnimatedIcon.checked = char.hasAnimatedIcon;
 			animIconCallback(char.hasAnimatedIcon);
+
 			positionXStepper.value = char.positionArray[0];
 			positionYStepper.value = char.positionArray[1];
 			positionCameraXStepper.value = char.cameraPosition[0];
@@ -1138,7 +1330,7 @@ class CharacterEditorState extends MusicBeatState
 			textAnim.text = '';
 		}
 
-		var inputTexts:Array<FlxUIInputText> = [animationInputText, imageInputText, healthIconInputText, animationNameInputText, animationIndicesInputText];
+		var inputTexts:Array<FlxUIInputText> = [animationInputText, imageInputText, healthIconInputText, animationNameInputText, animationIndicesInputText, animIconIdleName, animIconLosingName];
 		for (i in 0...inputTexts.length) {
 			if(inputTexts[i].hasFocus) {
 				FlxG.sound.muteKeys = [];
@@ -1257,6 +1449,15 @@ class CharacterEditorState extends MusicBeatState
 		}
 		//camMenu.zoom = FlxG.camera.zoom;
 		ghostChar.setPosition(char.x, char.y);
+
+		if (UI_characterbox.selected_tab_id == 'Icon Settings')
+		{
+			for (option in grpUI)
+				option.visible = hasAnimatedIcon.checked;
+
+			for (text in grpTexts)
+				text.visible = hasAnimatedIcon.checked;
+		}
 		super.update(elapsed);
 	}
 
@@ -1324,7 +1525,11 @@ class CharacterEditorState extends MusicBeatState
 			"flip_x": char.originalFlipX,
 			"no_antialiasing": char.noAntialiasing,
 			"healthbar_colors": char.healthColorArray,
-			"hasAnimatedIcon": char.hasAnimatedIcon
+			"hasAnimatedIcon": char.hasAnimatedIcon,
+			"iconFrameNames": char.iconFrameNames,
+			"iconFramerate": char.iconFramerate,
+			"iconOffsets": char.iconOffsets,
+			"iconScale": char.iconScale
 		};
 
 		var data:String = Json.stringify(json, "\t");

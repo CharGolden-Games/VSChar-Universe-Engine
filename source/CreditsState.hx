@@ -208,7 +208,7 @@ class CreditsState extends MusicBeatState
 				[
 					'CharGoldenYT',
 					'char',
-					"Fixing Erect chaning difficulty and QOL",
+					"Fixing Erect chaning difficulty, QOL, and Animated Icon Support.\nHi Char here. HAHA CHANING.",
 					'https://bsky.app/profile/chargoldenyt.bsky.social',
 					'FFA600'
 				],
