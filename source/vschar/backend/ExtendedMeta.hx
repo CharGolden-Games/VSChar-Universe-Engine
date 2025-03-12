@@ -63,6 +63,16 @@ class ExtendedMeta {
             }
 
             isEmpty = false;
+            
+            meta.set('modVersion', getModVersion_VersionOnly());
+            meta.set('modVersionString', getModVersion());
+            meta.set('modTitle', getModTitle());
+            meta.set('psychVer', '0.6.3');
+            meta.set('ueVer', '0.5.5');
+            meta.set('vsCharVersion', 'Unreleased [0.1b-Dev]');
+            meta.set('charEngineVersion', 'Unreleased [inDev]');
+            meta.set('curSong', '');
+            meta.set('ExtendedMetaJsonVer', '1.0');
         }
         if (appMetaFail)
         {
@@ -70,15 +80,6 @@ class ExtendedMeta {
             appMetaFail = false;
         }
 
-        meta.set('modVersion', getModVersion_VersionOnly());
-        meta.set('modVersionString', getModVersion());
-        meta.set('modTitle', getModTitle());
-        meta.set('psychVer', '0.6.3');
-        meta.set('ueVer', '0.5.5');
-        meta.set('vsCharVersion', 'Unreleased [0.1b-Dev]');
-        meta.set('charEngineVersion', 'Unreleased [inDev]');
-        meta.set('curSong', '');
-        meta.set('ExtendedMetaJsonVer', '1.0');
     }
 
     static inline function getModTitle()
