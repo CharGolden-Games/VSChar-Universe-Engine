@@ -36,10 +36,18 @@ typedef CharacterFile = {
 	var healthbar_colors:Array<Int>;
 
 	var hasAnimatedIcon:Bool;
-	var iconOffsets:Array<Float>;
+	var iconOffsetsOld:Null<Array<Null<Float>>>;
+	var iconOffsets:IconOffsets;
 	var iconScale:Array<Float>;
 	var iconFrameNames:IconFrameNames;
 	var iconFramerate:Null<Int>;
+}
+
+typedef IconOffsets = {
+	var idleX:Float;
+	var idleY:Float;
+	var loseX:Float;
+	var loseY:Float;
 }
 
 typedef IconFrameNames = {
@@ -84,7 +92,13 @@ class Character extends FlxSprite
 	public var hasMissAnimations:Bool = false;
 
 	public var hasAnimatedIcon:Bool = false;
-	public var iconOffsets:Array<Float> = [0, 0, 0, 0];
+	public var iconOffsets:IconOffsets = {
+		idleX: 0,
+		idleY: 0,
+		loseX: 0,
+		loseY: 0
+	};
+	public var iconOffsetsOld:Null<Array<Float>> = null;
 	public var iconScale:Array<Float> = [1, 1];
 	public var iconFrameNames:IconFrameNames = {idle: "idle0", losing: "losing0"};
 	public var iconFramerate:Null<Int> = 24;
@@ -232,11 +246,28 @@ class Character extends FlxSprite
 				}
 				hasAnimatedIcon = json.hasAnimatedIcon;
 
-				if (json.iconOffsets == null || json.iconOffsets.length < 2)
-					json.iconOffsets = [0, 0, 0, 0];
-				else if (json.iconOffsets.length < 4)
-					json.iconOffsets[2] = 0;
-					json.iconOffsets[3] = 0;
+				if (json.iconOffsets == null)
+					json.iconOffsets = {idleX: 0, idleY: 0, loseX: 0, loseY: 0};
+
+				if (json.iconOffsetsOld != null && (json.iconOffsets.idleX == 0 && json.iconOffsets.idleY == 0 && json.iconOffsets.loseX == 0 && json.iconOffsets.loseY == 0))
+				{
+					if (json.iconOffsetsOld[0] != null)
+					{
+						json.iconOffsets.idleX = json.iconOffsetsOld[0];
+					}
+					if (json.iconOffsetsOld[1] != null)
+					{
+						json.iconOffsets.idleY = json.iconOffsetsOld[1];
+					}
+					if (json.iconOffsetsOld[2] != null)
+					{
+						json.iconOffsets.loseX = json.iconOffsetsOld[2];
+					}
+					if (json.iconOffsetsOld[3] != null)
+					{
+						json.iconOffsets.loseY = json.iconOffsetsOld[3];
+					}
+				}
 
 				iconOffsets = json.iconOffsets;
 

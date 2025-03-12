@@ -194,12 +194,12 @@
 		0,
 		350
 	],
-	"iconOffsets": [
-		110,
-		120,
-		110,
-		120
-	],
+	"iconOffsets": {
+		"idleX": 120,
+		"idleY": 120,
+		"loseX": 120,
+		"loseY": 90
+	},
 	"hasAnimatedIcon": true,
 	"healthicon": "idk",
 	"iconFrameNames": {

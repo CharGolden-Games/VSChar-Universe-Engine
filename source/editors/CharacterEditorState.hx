@@ -1,5 +1,6 @@
 package editors;
 
+import flixel.ui.FlxBar;
 import flixel.addons.ui.FlxUIButton;
 import flixel.math.FlxPoint;
 #if desktop
@@ -78,6 +79,8 @@ class CharacterEditorState extends MusicBeatState
 	var characterList:Array<String> = [];
 
 	var cameraFollowPointer:FlxSprite;
+	var health:Float = 2; // Simulate health from PlayState.
+	var healthBar:FlxBar;
 	var healthBarBG:FlxSprite;
 
 	override function create()
@@ -115,6 +118,12 @@ class CharacterEditorState extends MusicBeatState
 		changeBGbutton.cameras = [camMenu];
 
 		loadChar(!daAnim.startsWith('bf'), false);
+
+		healthBar = new FlxBar(34, FlxG.height - 71, RIGHT_TO_LEFT, 593, 11, this, 'health', 0, 2);
+		healthBar.scrollFactor.set();
+		add(healthBar);
+		healthBar.cameras = [camHUD];
+		healthBar.createColoredFilledBar(0xFFFF0000, 0xFF00FF00);
 
 		healthBarBG = new FlxSprite(30, FlxG.height - 75).loadGraphic(Paths.image('healthBar'));
 		healthBarBG.scrollFactor.set();
@@ -819,6 +828,7 @@ class CharacterEditorState extends MusicBeatState
 		previewIdle = new FlxUIButton(animIconIdleName.x + 160, animIconIdleName.y - 3, 'Play Idle', function() {
 			try {
 				leHealthIcon.animation.play('idle');
+				@:privateAccess { leHealthIcon.iconOffsets = [animIconOffsetX.value, animIconOffsetY.value];}
 				leHealthIcon.updateHitbox(); // Resets the offset so might as well.
 				curIconAnim = 'idle';
 			}
@@ -831,7 +841,8 @@ class CharacterEditorState extends MusicBeatState
 		previewLose = new FlxUIButton(animIconIdleName.x + 160, animIconLosingName.y - 3, 'Play Losing', function() {
 			try {
 				leHealthIcon.animation.play('losing');
-				leHealthIcon.offset.set(animIconLoseOffsetX.value, animIconLoseOffsetY.value);
+				@:privateAccess { leHealthIcon.iconOffsets = [animIconLoseOffsetX.value, animIconLoseOffsetY.value];}
+				leHealthIcon.updateHitbox(); // Resets the offset so might as well.
 				curIconAnim = 'losing';
 			}
 			catch(e:Dynamic)
@@ -962,23 +973,25 @@ class CharacterEditorState extends MusicBeatState
 			}
 			else if (sender == animIconOffsetX)
 			{
-				char.iconOffsets[0] = animIconOffsetX.value;
-				leHealthIcon.offset.x = animIconOffsetX.value;
+				char.iconOffsets.idleX = animIconOffsetX.value;
+				if (curIconAnim == 'idle')
+					leHealthIcon.offset.x = animIconOffsetX.value;
 			}
 			else if (sender == animIconOffsetY)
 			{
-				char.iconOffsets[1] = animIconOffsetY.value;
-				leHealthIcon.offset.y = animIconOffsetY.value;
+				char.iconOffsets.idleY = animIconOffsetY.value;
+				if (curIconAnim == 'idle')
+					leHealthIcon.offset.y = animIconOffsetY.value;
 			}
 			else if (sender == animIconLoseOffsetX)
 			{
-				char.iconOffsets[2] = animIconOffsetX.value;
+				char.iconOffsets.loseX = animIconOffsetX.value;
 				if (curIconAnim == 'losing')
 					leHealthIcon.offset.x = animIconLoseOffsetX.value;
 			}
 			else if (sender == animIconLoseOffsetY)
 			{
-				char.iconOffsets[3] = animIconOffsetY.value;
+				char.iconOffsets.loseY = animIconLoseOffsetY.value;
 				if (curIconAnim == 'losing')
 					leHealthIcon.offset.y = animIconLoseOffsetY.value;
 			}
@@ -1200,8 +1213,10 @@ class CharacterEditorState extends MusicBeatState
 			leHealthIcon.changeIcon(healthIconInputText.text);
 			if (char.iconOffsets != null)
 			{
-				animIconOffsetX.value = char.iconOffsets[0];
-				animIconOffsetY.value = char.iconOffsets[1];
+				animIconOffsetX.value = char.iconOffsets.idleX;
+				animIconOffsetY.value = char.iconOffsets.idleY;
+				animIconLoseOffsetX.value = char.iconOffsets.loseX;
+				animIconLoseOffsetY.value = char.iconOffsets.loseY;
 			}
 			if (char.iconScale != null)
 			{
@@ -1316,6 +1331,7 @@ class CharacterEditorState extends MusicBeatState
 		#end
 	}
 
+	var lastColor:Int = 0xFF000000;
 	override function update(elapsed:Float)
 	{
 		MusicBeatState.camBeat = FlxG.camera;
@@ -1459,6 +1475,13 @@ class CharacterEditorState extends MusicBeatState
 				text.visible = hasAnimatedIcon.checked;
 		}
 		super.update(elapsed);
+
+		if (lastColor != healthBarBG.color)
+		{
+			lastColor = healthBarBG.color;
+			healthBar.createColoredFilledBar(lastColor, 0xFFFF0000);
+			healthBar.updateBar();
+		}
 	}
 
 	var _file:FileReference;

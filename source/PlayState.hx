@@ -1505,14 +1505,15 @@ class PlayState extends MusicBeatState
 					iconP2.animation.addByPrefix('idle', dad.iconFrameNames.idle, dad.iconFramerate, true);
 					iconP2.animation.addByPrefix('losing', dad.iconFrameNames.losing, dad.iconFramerate, true);
 					iconP2.animation.play('idle');
-					iconP2.offset.set(dad.iconOffsets[0], dad.iconOffsets[1]);
+					iconP2.offset.set(dad.iconOffsets.idleX, dad.iconOffsets.idleY);
 					@:privateAccess {
-						iconP2.iconOffsets = [dad.iconOffsets[0], dad.iconOffsets[1]];
+						iconP2.iconOffsets = [dad.iconOffsets.idleX, dad.iconOffsets.idleY];
 					}
 					trace('Dad Icon Scale: ${dad.iconScale}');
 					iconP2.scale.x = dad.iconScale[0];
 					iconP2.scale.y = dad.iconScale[1];
 					iconP2.updateHitbox();
+					trace('Dad Icon Offsets: ${dad.iconOffsets}');
 				}
 				else
 				{
@@ -1527,20 +1528,53 @@ class PlayState extends MusicBeatState
 					iconP1.animation.addByPrefix('idle', boyfriend.iconFrameNames.idle, boyfriend.iconFramerate, true, true);
 					iconP1.animation.addByPrefix('losing', boyfriend.iconFrameNames.losing, boyfriend.iconFramerate, true, true);
 					iconP1.animation.play('idle');
-					iconP1.offset.set(boyfriend.iconOffsets[0], boyfriend.iconOffsets[1]);
+					iconP1.offset.set(boyfriend.iconOffsets.idleX, boyfriend.iconOffsets.idleY);
 					@:privateAccess {
-						iconP1.iconOffsets = [boyfriend.iconOffsets[0], boyfriend.iconOffsets[1]];
+						iconP1.iconOffsets = [boyfriend.iconOffsets.idleX, boyfriend.iconOffsets.idleY];
 					}
 					trace('BF Icon Scale: ${boyfriend.iconScale}');
 					iconP1.scale.x = boyfriend.iconScale[0];
 					iconP1.scale.y = boyfriend.iconScale[1];
 					iconP1.updateHitbox();
+					trace('BF Icon Offsets: ${boyfriend.iconOffsets}');
 				}
 				else
 				{
 					iconP1.changeIcon(boyfriend.healthIcon);
 				}
 		}
+	}
+
+	function updateIconOffset(isOpp:Bool = false, isLosing:Bool = false)
+	{
+		if (!isOpp)
+		{
+			if (isLosing)
+			{
+				iconP1.offset.set(boyfriend.iconOffsets.loseX, boyfriend.iconOffsets.loseY);
+				@:privateAccess { iconP1.iconOffsets = [boyfriend.iconOffsets.loseX, boyfriend.iconOffsets.loseY]; }
+			}
+			else
+			{
+				iconP1.offset.set(boyfriend.iconOffsets.idleX, boyfriend.iconOffsets.idleY);
+				@:privateAccess { iconP1.iconOffsets = [boyfriend.iconOffsets.idleX, boyfriend.iconOffsets.idleY]; }
+			}
+			iconP1.updateHitbox();
+		}
+		else
+			{
+				if (isLosing)
+				{
+					iconP2.offset.set(dad.iconOffsets.loseX, dad.iconOffsets.loseY);
+					@:privateAccess { iconP2.iconOffsets = [dad.iconOffsets.loseX, dad.iconOffsets.loseY]; }
+				}
+				else
+				{
+					iconP2.offset.set(dad.iconOffsets.idleX, dad.iconOffsets.idleY);
+					@:privateAccess { iconP2.iconOffsets = [dad.iconOffsets.idleX, dad.iconOffsets.idleY]; }
+				}
+				iconP2.updateHitbox();
+			}
 	}
 
 	public function changeTheSettingsBitch()
@@ -3425,15 +3459,15 @@ class PlayState extends MusicBeatState
 				{
 					iconP1.animation.play('losing');
 				}
-				iconP1.offset.set(boyfriend.iconOffsets[3], boyfriend.iconOffsets[4]);
+				updateIconOffset(false, true);
 			}
 			else
 			{
 				if (iconP1.animation.name != 'idle')
 				{
 					iconP1.animation.play('idle');
-					iconP1.updateHitbox();
 				}
+				updateIconOffset();
 			}
 		}
 		else
@@ -3452,15 +3486,15 @@ class PlayState extends MusicBeatState
 				{
 					iconP2.animation.play('losing');
 				}
-				iconP2.offset.set(dad.iconOffsets[3], dad.iconOffsets[4]);
+				updateIconOffset(true, true);
 			}
 			else
 			{
 				if (iconP2.animation.name != 'idle')
 				{
 					iconP2.animation.play('idle');
-					iconP2.updateHitbox();
 				}
+				updateIconOffset(true);
 			}
 		}
 		else
