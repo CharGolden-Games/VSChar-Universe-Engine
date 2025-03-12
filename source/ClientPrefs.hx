@@ -84,6 +84,7 @@ class SaveVariables
 	public var hudStyle:String = 'Universe Engine';
 	public var floorRating:Bool = false;
 	public var forceTimeBar:Bool = false;
+	public var badsShitsBreakCombo:Bool = false;
 
 	//offical launcherl mao
 	public var officialLauncher:Bool = true;

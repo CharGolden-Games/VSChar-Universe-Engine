@@ -170,12 +170,20 @@ class CoolMenuState extends MusicBeatState
 
 		var targetX:Float = FlxG.width / 2 + 50;
 
-		versionShitUE = new FlxText(FlxG.width + 2000, FlxG.height - 92, 0, MainMenuState.versionShitString_ModVersion, 12);
+		versionShitUE = new FlxText(FlxG.width + 2000, FlxG.height - 112, 0, MainMenuState.versionShitString_ModVersion, 12);
 		versionShitUE.scrollFactor.set();
 		versionShitUE.setFormat(Paths.font('funkin.ttf'), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShitUE);
 		FlxTween.tween(versionShitUE, {x: targetX}, 2, {
 			ease: FlxEase.backOut
+		});
+		versionShitUE = new FlxText(FlxG.width + 2000, FlxG.height - 92, 0, MainMenuState.versionShitString_VsCharVersion, 12);
+		versionShitUE.scrollFactor.set();
+		versionShitUE.setFormat(Paths.font('funkin.ttf'), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(versionShitUE);
+		FlxTween.tween(versionShitUE, {x: targetX}, 2, {
+			ease: FlxEase.backOut,
+			startDelay: 0.5
 		});
 		versionShitPE = new FlxText(FlxG.width + 2000, FlxG.height - 72, 0, MainMenuState.versionShitString_EngineDetails, 12);
 		versionShitPE.scrollFactor.set();
@@ -183,7 +191,7 @@ class CoolMenuState extends MusicBeatState
 		add(versionShitPE);
 		FlxTween.tween(versionShitPE, {x: targetX}, 2, {
 			ease: FlxEase.backOut,
-			startDelay: 0.5
+			startDelay: 1
 		});
 		versionShitFNF = new FlxText(FlxG.width + 2000, FlxG.height - 52, 0, MainMenuState.versionShitString_FunkinVersion, 12);
 		versionShitFNF.scrollFactor.set();
@@ -191,7 +199,7 @@ class CoolMenuState extends MusicBeatState
 		add(versionShitFNF);
 		FlxTween.tween(versionShitFNF, {x: targetX}, 2, {
 			ease: FlxEase.backOut,
-			startDelay: 1
+			startDelay: 1.5
 		});
 
 		textBG = new FlxSprite(0, FlxG.height + 100).makeGraphic(FlxG.width, 30, 0xFF000000);

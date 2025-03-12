@@ -1,8 +1,25 @@
 package;
 
+import flixel.util.FlxSave;
 import flixel.FlxG;
 
 using StringTools;
+
+typedef HighscoreParams = {
+	// Main Stuffs
+	public var score:Int;
+	public var accuracy:Float;
+
+	// Specific Ratings
+	public var perfects:Int;
+	public var sicks:Int;
+	public var goods:Int;
+	public var bads:Int;
+	public var shits:Int;
+	
+	// Misc
+	public var averageTiming:Float;
+}
 
 class Highscore
 {
@@ -18,6 +35,8 @@ class Highscore
 	public static var songMisses:Map<String, Int> = new Map<String, Int>();
 	public static var songRating:Map<String, Float> = new Map<String, Float>();
 	#end
+
+	public static var songScores_new:Map<String, HighscoreParams> = new Map<String, HighscoreParams>();
 
 	public static function resetSong(song:String, diff:Int = 0):Void
 	{
@@ -166,6 +185,32 @@ class Highscore
 			setWeekScore(daWeek, 0);
 
 		return weekScores.get(daWeek);
+	}
+
+	/**
+	 * This gets the Mean of all the timings.
+	 * @param timings what do you think this is?
+	 * @return Float
+	 */
+	public static function averageTimings(timings:Array<Float>):Float
+	{
+		var totalTimings:Float = 0;
+
+		for (timing in timings)
+			totalTimings += timing;
+
+		return totalTimings / timings.length;
+	}
+
+	public static function setScore_New(song:String, diff:Int, params:HighscoreParams)
+	{
+		var save:FlxSave = new FlxSave();
+		save.bind('Highscores', 'universe');
+
+		song = formatSong(song, diff);
+		songScores_new.set(song, params);
+		save.data.songScores_new = songScores_new;
+		save.flush();
 	}
 
 	public static function load():Void

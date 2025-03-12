@@ -1,5 +1,6 @@
 package;
 
+import vschar.backend.ExtendedMeta;
 #if desktop
 import Discord.DiscordClient;
 import sys.thread.Thread;
@@ -141,7 +142,7 @@ class TitleState extends MusicBeatState
 		swagShader = new ColorSwap();
 		super.create();
 
-		FlxG.save.bind('funkin', 'universe');
+		FlxG.save.bind('funkin', 'VS_Char');
 
 		ClientPrefs.loadPrefs();
 		
@@ -529,6 +530,8 @@ class TitleState extends MusicBeatState
 		else
 			initialized = true;
 
+		ExtendedMeta.updateTitle();
+
 		// credGroup.add(credTextShit);
 	}
 
@@ -654,7 +657,6 @@ class TitleState extends MusicBeatState
 
 				transitioning = true;
 				// FlxG.sound.music.stop();
-				MainMenuState.versionShitString_FunkinVersion =  "Friday Night Funkin' v" + Application.current.meta.get('version'); // Prevent crashes!
 				new FlxTimer().start(1, function(tmr:FlxTimer)
 				{
 					if (ClientPrefs.data.fm)

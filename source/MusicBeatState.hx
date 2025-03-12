@@ -1,5 +1,6 @@
 package;
 
+import vschar.backend.ExtendedMeta;
 import Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.addons.ui.FlxUIState;
@@ -35,6 +36,14 @@ class MusicBeatState extends modchart.modcharting.ModchartMusicBeatState
 		return PlayerSettings.player1.controls;
 
 	override function create() {
+		if (PlayState.instance != null)
+		{
+			if (getState() != PlayState.instance){
+				ExtendedMeta.set('songArtist', '');
+				ExtendedMeta.set('songAssetArtist', '');
+				ExtendedMeta.set('curSong', '');
+			}
+		}
 		camBeat = FlxG.camera;
 		var skip:Bool = FlxTransitionableState.skipNextTransOut;
 		super.create();

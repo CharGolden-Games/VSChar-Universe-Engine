@@ -185,7 +185,11 @@ class MainMenuUselessState extends MusicBeatState
 
 		FlxG.camera.follow(camFollowPos, null, 1);
 
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 92, 0, MainMenuState.versionShitString_ModVersion, 12);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 112, 0, MainMenuState.versionShitString_ModVersion, 12);
+		versionShit.scrollFactor.set();
+		versionShit.setFormat(Paths.font('funkin.ttf'), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(versionShit);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 92, 0, MainMenuState.versionShitString_VsCharVersion, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat(Paths.font('funkin.ttf'), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);

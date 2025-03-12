@@ -17,4 +17,5 @@ import flixel.group.FlxSpriteGroup;
 import FunkinLua.ModchartSprite;
 
 using StringTools;
+using ue.backend.ExtendedStringTools;
 #end

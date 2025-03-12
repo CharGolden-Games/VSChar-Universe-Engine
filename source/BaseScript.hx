@@ -1,5 +1,11 @@
 package;
 
+#if desktop
+import Discord.DiscordClient;
+#end
+import flixel.tweens.FlxTween;
+import Note.EventNote;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import animateatlas.AtlasFrameMaker;
 import flixel.FlxBasic;
 import flixel.FlxObject;
@@ -8,6 +14,7 @@ import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.util.FlxColor;
 import FunkinLua.ModchartSprite;
+import ue.backend.CustomIntIterator;
 
 #if sys
 import sys.FileSystem;
@@ -17,8 +24,11 @@ import sys.io.File;
 import lime.utils.Assets as FlAssets;
 
 using StringTools;
+using ue.backend.ExtendedStringTools;
+using ue.backend.ExtendedStringTools.MathTools;
 class BaseScript {
     // BaseScript is basically BaseStage but cooler.
+    public var oldRPCSystem:Bool = false;
 	private var game(default, set):Dynamic = PlayState.instance;
 	public var onPlayState:Bool = false;
 	public var members(get, never):Array<FlxBasic>;
@@ -28,81 +38,114 @@ class BaseScript {
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
+    // Game shit.
     public var boyfriend(get, null):Boyfriend;
     public var gf(get, null):Character;
     public var dad(get, null):Character;
-
-    var songName(get, null):String;
-    var difficultyName(get, null):String;
-    var bpm(get, null):Float;
-
-    var crochet:Float;
-    var songPosition(get, null):Float;
-    var score(get, null):Int;
-    var misses(get, null):Int;
-    var health(get, set):Float;
-    var healthLossMult(get, null):Float;
-    var healthGainMult(get, null):Float;
-    /**
-     * The Accuracy after turning it into a percentage value.
-     */
-    var accuracy(get, null):Float;
-    var ratingName(get, null):String;
-    /**
-     * The raw rating percent
-     */
-    var ratingPercent(get, null):Float;
-    var hits(get, null):Int;
-    var rating(get, null):Float;
-    var ratingFC(get, null):String;
-    var songLength(get, null):Float;
-    var noteOffset(get, null):Int;
-    var curBeat(get, null):Int;
-    var curStep(get, null):Int;
-
-    var hudStyle(get, null):String;
-
-    var totalPlayed(get, null):Int;
-    var totalNotesHit(get, null):Float;
-
     var camGame(get, null):FlxCamera;
     var camHUD(get, null):FlxCamera;
     var camOther(get, null):FlxCamera;
-
-    public var name:String = 'Unnamed Script';
+    var notes(get, null):FlxTypedGroup<Note>;
+    var unspawnNotes(get, null):Array<Note>;
+    var eventNotes(get, null):Array<EventNote>;
+    var playerStrums(get, null):FlxTypedGroup<StrumNote>;
+    var opponentStrums(get, null):FlxTypedGroup<StrumNote>;
 
     function get_boyfriend():Boyfriend return game.boyfriend;
     function get_gf():Character return game.gf;
     function get_dad():Character return game.dad;
-
-    function get_difficultyName():String return CoolUtil.difficulties[PlayState.storyDifficulty];
-    function get_songName():String return PlayState.SONG.song;
-    function get_bpm():Float return PlayState.SONG.bpm;
-
-    function get_crochet():Float return Conductor.crochet;
-    function get_songPosition():Float return Conductor.songPosition;
-    function get_score():Int return game.lerpScore;
-    function get_misses():Int return game.songMisses;
-    function get_accuracy():Float return Highscore.floorDecimal(game.ratingPercent * 100, 2);
-    function get_ratingName():String return game.ratingName;
-    function get_ratingPercent():Float return game.ratingPercent;
-    function get_songLength():Float return FlxG.sound.music.length;
-    function get_noteOffset():Int return ClientPrefs.data.noteOffset;
-    function get_hits():Int return game.songHits;
-    function get_rating():Float return game.ratingPercent;
-    function get_ratingFC():String return game.ratingFC;
-    function get_curBeat():Int return game.curBeat;
-    function get_curStep():Int return game.curStep;
-    function get_totalPlayed():Int return game.totalPlayed;
-    function get_totalNotesHit():Float return game.totalNotesHit;
     function get_camGame():FlxCamera return PlayState.instance.camGame;
     function get_camHUD():FlxCamera return PlayState.instance.camHUD;
     function get_camOther():FlxCamera return PlayState.instance.camOther;
-    function get_hudStyle():String return ClientPrefs.data.hudStyle;
+    function get_notes():FlxTypedGroup<Note> return PlayState.instance.notes;
+    function get_unspawnNotes():Array<Note> return PlayState.instance.unspawnNotes;
+    function get_eventNotes():Array<EventNote> return PlayState.instance.eventNotes;
+    function get_playerStrums():FlxTypedGroup<StrumNote> return PlayState.instance.playerStrums;
+    function get_opponentStrums():FlxTypedGroup<StrumNote> return PlayState.instance.opponentStrums;
+
+    // Song Shit.
+    var difficultyName(get, null):String;
+    var crochet:Float;
+    var songPosition(get, null):Float;
+    var songName(get, null):String;
+    var songLength(get, null):Float;
+    var bpm(get, null):Float;
+    var curBeat(get, null):Int;
+    var curStep(get, null):Int;
+    var curSection(get, null):Int;
+    var mustHitSection(get, null):Bool;
+
+    function get_difficultyName():String return CoolUtil.difficulties[PlayState.storyDifficulty];
+    function get_crochet():Float return Conductor.crochet;
+    function get_songPosition():Float return Conductor.songPosition;
+    function get_songName():String return PlayState.SONG.song;
+    function get_songLength():Float return FlxG.sound.music.length;
+    function get_bpm():Float return PlayState.SONG.bpm;
+    function get_curBeat():Int return game.curBeat;
+    function get_curStep():Int return game.curStep;
+    function get_curSection():Int return @:privateAccess PlayState.instance.curSection;
+    function get_mustHitSection():Bool return PlayState.SONG.notes[curSection].mustHitSection;
+
+    // Score Shit.
+    var score(get, null):Int;
+    /*
+	* The score but not lerp'd
+    */
+    var scoreActual(get, null):Int;
+    var misses(get, null):Int;
+    var health(get, set):Float;
+    function get_score():Int return game.lerpScore;
+    function get_scoreActual():Int return game.songScore;
+    function get_misses():Int return game.songMisses;
     function get_health():Float return PlayState.instance.health;
     function set_health(value:Float):Float return PlayState.instance.health = value;
+
+    // Rating Shit.
+    var ratingName(get, null):String;
+    var ratingPercent(get, null):Float; //The raw rating percent
+    var rating(get, null):Float;
+    var ratingFC(get, null):String;
+    var totalPlayed(get, null):Int;
+    var totalNotesHit(get, null):Float;
+    var accuracy(get, null):Float; // The Accuracy after turning it into a percentage value.
+    var hits(get, null):Int;
+
+    function get_ratingName():String return game.ratingName;
+    function get_ratingPercent():Float return game.ratingPercent;
+    function get_rating():Float return game.ratingPercent;
+    function get_ratingFC():String return game.ratingFC;
+    function get_totalPlayed():Int return game.totalPlayed;
+    function get_totalNotesHit():Float return game.totalNotesHit;
+    function get_accuracy():Float return Highscore.floorDecimal(game.ratingPercent * 100, 2);
+    function get_hits():Int return game.songHits;
+
+    // Gameplay Settings
+    var healthLossMult(get, null):Float;
+    var healthGainMult(get, null):Float;
+    var noteOffset(get, null):Int;
+    var hudStyle(get, null):String;
+    var middlescroll(get, null):Bool;
+
     function get_healthLossMult():Float return PlayState.instance.healthLoss;
     function get_healthGainMult():Float return PlayState.instance.healthGain;
+    function get_noteOffset():Int return ClientPrefs.data.noteOffset;
+    function get_hudStyle():String return ClientPrefs.data.hudStyle;
+    function get_middlescroll():Bool return ClientPrefs.data.middleScroll;
+
+    // Script Specific variables
+    public var name(default, set):String = 'Unnamed Script';
+    public var nameCallback:Null<String -> String> = null;
+    function set_name(s:String):String
+    {
+        if (nameCallback != null)
+            name = nameCallback(s);
+        else
+            name = s;
+
+        return name;
+    }
+    var singleRun:Bool = false; // If a script only triggers once.
+
 	inline private function set_game(value:MusicBeatState)
 	{
 		onPlayState = (Std.isOfType(value, PlayState));
@@ -140,138 +183,37 @@ class BaseScript {
 
     public function onCountdownTick(tick:Int):Void {}
 
-    public function runLuaCode(code:String):Void
-    {
-        #if sys
-        // Idiot prevention plan :3
-        if (!FileSystem.exists('assets/embed/script.lua'))
-        {
-            if (!FileSystem.exists('assets/embed'))
-                FileSystem.createDirectory('assets/embed');
+    public function onRating(name:String):Void {}
 
-            File.saveContent('assets/embed/script.lua', '-- This Script (while empty) is important to a function in the game.');
-        }
-        FunkinLua.runLuaCode(code);
-        #end
+    public function onMoveCamera(focus:String):Void {}
+
+    public function addScript(script:BaseScript, ?group:String = 'extern')
+    {
+        ue.UEScript.pushScript(script, switch (group.lower()) {
+            case 'force':
+                ue.UEScript.FORCE;
+            case 'option' | 'options':
+                ue.UEScript.OPTIONS;
+            case 'gp' | 'gameplay':
+                ue.UEScript.GP;
+            default:
+                null;
+        });
     }
 
-    public function precacheSound(name:String) CoolUtil.precacheSound(name);
-
-    public function playSound(sound:String, volume:Float = 1, ?tag:String = null)
-		{
-			if (tag != null && tag.length > 0)
-			{
-				tag = tag.replace('.', '');
-				if (PlayState.instance.modchartSounds.exists(tag))
-				{
-					PlayState.instance.modchartSounds.get(tag).stop();
-				}
-				PlayState.instance.modchartSounds.set(tag, FlxG.sound.play(Paths.sound(sound), volume, false, function()
-				{
-					PlayState.instance.modchartSounds.remove(tag);
-					PlayState.instance.callOnLuas('onSoundFinished', [tag]);
-				}));
-				return;
-			}
-			FlxG.sound.play(Paths.sound(sound), volume);
-		}
-
-    public function stopSound(tag:String)
-        {
-            if (tag != null && tag.length > 1 && PlayState.instance.modchartSounds.exists(tag))
-            {
-                PlayState.instance.modchartSounds.get(tag).stop();
-                PlayState.instance.modchartSounds.remove(tag);
-            }
-        }
-
-    public function changePresence(details:String, ?state:Null<String>, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float)
-        {
-            #if desktop
-            Discord.DiscordClient.changePresence(details, state, smallImageKey, hasStartTimestamp, endTimestamp);
-            #end
-        }
-
-    public function loadFrames(spr:FlxSprite, image:String, spriteType:String)
-	{
-		switch (spriteType.toLowerCase().trim())
-		{
-			case "texture" | "textureatlas" | "tex":
-				spr.frames = AtlasFrameMaker.construct(image);
-
-			case "texture_noaa" | "textureatlas_noaa" | "tex_noaa":
-				spr.frames = AtlasFrameMaker.construct(image, null, true);
-
-			case "packer" | "packeratlas" | "pac":
-				spr.frames = Paths.getPackerAtlas(image);
-
-			default:
-				spr.frames = Paths.getSparrowAtlas(image);
-		}
-	}
-
-    public function resetSpriteTag(tag:String)
-        {
-            if (!PlayState.instance.modchartSprites.exists(tag))
-            {
-                return;
-            }
-    
-            var pee:ModchartSprite = PlayState.instance.modchartSprites.get(tag);
-            pee.kill();
-            if (pee.wasAdded)
-            {
-                PlayState.instance.remove(pee, true);
-            }
-            pee.destroy();
-            PlayState.instance.modchartSprites.remove(tag);
-        }
-
-    public function makeAnimatedSprite(tag:String, image:String, x:Float, y:Float, ?spriteType:String = "sparrow"):ModchartSprite
-		{
-			tag = tag.replace('.', '');
-			resetSpriteTag(tag);
-			var leSprite:ModchartSprite = new ModchartSprite(x, y);
-
-			loadFrames(leSprite, image, spriteType);
-			leSprite.antialiasing = ClientPrefs.data.globalAntialiasing;
-			PlayState.instance.modchartSprites.set(tag, leSprite);
-
-            return leSprite;
-		}
-
-    function debugPrint(text1:Dynamic = '', text2:Dynamic = '', text3:Dynamic = '', text4:Dynamic = '', text5:Dynamic = '', color:FlxColor = FlxColor.WHITE)
+    public function addLuaScript(LuaFile:String, ?ignoreAlreadyRunning:Bool = false) //Just in case.
     {
-        var text:String = '' + text1 + text2 + text3 + text4 + text5;
-        game.addTextToDebug(text, color);
-        trace(text);
+        runLuaCode('addLuaScript("$LuaFile", $ignoreAlreadyRunning)');
     }
-
-    function formatSong(song:String, diff:Int):String return Paths.formatToSongPath(song) + CoolUtil.getDifficultyFilePath(diff);
-
-    function keyPressed(name:String)
-		{
-			var key:Bool = false;
-			switch (name)
-			{
-				case 'left':
-					key = PlayState.instance.getControl('NOTE_LEFT');
-				case 'down':
-					key = PlayState.instance.getControl('NOTE_DOWN');
-				case 'up':
-					key = PlayState.instance.getControl('NOTE_UP');
-				case 'right':
-					key = PlayState.instance.getControl('NOTE_RIGHT');
-				case 'space':
-					key = FlxG.keys.pressed.SPACE; // an extra key for convinience
-			}
-			return key;
-		}
 
     /**
-     * Shit to do when loading (replaces onCreate)
+     * Put shit to do BEFORE `onCreate()` then use `super.initialize()` at the end to run `onCreate()`.
+     * 
+     * (Besides that, it's basically just `onCreate()`)
      */
-    public function initialize():Void {}
+    public function initialize():Void onCreate();
+
+    public function onCreate():Void {}
 
     public function onEvent(name:String, value1:String, value2:String, strumTime:Float):Void {}
 
@@ -300,11 +242,6 @@ class BaseScript {
     public var UEkeyXPos(get, null):Float;
     public var UEkeyYPos(get, null):Float;
 
-    //VS Char Settings
-    public var rotBop(get, null):Bool;
-    public var floorRating(get, null):Bool;
-    public var forceTimeBar(get, null):Bool;
-
     function get_UEHud():Bool return ClientPrefs.data.ueHud;
     function get_UEDetachedHB():Bool return ClientPrefs.data.dhb;
     function get_UEhudZoomOut():Bool return ClientPrefs.data.hudZoomOut;
@@ -327,9 +264,16 @@ class BaseScript {
     function get_UEkeyXPos():Float return ClientPrefs.data.keyXPos;
     function get_UEkeyYPos():Float return ClientPrefs.data.keyYPos;
 
+    //VS Char Settings
+    public var rotBop(get, null):Bool;
+    public var floorRating(get, null):Bool;
+    public var forceTimeBar(get, null):Bool;
+    public var badsShitsBreakCombo(get, null):Bool;
+
     function get_rotBop():Bool return ClientPrefs.data.rotBop;
     function get_floorRating():Bool return ClientPrefs.data.floorRating;
     function get_forceTimeBar():Bool return ClientPrefs.data.forceTimeBar;
+    function get_badsShitsBreakCombo():Bool return ClientPrefs.data.badsShitsBreakCombo;
 
     // Gameplay Settings
     public var UEplayBothSides(get, null):Bool;
@@ -345,4 +289,292 @@ class BaseScript {
     function get_UEsd():Bool return ClientPrefs.data.gameplaySettings.get('sd');
     function get_UEhealthdrainp2():Bool return ClientPrefs.data.gameplaySettings.get('hdp2');
     function get_UEIncreasePBR():Bool return ClientPrefs.data.gameplaySettings.get('ipbr');
+
+    var screenWidth(get, null):Float;
+    function get_screenWidth():Float
+    {
+        return FlxG.width;
+    }
+    var screenHeight(get, null):Float;
+    function get_screenHeight():Float
+    {
+        return FlxG.height;
+    }
+
+
+    // Lua function recreations
+        
+    /**
+     * Basically recreates the LUA for [`var`]=[`startPos`], [`endPos`], [`stepBy`]
+     * 
+     * @param startPos What value should this start at?
+     * @param endPos What value should this stop at?
+     * @param stepBy How much should it iterate before doing the function?
+     * @param func the function to do when stepBy reached i.e. `function(i:Int) print('stepBy hit!')`
+     */
+     @:deprecated('[DEPRECATED]: "This function is stupid and rendered useless over just doing `for (i in newIterator(start, end, step))`!"')
+    function luaIterator(startPos:Int, endPos:Int, stepBy:Int, func:Int->Void)
+        {
+            for (i in newIterator(startPos, endPos, stepBy))
+            {
+               func(i);
+            }
+        }
+
+    var iterator:CustomIntIterator = new CustomIntIterator(0, 1);
+
+	/**
+        Recreates LUA Int iteration.
+		Iterates from `min` (inclusive) to `max` (exclusive) by `step`.
+
+		If `max <= min`, the iterator will not act as a countdown
+	**/
+    function newIterator(min:Int, max:Int, step:Int = 1):CustomIntIterator
+    {
+        return iterator.recycleIterator(min, max, step);
+    }
+
+    // Misc functions/functions from FunkinLua callbacks.
+
+    public function runLuaCode(code:String):Void
+        {
+            #if sys
+            // Idiot prevention plan :3
+            if (!FileSystem.exists('assets/embed/script.lua'))
+            {
+                if (!FileSystem.exists('assets/embed'))
+                    FileSystem.createDirectory('assets/embed');
+    
+                File.saveContent('assets/embed/script.lua', '-- This Script (while empty) is important to a function in the game.');
+            }
+            FunkinLua.runLuaCode(code);
+            #end
+        }
+    
+    
+        // WE LOVE STEALING LUA CALLBACK FUNCTIONS!
+    function getRandomInt(Min:Int, Max:Int, ?Excludes:Array<Int>):Int return Min.getRandomInt(Max, Excludes);
+    function getRandomFloat(Min:Float, Max:Float, ?Excludes:Array<Float>) return Min.getRandomFloat(Max, Excludes);
+        public function precacheSound(name:String) CoolUtil.precacheSound(name);
+    
+        public function playSound(sound:String, volume:Float = 1, ?tag:String = null)
+            {
+                if (tag != null && tag.length > 0)
+                {
+                    tag = tag.replace('.', '');
+                    if (PlayState.instance.modchartSounds.exists(tag))
+                    {
+                        PlayState.instance.modchartSounds.get(tag).stop();
+                    }
+                    PlayState.instance.modchartSounds.set(tag, FlxG.sound.play(Paths.sound(sound), volume, false, function()
+                    {
+                        PlayState.instance.modchartSounds.remove(tag);
+                        PlayState.instance.callOnLuas('onSoundFinished', [tag]);
+                    }));
+                    return;
+                }
+                FlxG.sound.play(Paths.sound(sound), volume);
+            }
+    
+        public function stopSound(tag:String)
+            {
+                if (tag != null && tag.length > 1 && PlayState.instance.modchartSounds.exists(tag))
+                {
+                    PlayState.instance.modchartSounds.get(tag).stop();
+                    PlayState.instance.modchartSounds.remove(tag);
+                }
+            }
+    
+        #if desktop
+        public function changePresence(details:String, ?state:Null<String>, ?smallImageKey:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float)
+            {
+                    DiscordClient.changePresence(details, state, smallImageKey, hasStartTimestamp, endTimestamp);
+            }
+
+        public function newPresence(details:String, state:Null<String>, ?smallImageKey:String, ?largeImageKey:String, largeImageText:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float)
+        {
+            DiscordClient.newPresence(details, state, smallImageKey, largeImageKey, largeImageText, hasStartTimestamp, endTimestamp);
+        }
+
+        public function changeToken(token:String) DiscordClient.changeID(token);
+
+        public function resetID() DiscordClient.resetID();
+        #else
+        public function changePresence(details:String, ?state:Null<String>, ?smallImageKey:String, ?largeImageKey:String, largeImageText:String, ?hasStartTimestamp:Bool, ?endTimestamp:Float) {}
+        public function changeToken(token:String) {}
+        public function resetID() {}
+        #end
+        
+    
+        public function loadFrames(spr:FlxSprite, image:String, spriteType:String)
+        {
+            switch (spriteType.toLowerCase().trim())
+            {
+                case "texture" | "textureatlas" | "tex":
+                    spr.frames = AtlasFrameMaker.construct(image);
+    
+                case "texture_noaa" | "textureatlas_noaa" | "tex_noaa":
+                    spr.frames = AtlasFrameMaker.construct(image, null, true);
+    
+                case "packer" | "packeratlas" | "pac":
+                    spr.frames = Paths.getPackerAtlas(image);
+    
+                default:
+                    spr.frames = Paths.getSparrowAtlas(image);
+            }
+        }
+    
+        public function resetSpriteTag(tag:String)
+            {
+                if (!PlayState.instance.modchartSprites.exists(tag))
+                {
+                    return;
+                }
+        
+                var pee:ModchartSprite = PlayState.instance.modchartSprites.get(tag);
+                pee.kill();
+                if (pee.wasAdded)
+                {
+                    PlayState.instance.remove(pee, true);
+                }
+                pee.destroy();
+                PlayState.instance.modchartSprites.remove(tag);
+            }
+    
+        public function makeAnimatedSprite(tag:String, image:String, x:Float, y:Float, ?spriteType:String = "sparrow"):ModchartSprite
+            {
+                tag = tag.replace('.', '');
+                resetSpriteTag(tag);
+                var leSprite:ModchartSprite = new ModchartSprite(x, y);
+    
+                loadFrames(leSprite, image, spriteType);
+                leSprite.antialiasing = ClientPrefs.data.globalAntialiasing;
+                PlayState.instance.modchartSprites.set(tag, leSprite);
+    
+                return leSprite;
+            }
+    
+        function debugPrint(text1:Dynamic = '', text2:Dynamic = '', text3:Dynamic = '', text4:Dynamic = '', text5:Dynamic = '', color:FlxColor = FlxColor.WHITE)
+        {
+            var text:String = '' + text1 + text2 + text3 + text4 + text5;
+            game.addTextToDebug(text, color);
+            trace(text);
+        }
+    
+        function formatSong(song:String, diff:Int):String return Paths.formatToSongPath(song) + CoolUtil.getDifficultyFilePath(diff);
+    
+        function keyPressed(name:String)
+            {
+                var key:Bool = false;
+                switch (name)
+                {
+                    case 'left':
+                        key = PlayState.instance.getControl('NOTE_LEFT');
+                    case 'down':
+                        key = PlayState.instance.getControl('NOTE_DOWN');
+                    case 'up':
+                        key = PlayState.instance.getControl('NOTE_UP');
+                    case 'right':
+                        key = PlayState.instance.getControl('NOTE_RIGHT');
+                    case 'space':
+                        key = FlxG.keys.pressed.SPACE; // an extra key for convinience
+                }
+                return key;
+            }
+            
+        function cancelTween(tag:String)
+            {
+                if (PlayState.instance.modchartTweens.exists(tag))
+                {
+                    PlayState.instance.modchartTweens.get(tag).cancel();
+                    PlayState.instance.modchartTweens.get(tag).destroy();
+                    PlayState.instance.modchartTweens.remove(tag);
+                }
+            }
+    
+        function getFlxEaseByString(ease:String)
+        {
+            return FunkinLua.getFlxEaseByString(ease);
+        }
+    
+        function noteTweenX(tag:String, note:Int, value:Dynamic, duration:Float, ease:String)
+            {
+                cancelTween(tag);
+                if (note < 0)
+                    note = 0;
+                var testicle:StrumNote = PlayState.instance.strumLineNotes.members[note % PlayState.instance.strumLineNotes.length];
+    
+                if (testicle != null)
+                {
+                    PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {x: value}, duration, {
+                        ease: getFlxEaseByString(ease),
+                        onComplete: function(twn:FlxTween)
+                        {
+                            PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+                            PlayState.instance.modchartTweens.remove(tag);
+                        }
+                    }));
+                }
+            }
+    
+        function noteTweenY(tag:String, note:Int, value:Dynamic, duration:Float, ease:String)
+            {
+                cancelTween(tag);
+                if (note < 0)
+                    note = 0;
+                var testicle:StrumNote = PlayState.instance.strumLineNotes.members[note % PlayState.instance.strumLineNotes.length];
+    
+                if (testicle != null)
+                {
+                    PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {y: value}, duration, {
+                        ease: getFlxEaseByString(ease),
+                        onComplete: function(twn:FlxTween)
+                        {
+                            PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+                            PlayState.instance.modchartTweens.remove(tag);
+                        }
+                    }));
+                }
+            }
+    
+        function noteTweenAngle(tag:String, note:Int, value:Dynamic, duration:Float, ease:String)
+            {
+                cancelTween(tag);
+                if (note < 0)
+                    note = 0;
+                var testicle:StrumNote = PlayState.instance.strumLineNotes.members[note % PlayState.instance.strumLineNotes.length];
+    
+                if (testicle != null)
+                {
+                    PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {angle: value}, duration, {
+                        ease: getFlxEaseByString(ease),
+                        onComplete: function(twn:FlxTween)
+                        {
+                            PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+                            PlayState.instance.modchartTweens.remove(tag);
+                        }
+                    }));
+                }
+            }
+    
+        function noteTweenAlpha(tag:String, note:Int, value:Dynamic, duration:Float, ease:String)
+            {
+                cancelTween(tag);
+                if (note < 0)
+                    note = 0;
+                var testicle:StrumNote = PlayState.instance.strumLineNotes.members[note % PlayState.instance.strumLineNotes.length];
+    
+                if (testicle != null)
+                {
+                    PlayState.instance.modchartTweens.set(tag, FlxTween.tween(testicle, {alpha: value}, duration, {
+                        ease: getFlxEaseByString(ease),
+                        onComplete: function(twn:FlxTween)
+                        {
+                            PlayState.instance.callOnLuas('onTweenCompleted', [tag]);
+                            PlayState.instance.modchartTweens.remove(tag);
+                        }
+                    }));
+                }
+            }
+    
 }

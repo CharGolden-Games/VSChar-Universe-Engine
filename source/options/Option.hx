@@ -23,6 +23,15 @@ import Controls;
 
 using StringTools;
 
+typedef AffectsHUDStyle = {
+	var ue:Bool;
+	var cn:Bool;
+	var pe:Bool;
+	var ke:Bool;
+	var funkin:Bool;
+	var vc:Bool;
+}
+
 class Option
 {
 	private var child:Alphabet;
@@ -49,6 +58,16 @@ class Option
 	public var displayFormat:String = '%v'; //How String/Float/Percent/Int values are shown, %v = Current value, %d = Default value
 	public var description:String = '';
 	public var name:String = 'Unknown';
+
+	public var affectsHUD:AffectsHUDStyle = {
+		ue: false,
+		cn: false,
+		pe: false,
+		ke: false,
+		funkin: false,
+		vc: false
+	};
+	public var hudStyleOption:Bool = false;
 
 	public function new(name:String, description:String = '', variable:String, type:String = 'bool', defaultValue:Dynamic = 'null variable value', ?options:Array<String> = null)
 	{

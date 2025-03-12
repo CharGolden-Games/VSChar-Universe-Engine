@@ -76,7 +76,7 @@ class FunkinLua
 
 	public static var ir = ClientPrefs.copyKey(ClientPrefs.keyBinds.get('is'));
 
-	public function new(script:String)
+	public function new(script:String, inEditor:Bool = false)
 	{
 		#if LUA_ALLOWED
 		lua = LuaL.newstate();
@@ -3702,7 +3702,7 @@ class FunkinLua
 	}
 
 	// Better optimized than using some getProperty shit or idk
-	function getFlxEaseByString(?ease:String = '')
+	public static function getFlxEaseByString(?ease:String = '')
 	{
 		switch (ease.toLowerCase().trim())
 		{

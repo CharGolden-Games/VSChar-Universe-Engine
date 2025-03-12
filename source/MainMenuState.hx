@@ -2,6 +2,8 @@ package;
 
 #if desktop
 import Discord.DiscordClient;
+import sys.FileSystem;
+import sys.io.File;
 #end
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -24,6 +26,7 @@ import flixel.FlxSubState;
 import flixel.addons.display.FlxBackdrop;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.math.FlxPoint;
+import vschar.backend.ExtendedMeta;
 
 using StringTools;
 
@@ -31,12 +34,36 @@ class MainMenuState extends MusicBeatState
 {
 	public static var ueVersion:String = '0.5.5';
 	public static var psychEngineVersion:String = '0.6.3'; // This is also used for Discord RPC
-	public static var vsCharVersion:String = 'Unreleased';
-	public static var charEngineVersion:String = 'Unreleased';
+	public static var vsCharVersion(get, null):String;
+	public static var charEngineVersion(get, null):String;
 
-	public static var versionShitString_ModVersion:String = 'VS Char v$vsCharVersion';
+	static function get_vsCharVersion():String
+	{
+		return ExtendedMeta.get('vsCharVersion');
+	}
+
+	static function get_charEngineVersion():String
+	{
+		return ExtendedMeta.get('charEngineVersion');
+	}
+
+	public static var versionShitString_VsCharVersion:String = 'VS Char v$vsCharVersion';
+	public static var versionShitString_ModVersion(get, default):String;
+	static function get_versionShitString_ModVersion():String
+	{
+		var version:Null<String> = ExtendedMeta.get('modVersionString');
+		if (version == 'None|N/A' || version == null)
+			return 'No mod name or version specified!';
+
+		return version;
+	}
 	public static var versionShitString_EngineDetails:String = 'Char Engine v$charEngineVersion (Based on Universe Engine 0.5.5, Psych 0.6.3)';
-	public static var versionShitString_FunkinVersion:String = '';
+	public static var versionShitString_FunkinVersion(get, default):String;
+	static function get_versionShitString_FunkinVersion():String
+	{
+		ExtendedMeta.flushToFile();
+		return "Friday Night Funkin' v" + ExtendedMeta.get('funkinVersion');
+	}
 	public static var curSelected:Int = 0;
 
 	var reset = controls.RESET;
@@ -192,7 +219,11 @@ class MainMenuState extends MusicBeatState
 		}
 
 		FlxG.camera.follow(camFollowPos, null, 1);
-		var versionShit:FlxText = new FlxText(12, FlxG.height - 92, 0, versionShitString_ModVersion, 12);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 112, 0, versionShitString_ModVersion, 12);
+		versionShit.scrollFactor.set();
+		versionShit.setFormat(Paths.font('funkin.ttf'), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(versionShit);
+		var versionShit:FlxText = new FlxText(12, FlxG.height - 92, 0, versionShitString_VsCharVersion, 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat(Paths.font('funkin.ttf'), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);

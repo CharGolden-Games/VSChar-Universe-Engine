@@ -1,1 +1,1 @@
-Friday Night Funkin': Funkin With Char! | VS Char v{vsCharVersion} {curSong}
+Friday Night Funkin': Funkin With Char! | VS Char v{vsCharVersion} {curSong} {curArtist} {curAssetArtist}

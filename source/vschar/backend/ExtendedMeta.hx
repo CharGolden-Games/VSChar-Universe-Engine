@@ -17,7 +17,6 @@ using ue.backend.ExtendedStringTools;
 class ExtendedMeta {
     static var meta:Map<String, String> = new Map<String, String>();
     static var isEmpty:Bool = true;
-    static var curSong:String = '';
 
     static var appMetaFail:Bool = false;
     static var appMeta(get, null):Map<String, String>;
@@ -64,15 +63,20 @@ class ExtendedMeta {
 
             isEmpty = false;
             
+            // Version shit
             meta.set('modVersion', getModVersion_VersionOnly());
             meta.set('modVersionString', getModVersion());
-            meta.set('modTitle', getModTitle());
             meta.set('psychVer', '0.6.3');
             meta.set('ueVer', '0.5.5');
             meta.set('vsCharVersion', 'Unreleased [0.1b-Dev]');
             meta.set('charEngineVersion', 'Unreleased [inDev]');
-            meta.set('curSong', '');
             meta.set('ExtendedMetaJsonVer', '1.0');
+
+            // Other shit
+            meta.set('modTitle', getModTitle());
+            meta.set('curSong', '');
+            meta.set('songArtist', '');
+            meta.set('songAssetArtist', '');
         }
         if (appMetaFail)
         {
@@ -95,32 +99,36 @@ class ExtendedMeta {
             return 'null';
     }
 
-    public static function updateTitle()
+    public static function updateTitle():String
     {
-        if (get('curSong') != curSong)
-            meta.set('curSong', curSong); // pls work pls pls pls
-
+        checkMeta();
         var title:String = get('modTitle');
 
         if (title == 'null')
-            return;
+            return get('name');
 
-        if (curSong != '')
-            title = title.replace('{curSong}',
-            '| ${curSong.FUL()}').replace('{curArtist}',
-            '').replace('{curAssetArtist}', '');
+        if (get('curSong') != '')
+            title = title.replace('{curSong}', '| ' + get('curSong'));
         else
-            title = title.replace('{curSong}', 
-        '').replace('{curArtist}',
-        '').replace('{curAssetArtist}', '');
+            title = title.replace('{curSong}', '');
 
-        title = title.replace('{vsCharVersion}',
-        get('vsCharVersion', true)).replace('{engineVersion_Char}',
-        get('charEngineVersion', true)).replace('{engineVersion_Psych}',
-        get('psychVer', true)).replace('{engineVersion_UE}', 
-        get('ueVer', true)).replace('{modVersion}', get('modVersion', true));
+        if (get('songArtist') != '')
+            title = title.replace('{curArtist}', '| Composer: ' + get('songArtist'));
+        else
+            title = title.replace('{curArtist}', '');
 
-        openfl.Lib.application.window.title = title;
+        if (get('songAssetArtist') != '')
+            title = title.replace('{curAssetArtist}', '| Artist: ' + get('songAssetArtist'));
+        else
+            title = title.replace('{curAssetArtist}', '');
+
+        title = title.replace('{vsCharVersion}', get('vsCharVersion', true));
+        title = title.replace('{engineVersion_Char}', get('charEngineVersion', true));
+        title = title.replace('{engineVersion_Psych}', get('psychVer', true));
+        title = title.replace('{engineVersion_UE}', get('ueVer', true));
+        title = title.replace('{modVersion}', get('modVersion', true));
+
+        return openfl.Lib.application.window.title = title;
     }
 
     static inline function getModVersion()
@@ -137,10 +145,24 @@ class ExtendedMeta {
     }
     static inline function getModVersion_VersionOnly()
     {
+        checkPathsExist();
         var text = getModVerText();
 
         var splitVer = text.split('|');
         return splitVer[1];
+    }
+
+    static function checkPathsExist()
+    {
+        if (!pathExists('extendedMeta'))
+        {
+            #if sys
+            FileSystem.createDirectory('extendedMeta');
+            File.saveContent('extendedMeta/title.txt', 'null');
+            File.saveContent('extendedMeta/modVersion.txt', 'None|N/A');
+            File.saveContent('extendedMeta/readme.txt', Assets.getText('assets/embed/extendedMetaReadme.txt'));
+            #end
+        }
     }
 
     static inline function getModVerText():String
@@ -165,11 +187,9 @@ class ExtendedMeta {
     {
         checkMeta();
         if (key == 'curSong'){
-            curSong = value;
-            meta.remove('curSong'); // PLEASE.
-            meta.set('curSong', curSong);
-            flushToFile();
+            meta.set('curSong', value);
             updateTitle();
+            flushToFile();
             return;
         }
 

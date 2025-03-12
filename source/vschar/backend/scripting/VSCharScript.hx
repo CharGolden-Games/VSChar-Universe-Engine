@@ -12,7 +12,7 @@ class VSCharScript extends UEScript {
         super.onCreatePost();
 
         if (ClientPrefs.data.vsCharCustomizations)
-            Fire.baseTitle = "Friday Night Funkin': Funkin' with Char!"; // VS Char customization.
+            Fire.baseTitle = ExtendedMeta.updateTitle(); // VS Char customization.
     }
 
     public override function getForcedScripts():Array<BaseScript> {

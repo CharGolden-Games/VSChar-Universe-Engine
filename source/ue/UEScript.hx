@@ -23,6 +23,7 @@ class UEScript extends BaseScript
     public static var FORCE:Array<BaseScript> = [];
     public static var OPTIONS:Array<BaseScript> = [];
     public static var GP:Array<BaseScript> = [];
+    public static var EXTERN:Array<BaseScript> = [];
 
     public static var totalScripts(get, null):Int = 0;
     static function get_totalScripts():Int
@@ -38,63 +39,163 @@ class UEScript extends BaseScript
         instance = this;
     }
 
+    function clearScripts()
+    {
+        if (FORCE.length > 0 || OPTIONS.length > 0 || GP.length > 0)
+            {
+                // Shouldn't be more then 0, but if it is, clear scripts!
+                #if debug trace('RESETTING LOADED SCRIPTS'); #end
+    
+                var clearedScripts:Int = 0;
+    
+                for (script in FORCE) {
+                    #if debug trace('CLEARING "${script.name}".'); #end
+                    script.onDestroy();
+                }
+                clearedScripts += FORCE.length;
+                FORCE = [];
+    
+                for (script in OPTIONS) {
+                    #if debug trace('CLEARING "${script.name}".'); #end
+                    script.onDestroy();
+                }
+                clearedScripts += OPTIONS.length;
+                OPTIONS = [];
+    
+                for (script in GP) {
+                    #if debug trace('CLEARING "${script.name}".'); #end
+                    script.onDestroy();
+                }
+                clearedScripts += GP.length;
+                GP = [];
+    
+                #if debug trace('CLEARED $clearedScripts SCRIPTS'); #end
+            }
+    }
     public override function initialize():Void
     {
-        super.initialize();
+        clearScripts();
 
-        if (FORCE.length > 0 || OPTIONS.length > 0 || GP.length > 0)
-        {
-            // Shouldn't be more then 0, but if it is, clear scripts!
-            #if debug trace('RESETTING LOADED SCRIPTS'); #end
-
-            var clearedScripts:Int = 0;
-
-            for (script in FORCE) {
-                #if debug trace('CLEARING "${script.name}".'); #end
-                script.onDestroy();
-            }
-            clearedScripts += FORCE.length;
-            FORCE = [];
-
-            for (script in OPTIONS) {
-                #if debug trace('CLEARING "${script.name}".'); #end
-                script.onDestroy();
-            }
-            clearedScripts += OPTIONS.length;
-            OPTIONS = [];
-
-            for (script in GP) {
-                #if debug trace('CLEARING "${script.name}".'); #end
-                script.onDestroy();
-            }
-            clearedScripts += GP.length;
-            GP = [];
-
-            #if debug trace('CLEARED $clearedScripts SCRIPTS'); #end
-        }
-
-        trace('LOADING SCRIPTS INTO ARRAYS');
+        #if debug trace('LOADING SCRIPTS INTO ARRAYS'); #end
 
         pushScripts(getForcedScripts(), FORCE);
         pushScripts(getOptionScripts(), OPTIONS);
         pushScripts(getGPScripts(), GP);
 
-        trace('SCRIPTS LOADED: $totalScripts');
+        #if debug trace('SCRIPTS LOADED: $totalScripts'); #end
 
         for (script in FORCE) {
             #if debug trace('INITIALIZING ${script.name}'); #end
             script.initialize();
+            script.nameCallback = function(s:String):String return updateScriptText(s, script.name, 'force');
         }
         for (script in OPTIONS) {
             #if debug trace('INITIALIZING ${script.name}'); #end
             script.initialize();
+            script.nameCallback = function(s:String):String return updateScriptText(s, script.name, 'options');
         }
         for (script in GP) {
              #if debug trace('INITIALIZING ${script.name}'); #end
             script.initialize();
+            script.nameCallback = function(s:String):String return updateScriptText(s, script.name, 'gp');
         }
 
-        trace ('ALL SCRIPTS INITIALIZED');
+        #if debug trace ('ALL SCRIPTS INITIALIZED'); #end
+
+        super.initialize();
+    }
+
+    public override function onCreate() {
+        super.onCreate();
+
+        for (script in FORCE)
+            script.onCreate();
+        for (script in OPTIONS)
+            script.onCreate();
+        for (script in GP)
+            script.onCreate();
+    }
+    public override function onRating(name:String) {
+        super.onRating(name);
+
+        for (script in FORCE)
+            script.onRating(name);
+        for (script in OPTIONS)
+            script.onRating(name);
+        for (script in GP)
+            script.onRating(name);
+    }
+
+    public override function onMoveCamera(focus:String)
+    {
+        super.onMoveCamera(focus);
+
+        for (script in FORCE)
+            script.onMoveCamera(focus);
+        for (script in OPTIONS)
+            script.onMoveCamera(focus);
+        for (script in GP)
+            script.onMoveCamera(focus);
+    }
+
+    function updateScriptText(s:String, oldName:String, arrayName:String):String
+    {
+        try
+        {
+            var scriptNames_FORCE:Array<String> = [];
+
+            for (script in FORCE)
+                scriptNames_FORCE.push(script.name);
+
+            var scriptNames_OPTIONS:Array<String> = [];
+
+            for (script in OPTIONS)
+                scriptNames_OPTIONS.push(script.name);
+
+            var scriptNames_GP:Array<String> = [];
+
+            for (script in GP)
+                scriptNames_GP.push(script.name);
+
+            var scriptNames_EXTERN:Array<String> = [];
+
+            for (script in EXTERN)
+                scriptNames_EXTERN.push(script.name);
+
+            switch (arrayName.lower())
+            {
+                case 'force':
+                    for (name in scriptNames_FORCE)
+                    {
+                        if (name == oldName)
+                            name = s;
+                    }
+
+                case 'options':
+                    for (name in scriptNames_OPTIONS)
+                    {
+                        if (name == oldName)
+                            name = s;
+                    }
+                    
+                case 'gp' | 'gameplay':
+                    for (name in scriptNames_GP)
+                    {
+                        if (name == oldName)
+                            name = s;
+                    }
+                case 'extern' | 'external':
+                    for (name in scriptNames_EXTERN)
+                    {
+                        if (name == oldName)
+                            name = s;
+                    }
+            }
+            scriptsLoaded.text = 'Scripts Loaded: $totalScripts\nFORCE: $scriptNames_FORCE\nOPTIONS: $scriptNames_OPTIONS\nGameplay Settings: $scriptNames_GP\nExternal: $scriptNames_EXTERN';
+        }
+        catch(e:Dynamic){}
+
+        return s;
     }
 
     function getForcedScripts():Array<BaseScript>
@@ -335,7 +436,8 @@ class UEScript extends BaseScript
         var totalScripts:Array<Array<BaseScript>> = [
             FORCE,
             OPTIONS,
-            GP
+            GP,
+            EXTERN
         ];
 
         var pos:Int = -1;
@@ -404,18 +506,25 @@ class UEScript extends BaseScript
                 var scriptNames_GP:Array<String> = [];
                 for (script in GP)
                     scriptNames_GP.push(script.name);
-                scriptsLoaded.text = 'Scripts Loaded: $totalScripts\nFORCE: $scriptNames_FORCE\nOPTIONS: $scriptNames_OPTIONS\nGameplay Settings: $scriptNames_GP';
+                var scriptNames_EXTERN:Array<String> = [];
+                for (script in EXTERN)
+                    scriptNames_EXTERN.push(script.name);
+                scriptsLoaded.text = 'Scripts Loaded: $totalScripts\nFORCE: $scriptNames_FORCE\nOPTIONS: $scriptNames_OPTIONS\nGameplay Settings: $scriptNames_GP\nExternal: $scriptNames_EXTERN';
             }
             catch(e:Dynamic){}
         }
     }
 
-    public static function pushScript(script:BaseScript, array:Array<BaseScript>):Array<BaseScript>
+    public static function pushScript(script:BaseScript, ?array:Array<BaseScript>):Array<BaseScript>
     {
-        array.push(script);
-        trace('LOADED SCRIPT: "${script.name}".');
+        if (array != null)
+            array.push(script);
+        else // If no array specified likely is none of the catagorys!
+            EXTERN.push(script);
 
-        trace('THE NEW ARRAYS ARE `$FORCE` `$OPTIONS` `$GP`');
+        trace('LOADED SCRIPT: "${script.name}".');
+        script.initialize();
+        trace('THE NEW ARRAYS ARE `$FORCE` `$OPTIONS` `$GP` `$EXTERN`');
         
         if (ClientPrefs.data.showLoadedScripts)
         {
@@ -430,7 +539,10 @@ class UEScript extends BaseScript
                 var scriptNames_GP:Array<String> = [];
                 for (script in GP)
                     scriptNames_GP.push(script.name);
-                scriptsLoaded.text = 'Scripts Loaded: $totalScripts\nFORCE: $scriptNames_FORCE\nOPTIONS: $scriptNames_OPTIONS\nGameplay Settings: $scriptNames_GP';
+                var scriptNames_EXTERN:Array<String> = [];
+                for (script in EXTERN)
+                    scriptNames_EXTERN.push(script.name);
+                scriptsLoaded.text = 'Scripts Loaded: $totalScripts\nFORCE: $scriptNames_FORCE\nOPTIONS: $scriptNames_OPTIONS\nGameplay Settings: $scriptNames_GP\nExternal: $scriptNames_EXTERN';
             }
             catch(e:Dynamic){}
         }
@@ -444,7 +556,7 @@ class MasterScript extends BaseScript
     public function new(name:String = 'Unnamed Script') super(name);
 
     public function callScript(?script:String) {
-        if (path != null)
+        if (script != null)
             executeScript('scripts/$script.hx');
 
         UEScript.removeScript(name);

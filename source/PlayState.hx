@@ -79,6 +79,7 @@ import sys.io.File;
 #if VIDEOS_ALLOWED
 import vlc.MP4Handler;
 #end
+import vschar.backend.ExtendedMeta;
 
 using StringTools;
 
@@ -2624,6 +2625,15 @@ class PlayState extends MusicBeatState
 
 	function startSong():Void
 	{
+		trace(SONG.composer);
+		trace(SONG.artist);
+		if (SONG.composer == null)
+			SONG.composer = '';
+		if (SONG.artist == null)
+			SONG.artist = '';
+		ExtendedMeta.set('songArtist', SONG.composer);
+		ExtendedMeta.set('songAssetArtist', SONG.artist);
+		ExtendedMeta.set('curSong', ue.backend.ExtendedStringTools.FUL(SONG.song));
 		startingSong = false;
 
 		previousFrameTime = FlxG.game.ticks;
@@ -2673,6 +2683,7 @@ class PlayState extends MusicBeatState
 		setOnLuas('songLength', songLength);
 		callOnLuas('onSongStart', []);
 		scripter.onSongStart();
+		ExtendedMeta.flushToFile();
 	}
 
 	var debugNum:Int = 0;
@@ -4718,6 +4729,8 @@ class PlayState extends MusicBeatState
 			daRating.increase();
 		note.rating = daRating.name;
 		score = daRating.score;
+
+		scripter.onRating(daRating.name);
 
 		/*if (daRating.noteSplash && !note.noteSplashDisabled)
 			{

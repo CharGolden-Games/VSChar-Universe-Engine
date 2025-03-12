@@ -18,12 +18,14 @@ class RotBop extends BaseScript
     var timesBopped:Int = 0;
 
     public override function initialize() {
-        super.initialize();
-
         frequency = 2;
         intensity = 1;
         allowFlickering = false;
         rotateCamGame = true;
+        
+        addScript(new CamHop(), 'options');
+
+        super.initialize();
     }
 
     public override function onBeatHit() {
@@ -32,7 +34,7 @@ class RotBop extends BaseScript
         doBop();
     }
 
-    function doBop()
+    function doBop(manual:Bool = false)
     {
         var finalAngle1:Float = -(15 * intensity);
         var finalAngle2:Float = (15 * intensity);
@@ -47,7 +49,7 @@ class RotBop extends BaseScript
             finalAngle2 = Std.int(finalAngle2);
         }
         
-        if (curBeat % frequency == 0)
+        if (curBeat % frequency == 0 || manual)
         {
             if (timesBopped == 0)
             {
@@ -68,7 +70,7 @@ class RotBop extends BaseScript
         super.onSongStart();
 
         isInitialized = true;
-        doBop();
+        doBop(true);
     }
 
     public override function onUpdate(elapsed:Float) {
@@ -156,6 +158,7 @@ class HudType extends BaseScript
 
     // Kade Engine Hud
     public var ratingTxt:FlxText;
+    var comboBreaks:Int = 0;
 
     // VS Char Hud
     public var vsCharText_Score:String = 'How SICK you are:';
@@ -175,6 +178,13 @@ class HudType extends BaseScript
         ['YOU ARE A BOT!!', 1] // The value on this one isn't used actually, since Perfect is always "1"
     ];
     var funnyMissText:FlxText;
+
+    public override function initialize()
+    {
+        FlxG.camera.bgColor.alpha = 0;
+        camGame.bgColor.alpha = 0;
+        super.initialize();
+    }
 
     public override function onCreatePost() {
         super.onCreatePost();
@@ -334,7 +344,7 @@ class HudType extends BaseScript
                 }
 
             case "Funkin'":
-                PlayState.instance.scoreTxt.text = 'Score: $score';
+                PlayState.instance.scoreTxt.text = 'Score: ${score.formatMoney()}';
 
             case 'VS Char':
                 if (totalPlayed > 0)
@@ -354,9 +364,17 @@ class HudType extends BaseScript
                     }
                     else {
                         curColor = 0xFF00FFFF;
-                        if (PlayState.instance.shits > 0 || PlayState.instance.bads > 0 || misses > 0)
+                        if (PlayState.instance.shits > 0 || PlayState.instance.bads > 0 || misses > 0 || comboBreaks > 0)
                         {
-                           curRating += ' (Actually you kinda fucking suck)';
+                           curRating += ' (Actually you kinda fucking suck';
+                           if (comboBreaks > 0 && misses == 0)
+                           {
+                            curRating += ' [FC])';
+                           }
+                           else
+                           {
+                            curRating += ')';
+                           }
                         }
                     }
                     var curAccuracy:Float = accuracy;
@@ -364,7 +382,7 @@ class HudType extends BaseScript
                         curAccuracy = Math.floor(accuracy);
 
                     var ratingText:String = 'Accuracy: $curAccuracy% | Rating: $curRating';
-                    PlayState.instance.scoreTxt.text = '$vsCharText_Score $score | $vsCharText_MissesPt1 $misses$vsCharText_MissesPt2\n$ratingText';
+                    PlayState.instance.scoreTxt.text = '$vsCharText_Score ${score.formatMoney()} | $vsCharText_MissesPt1 ${misses + comboBreaks}$vsCharText_MissesPt2\n$ratingText';
 
                     @:privateAccess {
                         scoreTxtFormat.format.color = curColor;
@@ -380,7 +398,7 @@ class HudType extends BaseScript
             case "Kade Engine":
                 if (totalPlayed > 0)
                 {
-                    PlayState.instance.scoreTxt.text = 'Score:$score | Combo Breaks:$misses | Accuracy:$accuracy % | Rating: ${GenerateLetterRank(accuracy)}';
+                    PlayState.instance.scoreTxt.text = 'Score:$score | Combo Breaks:${misses + comboBreaks} | Accuracy:$accuracy % | Rating: ${GenerateLetterRank(accuracy)}';
                     ratingTxt.text = 'Perfects: ${PlayState.instance.perfects}\nSicks: ${PlayState.instance.sicks}\nGoods: ${PlayState.instance.goods}\nBads: ${PlayState.instance.bads}\nShits: ${PlayState.instance.shits}';
                 }
         }
@@ -539,6 +557,33 @@ class HudType extends BaseScript
         updateText();
     }
 
+    public override function onRating(name:String) {
+        super.onRating(name);
+
+        switch(hudStyle)
+        {
+            case 'Kade Engine' | 'VS Char':
+                switch (name)
+                {
+                    case 'shit' | 'bad':
+                        if (badsShitsBreakCombo)
+                        {
+                            PlayState.instance.combo = 0;
+                            comboBreaks++;
+                            health -= 0.12; // fuck you get a health penalty.
+                            if (hudStyle == 'VS Char')
+                            {
+                                if (funnyMissTween != null)
+                                    funnyMissTween.cancel();
+
+                                funnyMissText.alpha = 1;
+                                funnyMissTween = FlxTween.tween(funnyMissText, {alpha: 0}, 0.75, {ease: FlxEase.linear});
+                            }
+                        }
+                }
+        }
+    }
+
     public override function onEvent(name:String, value1:String, value2:String, strumTime:Float) {
         super.onEvent(name, value1, value2, strumTime);
 
@@ -564,4 +609,25 @@ private final class ComboRating {
 		this.rating = rating;
 		this.color = color;
 	}
+}
+
+class CamHop extends BaseScript
+{
+    public function new() super('Camera Jump onBeatHit');
+
+    var jumpTween:FlxTween;
+    function doJump()
+    {
+        if (jumpTween != null)
+            jumpTween.cancel();
+
+        camHUD.y = -25;
+
+        jumpTween = FlxTween.tween(camHUD, {y: 0}, 0.1, {ease: FlxEase.linear});
+    }
+
+    public override function onBeatHit() {
+        doJump();
+        super.onBeatHit();
+    }
 }

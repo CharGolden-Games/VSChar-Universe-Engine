@@ -13,11 +13,12 @@ using StringTools;
 class DiscordClient
 {
 	public static var isInitialized:Bool = false;
+	public static var id:String = "1288919403362123827";
 	public function new()
 	{
 		trace("Discord Client starting...");
 		DiscordRpc.start({
-			clientID: "1288919403362123827",
+			clientID: id,
 			onReady: onReady,
 			onError: onError,
 			onDisconnected: onDisconnected
@@ -32,6 +33,13 @@ class DiscordClient
 		}
 
 		DiscordRpc.shutdown();
+	}
+
+	public static function resetID()
+	{
+		shutdown();
+		id = "1288919403362123827";
+		initialize();
 	}
 	
 	public static function shutdown()
@@ -90,6 +98,36 @@ class DiscordClient
 		});
 
 		//trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
+	}
+
+	public static function newPresence(details:String, state:Null<String>, ?smallImageKey : String, ?largeImageKey : String, largeImageText : String, ?hasStartTimestamp : Bool, ?endTimestamp: Float)
+	{
+		var startTimestamp:Float = if(hasStartTimestamp) Date.now().getTime() else 0;
+
+		if (endTimestamp > 0)
+		{
+			endTimestamp = startTimestamp + endTimestamp;
+		}
+
+		DiscordRpc.presence({
+			details: details,
+			state: state,
+			largeImageKey: largeImageKey,
+			largeImageText: largeImageText,
+			smallImageKey : smallImageKey,
+			// Obtained times are in milliseconds so they are divided so Discord can use it
+			startTimestamp : Std.int(startTimestamp / 1000),
+            endTimestamp : Std.int(endTimestamp / 1000)
+		});
+
+		//trace('Discord RPC Updated. Arguments: $details, $state, $smallImageKey, $hasStartTimestamp, $endTimestamp');
+	}
+
+	public static function changeID(token:String)
+	{
+		shutdown();
+		id = token;
+		initialize();
 	}
 
 	#if LUA_ALLOWED

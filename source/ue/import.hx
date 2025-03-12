@@ -1,4 +1,4 @@
-package vschar;
+package ue;
 
 #if !macro
 import flixel.FlxG;
@@ -15,6 +15,9 @@ import flixel.util.FlxTimer;
 import flixel.util.FlxColor;
 import flixel.group.FlxSpriteGroup;
 import FunkinLua.ModchartSprite;
+import ue.backend.CustomIntIterator;
 
 using StringTools;
+using ue.backend.ExtendedStringTools;
+using ue.backend.ExtendedStringTools.MathTools;
 #end

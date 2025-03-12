@@ -1,11 +1,14 @@
 package options.vschar;
 
+import options.Option.AffectsHUDStyle;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.ui.FlxBar;
 import flixel.text.FlxText;
 import flixel.text.FlxText.FlxTextFormat;
 import flixel.util.FlxColor;
+
+using ue.backend.ExtendedStringTools;
 
 class EngineSubstate extends BaseOptionsMenu {
 	var camText:FlxCamera;
@@ -40,6 +43,9 @@ class EngineSubstate extends BaseOptionsMenu {
 	public var healthBar:FlxBar;
 	public var camHUD:FlxCamera;
 
+		// `Option Affects` HUD
+	public var optionAffects:FlxText;
+
     public function new() {
         title = 'Char Engine Settings';
 		rpcTitle = 'Char Engine Settings Menu'; //for Discord Rich Presence
@@ -61,17 +67,33 @@ class EngineSubstate extends BaseOptionsMenu {
 		option.onChange = updateHealthbar;
 
 		var option:Option = new Option('Floor Rating',
-		"Whether to round down the rating when displaying the accuracy\ni.e 97.9% becomes 97%\n(\"VS Char\" HUD Style only).",
+		"Whether to round down the rating when displaying the accuracy\ni.e 97.9% becomes 97%",
 		'floorRating',
 		'bool',
 		false);
+		option.affectsHUD.vc = true;
+		option.hudStyleOption = true;
 		addOption(option);
 
 		var option:Option = new Option('Force Time Bar',
-		"Whether to show the time bar regardless of if the style hides it\n(Applies to \"Codename Engine\", \"Kade Engine\", and \"Funkin'\" styles).",
+		"Whether to show the time bar regardless of if the style hides it",
 		'forceTimeBar',
 		'bool',
 		false);
+		option.affectsHUD.cn = true;
+		option.affectsHUD.ke = true;
+		option.affectsHUD.funkin = true;
+		option.hudStyleOption = true;
+		addOption(option);
+
+		var option:Option = new Option('Bads/Shits break combo',
+		"Whether to break combo on bad/shit rating.",
+		'badsShitsBreakCombo',
+		'bool',
+		false);
+		option.affectsHUD.ke = true;
+		option.affectsHUD.vc = true;
+		option.hudStyleOption = true;
 		addOption(option);
 
 		super();
@@ -114,6 +136,11 @@ class EngineSubstate extends BaseOptionsMenu {
 		ratingTxt = new FlxText(0, 0, FlxG.width, "Perfects: 69\nSicks: 420\nGoods: 20\nBads: 10\nShits: 2", 20);
 		ratingTxt.setFormat(Paths.font('vcr.ttf'), 20, 0xFFFFFFFF, LEFT, OUTLINE, 0xFF000000);
 		ratingTxt.screenCenter(Y);
+		
+		optionAffects = new FlxText(0, 0, FlxG.width, 'Affects HUD style:\n"Universe Engine": false\n"Codename Engine": false\n"Psych Engine": false\n"Kade Engine": false\n"Funkin\'": false\n"VS Char": false', 20);
+		optionAffects.setFormat(Paths.font('vcr.ttf'), 30, 0xFFFFFFFF, RIGHT, OUTLINE, 0xFF000000);
+		optionAffects.borderSize = 3;
+		optionAffects.screenCenter(Y);
 
         UEmiss = new FlxText(XHpos, YHpos - 40, 500, "Screw-Ups: 420", 21);
         UEmiss.setFormat(Paths.font('funkin.ttf'), 21, 0xFFFFFFFF, LEFT, OUTLINE, 0xFF000000);
@@ -131,6 +158,7 @@ class EngineSubstate extends BaseOptionsMenu {
 		accuracyTxt.visible = false;
 		missesTxt.visible = false;
 		ratingTxt.visible = false;
+		optionAffects.visible = false;
 		UEmiss.visible = false;
 		UEscore.visible = false;
 		UErating.visible = false;
@@ -154,6 +182,7 @@ class EngineSubstate extends BaseOptionsMenu {
         add(UEmiss);
         add(UEscore);
         add(UErating);
+		add(optionAffects);
 
 		camHUD.visible = false;
 	}
@@ -162,6 +191,32 @@ class EngineSubstate extends BaseOptionsMenu {
 	{
 		var hudStyle = ClientPrefs.data.hudStyle;
 
+		// Reset the healthbar first.
+		healthBar.createFilledBar(0xFFAF66CE, 0xFF00CCFF);
+		healthBar.updateBar();
+		healthBarBG.loadGraphic(Paths.image('old-healthBar'));
+		try
+		{
+			scoreTxt.removeFormat(scoreTxtFormat);
+		}
+		catch(e:Dynamic) {}
+
+		// Check which HUD to preview!
+		switch(hudStyle)
+		{
+			case "Universe Engine":
+				healthBarBG.loadGraphic(Paths.image('healthBar'));
+
+			case "Funkin'" | 'Kade Engine':
+				healthBar.createFilledBar(0xFFFF0000, 0xFF00FF00);
+				healthBar.updateBar();
+		}
+
+		updateText(hudStyle);
+	}
+
+	function updateText(hudStyle:String)
+	{
 		// Reset the text first.
 		scoreTxt.visible = true;
 		ratingTxt.visible = false;
@@ -174,16 +229,7 @@ class EngineSubstate extends BaseOptionsMenu {
 		scoreTxt.text = 'Score: 12345 | Misses: 420 | Rating: 69.69% - Clear';
 		scoreTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		scoreTxt.fieldWidth = FlxG.width;
-		healthBar.createFilledBar(0xFFAF66CE, 0xFF00CCFF);
-		healthBar.updateBar();
-		healthBarBG.loadGraphic(Paths.image('old-healthBar'));
-		try
-		{
-			scoreTxt.removeFormat(scoreTxtFormat);
-		}
-		catch(e:Dynamic) {}
-
-		// Check which HUD to preview!
+		
 		switch (hudStyle)
 		{
 			case 'Universe Engine':
@@ -191,8 +237,17 @@ class EngineSubstate extends BaseOptionsMenu {
 				UEscore.visible = true;
 				UEmiss.visible = true;
 				UErating.visible = true;
-				healthBarBG.loadGraphic(Paths.image('healthBar'));
-			
+
+			case 'Kade Engine':
+				scoreTxt.text = 'Score:12345 | Combo Breaks:420 | Accuracy:69.69 % | Rating: C';
+				ratingTxt.visible = true;
+
+			case "Funkin'":
+                scoreTxt.size = 16;
+                scoreTxt.text = 'Score: 12,345';
+                scoreTxt.fieldWidth = FlxG.width - 400;
+                scoreTxt.alignment = RIGHT;
+
 			case 'Codename Engine':
 				scoreTxt.setFormat(Paths.font('vcr.ttf'), 16, 0xFFFFFFFF, RIGHT, OUTLINE, 0xFF000000);
 				scoreTxt.text = 'Score:12345';
@@ -201,38 +256,6 @@ class EngineSubstate extends BaseOptionsMenu {
 				scoreTxt.fieldWidth = 300;
 				missesTxt.visible = true;
 				accuracyTxt.visible = true;
-				healthBar.createFilledBar(0xFFFF0000, 0xFF00FF00);
-				healthBar.updateBar();
-
-			case 'Kade Engine':
-				scoreTxt.text = 'Score:12345 | Combo Breaks:420 | Accuracy:69.69 % | Rating: C';
-				ratingTxt.visible = true;
-
-			case "Funkin'":
-                scoreTxt.size = 16;
-                scoreTxt.text = 'Score: 0';
-                scoreTxt.fieldWidth = FlxG.width - 400;
-                scoreTxt.alignment = RIGHT;
-				healthBar.createFilledBar(0xFFFF0000, 0xFF00FF00);
-				healthBar.updateBar();
-
-			case 'VS Char':
-				scoreTxt.size = 16;
-				var curAccuracy:Float = 69.69;
-				if (ClientPrefs.data.floorRating)
-					curAccuracy = Math.floor(69.69);
-				scoreTxt.text = 'How SICK you are: 12345 | Messed Up 420 Times\nAccuracy: $curAccuracy% | Rating: Hehe, Funny Number (Actually you kinda fucking suck)';
-				scoreTxt.addFormat(scoreTxtFormat, 0, 1);
-		}
-
-		updateText(hudStyle);
-	}
-
-	function updateText(hudStyle:String)
-	{
-		switch (hudStyle)
-		{
-			case 'Codename Engine':
                 @:privateAccess {
                     accFormat.format.color = 0xFFFFAA44;
 
@@ -243,31 +266,61 @@ class EngineSubstate extends BaseOptionsMenu {
                     }
                 }
 
-			case 'VS Char':@:privateAccess {
-				scoreTxtFormat.format.color = 0xFF00FF00;
-				
-				for (i => frmtRange in scoreTxt._formatRanges) if (frmtRange.format == scoreTxtFormat) {
-					scoreTxt._formatRanges[i].range.start = scoreTxt.text.length - ('Hehe, Funny Number (Actually you kinda fucking suck)').length;
-					scoreTxt._formatRanges[i].range.end = scoreTxt.text.length;
-					break;
+			case 'VS Char':
+				scoreTxt.size = 16;
+				var curAccuracy:Float = 69.69;
+				if (ClientPrefs.data.floorRating)
+					curAccuracy = curAccuracy.floor();
+				scoreTxt.text = 'How SICK you are: 12,345 | Messed Up 420 Times\nAccuracy: $curAccuracy% | Rating: Hehe, Funny Number (Actually you kinda fucking suck)';
+				scoreTxt.addFormat(scoreTxtFormat, 0, 1);
+
+				@:privateAccess {
+					scoreTxtFormat.format.color = 0xFF00FF00;
+
+					for (i => frmtRange in scoreTxt._formatRanges) if (frmtRange.format == scoreTxtFormat) {
+						scoreTxt._formatRanges[i].range.start = scoreTxt.text.length - ('Hehe, Funny Number (Actually you kinda fucking suck)').length;
+						scoreTxt._formatRanges[i].range.end = scoreTxt.text.length;
+						break;
 				}
 			}
 		}
+
+		if (optionAffects != null)
+		{
+			optionAffects.visible = curOption.hudStyleOption;
+			var affectsHUD:AffectsHUDStyle = curOption.affectsHUD;
+			optionAffects.text = ''
+			+ 'Affects HUD style :      \n\n\n'
+			+ '"Universe Engine" : ${affectsHUD.ue.toString()}\n'
+			+ '"Codename Engine" : ${affectsHUD.cn.toString()}\n'
+			+ '"Psych Engine"    : ${affectsHUD.pe.toString()}\n'
+			+ '"Kade Engine"     : ${affectsHUD.ke.toString()}\n'
+			+ '"Funkin\'"         : ${affectsHUD.funkin.toString()}\n'
+			+ '"VS Char"         : ${affectsHUD.vc.toString()}';
+		}
+	}
+
+	@:deprecated('Deprecated function: Use o.toString() instead (this literally just serves as a redirect.)')
+	function boolToString(bool:Bool):String
+	{
+		return bool.toString();
 	}
 
 	override function changeSelection(change:Int = 0) {
 		super.changeSelection(change);
 
-		if (curOption.name == 'HUD Style')
+		if (camHUD != null)
 		{
-			camHUD.visible = true;
 			updateHealthbar();
-		}
-		else
-		{
-			if (camHUD != null)
+			if (curOption.name == 'HUD Style')
+			{
+				camHUD.visible = true;
+			}
+			else
+			{
 				if (camHUD.visible)
 					camHUD.visible = false;
+			}
 		}
 	}
 }

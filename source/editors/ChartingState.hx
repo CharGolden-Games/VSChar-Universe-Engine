@@ -407,6 +407,7 @@ class ChartingState extends MusicBeatState
 			{name: "Events", label: 'Events'},
 			{name: "Charting", label: 'Charting'},
 			{name: "Note Spamming", label: 'Note Spamming'},
+			{name: "Credits", label: "Credits"}
 		];
 
 		UI_box = new FlxUITabMenu(null, tabs, true);
@@ -464,6 +465,7 @@ class ChartingState extends MusicBeatState
 		addEventsUI();
 		addChartingUI();
 		addNoteStackingUI();
+		addCreditUI();
 		updateHeads();
 		updateWaveform();
 		// UI_box.selected_tab = 4;
@@ -1314,6 +1316,35 @@ class ChartingState extends MusicBeatState
 		tab_group_stacking.add(new FlxText(100, stepperDuplicateAmount.y, 0, "Amount of Duplicates"));
 
 		UI_box.addGroup(tab_group_stacking);
+	}
+
+	var composerInput:FlxUIInputText;
+	var artistInput:FlxUIInputText;
+	function addCreditUI():Void
+	{
+		var tab_group = new FlxUI(null, UI_box);
+		tab_group.name = "Credits";
+
+		if (_song.composer == null)
+			_song.composer = 'None Provided';
+		if (_song.artist == null)
+			_song.artist = 'None Provided';
+
+		composerInput = new FlxUIInputText(15, 40, 150, _song.composer, 8);
+		composerInput.callback = function(name:String, idk:String) {
+			_song.composer = composerInput.text;
+		}
+
+		artistInput = new FlxUIInputText(15, 70, 150, _song.artist, 8);
+		artistInput.callback = function(name:String, idk:String) {
+			_song.artist = artistInput.text;
+		}
+
+		tab_group.add(new FlxText(15, 25, 0, "Composer:"));
+		tab_group.add(new FlxText(15, 55, 0, "Artist:"));
+		tab_group.add(composerInput);
+		tab_group.add(artistInput);
+		UI_box.addGroup(tab_group);
 	}
 
 	var eventDropDown:FlxUIDropDownMenuCustom;

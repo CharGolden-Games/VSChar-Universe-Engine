@@ -27,6 +27,7 @@ import flixel.addons.display.FlxGridOverlay;
 
 using StringTools;
 
+@:deprecated('This is the old FreeplayState only use/update when needed.')
 class FreeplayState extends MusicBeatState
 {
 	var songs:Array<SongMetadata> = [];
