@@ -11,8 +11,7 @@ class VSCharScript extends UEScript {
     public override function onCreatePost() {
         super.onCreatePost();
 
-        if (ClientPrefs.data.vsCharCustomizations)
-            Fire.baseTitle = ExtendedMeta.updateTitle(); // VS Char customization.
+        Fire.baseTitle = ExtendedMeta.updateTitle();
     }
 
     public override function getForcedScripts():Array<BaseScript> {
