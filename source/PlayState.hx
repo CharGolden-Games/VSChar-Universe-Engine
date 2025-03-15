@@ -1513,7 +1513,6 @@ class PlayState extends MusicBeatState
 					iconP2.scale.x = dad.iconScale[0];
 					iconP2.scale.y = dad.iconScale[1];
 					iconP2.updateHitbox();
-					trace('Dad Icon Offsets: ${dad.iconOffsets}');
 				}
 				else
 				{
@@ -1536,7 +1535,6 @@ class PlayState extends MusicBeatState
 					iconP1.scale.x = boyfriend.iconScale[0];
 					iconP1.scale.y = boyfriend.iconScale[1];
 					iconP1.updateHitbox();
-					trace('BF Icon Offsets: ${boyfriend.iconOffsets}');
 				}
 				else
 				{
@@ -5741,8 +5739,8 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
 
-		iconP1.scale.set(1.2, 1.2);
-		iconP2.scale.set(1.2, 1.2);
+		iconP1.scale.set(1.2 * boyfriend.iconScale[0], 1.2 * boyfriend.iconScale[1]);
+		iconP2.scale.set(1.2 * dad.iconScale[0], 1.2 * dad.iconScale[1]);
 
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
