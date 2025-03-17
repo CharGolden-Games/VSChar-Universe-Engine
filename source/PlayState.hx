@@ -1510,8 +1510,7 @@ class PlayState extends MusicBeatState
 						iconP2.iconOffsets = [dad.iconOffsets.idleX, dad.iconOffsets.idleY];
 					}
 					trace('Dad Icon Scale: ${dad.iconScale}');
-					iconP2.scale.x = dad.iconScale[0];
-					iconP2.scale.y = dad.iconScale[1];
+					iconP1.scale.set(dad.iconScale[0], dad.iconScale[1]);
 					iconP2.updateHitbox();
 				}
 				else
@@ -1532,8 +1531,7 @@ class PlayState extends MusicBeatState
 						iconP1.iconOffsets = [boyfriend.iconOffsets.idleX, boyfriend.iconOffsets.idleY];
 					}
 					trace('BF Icon Scale: ${boyfriend.iconScale}');
-					iconP1.scale.x = boyfriend.iconScale[0];
-					iconP1.scale.y = boyfriend.iconScale[1];
+					iconP1.scale.set(boyfriend.iconScale[0], boyfriend.iconScale[1]);
 					iconP1.updateHitbox();
 				}
 				else
@@ -3427,12 +3425,14 @@ class PlayState extends MusicBeatState
 		// FlxG.watch.addQuick('VOL', vocals.amplitudeLeft);
 		// FlxG.watch.addQuick('VOLRight', vocals.amplitudeRight);
 
-		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
-		iconP1.scale.set(mult * boyfriend.iconScale[0], mult * boyfriend.iconScale[1]);
+		var mult:Float = FlxMath.lerp(boyfriend.iconScale[0], iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
+		var mult2:Float = FlxMath.lerp(boyfriend.iconScale[1], iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
+		iconP1.scale.set(mult, mult2);
 		iconP1.updateHitbox();
 
-		var mult:Float = FlxMath.lerp(1, iconP2.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
-		iconP2.scale.set(mult * dad.iconScale[0], mult * dad.iconScale[1]);
+		var mult:Float = FlxMath.lerp(dad.iconScale[0], iconP2.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
+		var mult2:Float = FlxMath.lerp(dad.iconScale[1], iconP2.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
+		iconP2.scale.set(mult, mult2);
 		iconP2.updateHitbox();
 
 		var iconOffset:Int = 26;
@@ -5739,8 +5739,8 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
 
-		iconP1.scale.set(1.2 * boyfriend.iconScale[0], 1.2 * boyfriend.iconScale[1]);
-		iconP2.scale.set(1.2 * dad.iconScale[0], 1.2 * dad.iconScale[1]);
+		iconP1.scale.set(boyfriend.iconScale[0] + 0.2, boyfriend.iconScale[1] + 0.2);
+		iconP2.scale.set(dad.iconScale[0] + 0.2, dad.iconScale[1] + 0.2);
 
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
