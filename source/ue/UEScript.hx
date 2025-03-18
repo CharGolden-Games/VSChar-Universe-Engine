@@ -25,6 +25,8 @@ class UEScript extends BaseScript
     public static var GP:Array<BaseScript> = [];
     public static var EXTERN:Array<BaseScript> = [];
 
+    public static var allLoadedScripts:Map<String, BaseScript> = new Map<String, BaseScript>();
+
     public static var totalScripts(get, null):Int = 0;
     static function get_totalScripts():Int
     {
@@ -88,16 +90,19 @@ class UEScript extends BaseScript
             #if debug trace('INITIALIZING ${script.name}'); #end
             script.initialize();
             script.nameCallback = function(s:String):String return updateScriptText(s, script.name, 'force');
+            allLoadedScripts.set(script.name, script);
         }
         for (script in OPTIONS) {
             #if debug trace('INITIALIZING ${script.name}'); #end
             script.initialize();
             script.nameCallback = function(s:String):String return updateScriptText(s, script.name, 'options');
+            allLoadedScripts.set(script.name, script);
         }
         for (script in GP) {
              #if debug trace('INITIALIZING ${script.name}'); #end
             script.initialize();
             script.nameCallback = function(s:String):String return updateScriptText(s, script.name, 'gp');
+            allLoadedScripts.set(script.name, script);
         }
 
         #if debug trace ('ALL SCRIPTS INITIALIZED'); #end
@@ -426,6 +431,7 @@ class UEScript extends BaseScript
         {
             array.push(script);
             trace('LOADED SCRIPT: "${script.name}".');
+            allLoadedScripts.set(script.name, script);
         }
 
         return array;
@@ -439,6 +445,7 @@ class UEScript extends BaseScript
             GP,
             EXTERN
         ];
+        allLoadedScripts.remove(name);
 
         var pos:Int = -1;
         var found:Bool = false;
@@ -547,6 +554,7 @@ class UEScript extends BaseScript
             catch(e:Dynamic){}
         }
 
+        allLoadedScripts.set(script.name, script);
         return array;
     }
 }

@@ -131,7 +131,9 @@ class SaveVariables
 		'sn' => false, // this is shitty
 		'hdp2' => false,
 		'ipbr' => false, //
-		'ipbrv' => "Normal"
+		'ipbrv' => "Normal",
+		'BFasOpp' => false,
+		'ExtendHealth' => false
 	];
 	public var arrowRGB:Array<Array<FlxColor>> = [
 		[0xFFC24B99, 0xFFFFFFFF, 0xFF3C1F56],

@@ -80,6 +80,7 @@ import sys.io.File;
 import vlc.MP4Handler;
 #end
 import vschar.backend.ExtendedMeta;
+import vschar.objects.HealthBar;
 
 using StringTools;
 
@@ -196,11 +197,12 @@ class PlayState extends MusicBeatState
 
 	public var gfSpeed:Int = 1;
 	public var health:Float = 1;
+	public var maxHealth:Float = 2;
 	public var combo:Int = 0;
 
 	public var healthBarBG:AttachedSprite;
 
-	public var healthBar:FlxBar;
+	public var healthBar:HealthBar;
 
 	var songPercent:Float = 0;
 
@@ -300,6 +302,7 @@ class PlayState extends MusicBeatState
 	//public var UEratingTxt:FlxText;
 	
 	public var lerpScore:Int = 0;
+	public var lerpHealth:Float = 1;
 
 	public var timeTxt:FlxText;
 	var scoreTxtTween:FlxTween;
@@ -573,6 +576,7 @@ class PlayState extends MusicBeatState
 		switch (curStage)
 		{
 			case 'micheals-forest': new vschar.stages.MichealsForest(stageProperties);
+			case 'charisle-streets': new vschar.stages.CharIsleStreets();
 			default:
 				new BaseStage(); // Prevent crashing.
 				createStage(curStage); // Moved the creation code downward so I don't have to look at the sphagetti code and try to carefully place my `new StageNameHere()`'s
@@ -897,13 +901,14 @@ class PlayState extends MusicBeatState
 		if (ClientPrefs.data.downScroll)
 			healthBarBG.y = 0.11 * FlxG.height;
 
-		healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
-			'health', 0, 2);
-		healthBar.scrollFactor.set();
-		// healthBar
-		healthBar.visible = !ClientPrefs.data.hideHud;
-		healthBar.alpha = ClientPrefs.data.healthBarAlpha;
-		healthBarBG.sprTracker = healthBar;
+		healthBar = new HealthBar(0, FlxG.height * 0.89, switch (ClientPrefs.data.hudStyle) {
+			case 'Universe Engine':
+				'healthBar';
+			default:
+				'old-healthBar';
+		}, function() return lerpHealth);
+		healthBar.screenCenter(X);
+		healthBar.healthBarBG.visible = false; // For backward compat reasons, this should be hidden UNLESS SPECIFICALLY REQUIRED TO BE USED.
 		if (ClientPrefs.data.lhpbgb)
 		{
 			add(healthBarBG);
@@ -1681,10 +1686,8 @@ class PlayState extends MusicBeatState
 
 	public function reloadHealthBarColors()
 	{
-		healthBar.createFilledBar(FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]),
-			FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]));
-
-		healthBar.updateBar();
+		healthBar.changeColors(FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]),
+		FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]));
 	}
 
 	public function addCharacterToList(newCharacter:String, type:Int)
@@ -3470,8 +3473,8 @@ class PlayState extends MusicBeatState
 			- (150 * iconP2.scale.x) / 2
 			- iconOffset * 2;
 
-		if (health > 2)
-			health = 2;
+		if (health > maxHealth)
+			health = maxHealth;
 
 		if (healthBar.percent < 20)
 			iconP1.animation.curAnim.curFrame = 1;
@@ -3764,6 +3767,8 @@ class PlayState extends MusicBeatState
 		lerpScore = Math.floor(FlxMath.lerp(lerpScore, songScore, CoolUtil.boundTo(elapsed * 17, 0, 1)));
 		if (Math.abs(lerpScore - songScore) <= 10)
 			lerpScore = songScore;
+
+		lerpHealth = FlxMath.lerp(lerpHealth, health, 0.15);
 
 		setOnLuas('lerpScore', lerpScore);
 

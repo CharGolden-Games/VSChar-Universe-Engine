@@ -116,6 +116,10 @@
 	<assets path="assets/week6"         											library="week6"         		exclude="*.mp3" unless="web"/>
 	<assets path="assets/week7"         											library="week7"         		exclude="*.ogg" if="web"/>
 	<assets path="assets/week7"         											library="week7"         		exclude="*.mp3" unless="web"/>
+	<!-- <assets path="assets/vschar_stages/streets" rename="assets/charisle-streets"	library="charisle-streets"/> -->
+	<!-- 
+		DO NOT USE THESE FOLDERS YET FOR THE STAGES, FEATURE IS NOT DONE!
+	-->
 	<assets path="assets/stage_assets"  rename="assets/images/stage_assets"       	library="stage_assets"         	exclude="*.ogg" if="web"/>
 	<assets path="assets/stage_assets"  rename="assets/images/stage_assets"       	library="stage_assets"         	exclude="*.mp3" unless="web"/>
 	<assets path="assets/embed" embed="true"/>

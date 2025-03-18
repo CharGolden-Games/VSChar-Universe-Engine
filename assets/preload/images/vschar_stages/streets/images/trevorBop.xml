@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="trevorBop.png">
+	<!-- Created with Adobe Animate version 22.0.5.191 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="TrevorBop0000" x="0" y="0" width="314" height="576" frameX="-2" frameY="-23" frameWidth="316" frameHeight="599"/>
+	<SubTexture name="TrevorBop0001" x="314" y="0" width="310" height="578" frameX="-2" frameY="-21" frameWidth="316" frameHeight="599"/>
+	<SubTexture name="TrevorBop0002" x="624" y="0" width="304" height="599" frameX="-1" frameY="0" frameWidth="316" frameHeight="599"/>
+	<SubTexture name="TrevorBop0003" x="624" y="0" width="304" height="599" frameX="-1" frameY="0" frameWidth="316" frameHeight="599"/>
+	<SubTexture name="TrevorBop0004" x="928" y="0" width="274" height="598" frameX="0" frameY="-1" frameWidth="316" frameHeight="599"/>
+	<SubTexture name="TrevorBop0005" x="1202" y="0" width="276" height="598" frameX="0" frameY="-1" frameWidth="316" frameHeight="599"/>
+	<SubTexture name="TrevorBop0006" x="1478" y="0" width="281" height="598" frameX="0" frameY="-1" frameWidth="316" frameHeight="599"/>
+	<SubTexture name="TrevorBop0007" x="1478" y="0" width="281" height="598" frameX="0" frameY="-1" frameWidth="316" frameHeight="599"/>
+	<SubTexture name="TrevorBop0008" x="1478" y="0" width="281" height="598" frameX="0" frameY="-1" frameWidth="316" frameHeight="599"/>
+	<SubTexture name="TrevorBop0009" x="1478" y="0" width="281" height="598" frameX="0" frameY="-1" frameWidth="316" frameHeight="599"/>
+</TextureAtlas>

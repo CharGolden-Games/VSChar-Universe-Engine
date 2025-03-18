@@ -631,3 +631,259 @@ class CamHop extends BaseScript
         super.onBeatHit();
     }
 }
+
+class ExtendHealthbar extends BaseScript
+{
+    public function new() super('Extend Healthbar');
+
+    override function onCreatePost() {
+        super.onCreatePost();
+        
+        PlayState.instance.healthBar.changeMax(4);
+        PlayState.instance.healthBar.scaleHealthBar(1.5);
+        PlayState.instance.healthBar.screenCenter(X);
+        PlayState.instance.healthBar.x += 4;
+        PlayState.instance.healthBar.y += 4;
+        PlayState.instance.healthBarBG.scale.set(1.5, 1);
+        PlayState.instance.healthBarBG.updateHitbox();
+        PlayState.instance.healthBarBG.screenCenter(X);
+        PlayState.instance.health = 2;
+        PlayState.instance.lerpHealth = 2;
+    }
+}
+
+/**
+ * AKA Healthdrain on opp note hit but as if the player were to be playing as the opp.
+ */
+class BFasOpp extends BaseScript
+{
+    public function new() super('Health Drain');
+
+	var lastRating:FlxSprite;
+	var lastScore:Array<FlxSprite> = [];
+	var daPixelZoom:Float = 6;
+    var oppCombo:Int = 0;
+    function healthCalc(noteID:Int):Float
+    {
+        return (notes.members[noteID].hitHealth * healthGainMult) * healthLossMult;
+    }
+
+    public override function opponentNoteHit(id:Int, direction:Float, noteType:String, isSustainNote:Bool) {
+        super.opponentNoteHit(id, direction, noteType, isSustainNote);
+
+        if (checkHealth(id))
+            health -= healthCalc(id);
+
+        var pullTable:Array<Float> = [0.1, 0.6, 0.9, 1, 0.7];
+        if (hudStyle == 'Kade Engine' || hudStyle == 'VS Char')
+            pullTable = [0.7, 0.9, 1, 0.1, 0.1]; // Give ya an easier time for these styles
+        fauxComboPopup(isSustainNote, ranIntWeighted(1, 5, pullTable));
+    }
+
+    function ranIntWeighted(min:Int, max:Int, weights:Array<Float>, ?excludes:Array<Int>):Int
+    {
+        var totalLength:Int = 0;
+        for (i in min...max)
+        {
+            totalLength++;
+            if (weights[i] < 1)
+                weights[i] = 1;
+        }
+        if (!weights.contains(1))
+            weights[FlxG.random.int(0, weights.length - 1)] = 1;
+
+        if (weights.length > totalLength)
+        {
+            var newWeights:Array<Float> = [];
+            for(i in 0...totalLength)
+                newWeights.push(weights[i]);
+            weights = newWeights;
+        }
+
+        var ranFloat:Float = FlxG.random.float().roundDecimal(1);
+
+        var finalMin = min;
+
+        for (weight in weights)
+        {
+            var value:Int = min;
+            for (i in 0...totalLength)
+            {
+                value = min + i;
+            }
+            if (weight <= ranFloat)
+                finalMin = value;
+        }
+        
+        return FlxG.random.int(finalMin, max);
+    }
+
+    function checkHealth(id:Int)
+    {
+        return (health - healthCalc(id) > 0);
+    }
+
+    /**
+     * MOST OF THIS IS STOLEN FROM PLAYSTATE MWAHAHAHAHAHA
+     * @param isSus 
+     * @param ratingID 
+     */
+    function fauxComboPopup(isSus:Bool, ratingID:Int)
+    {
+        if (isSus)
+            return;
+        var ranRating:String = switch(ratingID)
+        {
+            case 1:
+                'shit';
+            case 2:
+                'bad';
+            case 3:
+                'good';
+            case 4:
+                'sick';
+            default:
+                'perfect';
+        };
+
+        if (ranRating == 'shit' || ranRating == 'bad')
+        {
+            if (hudStyle == 'Kade Engine' || hudStyle == 'VS Char')
+            {
+                oppCombo = 0;
+                health += 0.12; // Re-make the thing
+            }
+        }
+
+        oppCombo++;
+		var pixelShitPart1:String = '';
+		var pixelShitPart2:String = '';
+		if (PlayState.isPixelStage)
+		{
+			pixelShitPart1 = 'pixelUI/';
+			pixelShitPart2 = '-pixel';
+		}
+		var placement:String = Std.string(oppCombo);
+
+		var coolText:FlxText = new FlxText(0, 0, 0, placement, 32);
+		coolText.screenCenter();
+		coolText.x = FlxG.width * 0.35;
+
+        var rating:FlxSprite = new FlxSprite();
+        var sprite:String = ranRating;
+        if (PlayState.isPixelStage)
+            sprite = 'pixelUI/sick-pixel';
+
+        rating.loadGraphic(Paths.image(sprite));
+        rating.cameras = [camHUD];
+		rating.screenCenter();
+		rating.x = coolText.x - 40;
+		rating.y -= 60;
+		rating.acceleration.y = 550 * playbackRate * playbackRate;
+		rating.velocity.y -= FlxG.random.int(140, 175) * playbackRate;
+		rating.velocity.x -= FlxG.random.int(0, 10) * playbackRate;
+		rating.visible = (!ClientPrefs.data.hideHud && showRating);
+		rating.x += ClientPrefs.data.comboOffset[0];
+		rating.y -= ClientPrefs.data.comboOffset[1];
+
+		insert(members.indexOf(strumLineNotes), rating);
+        
+		if (!ClientPrefs.data.comboStacking)
+            {
+                if (lastRating != null)
+                    lastRating.kill();
+                lastRating = rating;
+            }
+    
+            if (!PlayState.isPixelStage)
+            {
+                rating.setGraphicSize(Std.int(rating.width * 0.7));
+                rating.antialiasing = ClientPrefs.data.globalAntialiasing;
+            }
+            else
+            {
+                rating.setGraphicSize(Std.int(rating.width * daPixelZoom * 0.85));
+            }
+
+            
+		rating.updateHitbox();
+
+		var seperatedScore:Array<Int> = [];
+
+		if (oppCombo >= 1000)
+		{
+			seperatedScore.push(Math.floor(oppCombo / 1000) % 10);
+		}
+		seperatedScore.push(Math.floor(oppCombo / 100) % 10);
+		seperatedScore.push(Math.floor(oppCombo / 10) % 10);
+		seperatedScore.push(oppCombo % 10);
+
+		var daLoop:Int = 0;
+		var xThing:Float = 0;
+		if (lastScore != null)
+		{
+			while (lastScore.length > 0)
+			{
+				lastScore[0].kill();
+				lastScore.remove(lastScore[0]);
+			}
+		}
+		for (i in seperatedScore)
+		{
+			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
+			numScore.cameras = [camHUD];
+			numScore.screenCenter();
+			numScore.x = coolText.x + (43 * daLoop) - 90;
+			numScore.y += 80;
+
+			numScore.x += ClientPrefs.data.comboOffset[2];
+			numScore.y -= ClientPrefs.data.comboOffset[3];
+
+			if (!ClientPrefs.data.comboStacking)
+				lastScore.push(numScore);
+
+			if (!PlayState.isPixelStage)
+			{
+				numScore.antialiasing = ClientPrefs.data.globalAntialiasing;
+				numScore.setGraphicSize(Std.int(numScore.width * 0.5));
+			}
+			else
+			{
+				numScore.setGraphicSize(Std.int(numScore.width * daPixelZoom));
+			}
+			numScore.updateHitbox();
+
+			numScore.acceleration.y = FlxG.random.int(200, 300) * playbackRate * playbackRate;
+			numScore.velocity.y -= FlxG.random.int(140, 160) * playbackRate;
+			numScore.velocity.x = FlxG.random.float(-5, 5) * playbackRate;
+			numScore.visible = !ClientPrefs.data.hideHud;
+
+			// if (combo >= 10 || combo == 0)
+			if (showComboNum)
+				insert(members.indexOf(strumLineNotes), numScore);
+
+			FlxTween.tween(numScore, {alpha: 0}, 0.2 / playbackRate, {
+				onComplete: function(tween:FlxTween)
+				{
+					numScore.destroy();
+				},
+				startDelay: Conductor.crochet * 0.002 / playbackRate
+			});
+
+			daLoop++;
+			if (numScore.x > xThing)
+				xThing = numScore.x;
+		}
+		/*
+			trace(combo);
+			trace(seperatedScore);
+		 */
+
+		coolText.text = Std.string(seperatedScore);
+		// add(coolText);
+
+		FlxTween.tween(rating, {alpha: 0}, 0.2 / playbackRate, {
+			startDelay: Conductor.crochet * 0.001 / playbackRate
+		});
+    }
+}

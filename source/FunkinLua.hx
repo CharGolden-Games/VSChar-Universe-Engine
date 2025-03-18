@@ -2471,8 +2471,7 @@ class FunkinLua
 			if (!rightHex.startsWith('0x'))
 				right = Std.parseInt('0xff' + rightHex);
 
-			PlayState.instance.healthBar.createFilledBar(left, right);
-			PlayState.instance.healthBar.updateBar();
+			PlayState.instance.healthBar.changeColors(left, right);
 		});
 		Lua_helper.add_callback(lua, "setTimeBarColors", function(leftHex:String, rightHex:String)
 		{

@@ -120,7 +120,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		option.onChange = onChangeChartOption;
 		optionsArray.push(option);
 
-		var option:GameplayOption = new GameplayOption('Health Drain', 'hd', 'bool', false);
+		var option:GameplayOption = new GameplayOption('Health Drain', 'BFasOpp', 'bool', false);
 		option.onChange = onChangeChartOption;
 		optionsArray.push(option);
 
@@ -129,6 +129,10 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		optionsArray.push(option);
 
 		var option:GameplayOption = new GameplayOption('Increase HlthDrn on miss', 'hdp2', 'bool', false);
+		option.onChange = onChangeChartOption;
+		optionsArray.push(option);
+
+		var option:GameplayOption = new GameplayOption('Extended HealthBar', 'ExtendHealth', 'bool', false);
 		option.onChange = onChangeChartOption;
 		optionsArray.push(option);
 

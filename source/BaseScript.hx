@@ -48,8 +48,12 @@ class BaseScript {
     var notes(get, null):FlxTypedGroup<Note>;
     var unspawnNotes(get, null):Array<Note>;
     var eventNotes(get, null):Array<EventNote>;
+	var strumLineNotes(get, null):FlxTypedGroup<StrumNote>;
     var playerStrums(get, null):FlxTypedGroup<StrumNote>;
     var opponentStrums(get, null):FlxTypedGroup<StrumNote>;
+    var showCombo(get, null):Bool;
+    var showComboNum(get, null):Bool;
+    var showRating(get, null):Bool;
 
     function get_boyfriend():Boyfriend return game.boyfriend;
     function get_gf():Character return game.gf;
@@ -60,8 +64,12 @@ class BaseScript {
     function get_notes():FlxTypedGroup<Note> return PlayState.instance.notes;
     function get_unspawnNotes():Array<Note> return PlayState.instance.unspawnNotes;
     function get_eventNotes():Array<EventNote> return PlayState.instance.eventNotes;
+    function get_strumLineNotes():FlxTypedGroup<StrumNote> return PlayState.instance.strumLineNotes;
     function get_playerStrums():FlxTypedGroup<StrumNote> return PlayState.instance.playerStrums;
     function get_opponentStrums():FlxTypedGroup<StrumNote> return PlayState.instance.opponentStrums;
+    function get_showCombo():Bool return PlayState.instance.showCombo;
+    function get_showComboNum():Bool return PlayState.instance.showComboNum;
+    function get_showRating():Bool return PlayState.instance.showRating;
 
     // Song Shit.
     var difficultyName(get, null):String;
@@ -74,6 +82,7 @@ class BaseScript {
     var curStep(get, null):Int;
     var curSection(get, null):Int;
     var mustHitSection(get, null):Bool;
+    var playbackRate(get, null):Float;
 
     function get_difficultyName():String return CoolUtil.difficulties[PlayState.storyDifficulty];
     function get_crochet():Float return Conductor.crochet;
@@ -85,6 +94,7 @@ class BaseScript {
     function get_curStep():Int return game.curStep;
     function get_curSection():Int return @:privateAccess PlayState.instance.curSection;
     function get_mustHitSection():Bool return PlayState.SONG.notes[curSection].mustHitSection;
+    function get_playbackRate():Float return PlayState.instance.playbackRate;
 
     // Score Shit.
     var score(get, null):Int;
@@ -94,9 +104,11 @@ class BaseScript {
     var scoreActual(get, null):Int;
     var misses(get, null):Int;
     var health(get, set):Float;
+    var combo(get, null):Int;
     function get_score():Int return game.lerpScore;
     function get_scoreActual():Int return game.songScore;
     function get_misses():Int return game.songMisses;
+    function get_combo():Int return game.combo;
     function get_health():Float return PlayState.instance.health;
     function set_health(value:Float):Float return PlayState.instance.health = value;
 
