@@ -26,6 +26,13 @@ typedef WeekFile =
 	var hideStoryMode:Bool;
 	var hideFreeplay:Bool;
 	var difficulties:String;
+	var icons:Null<Array<Null<AnimIcon>>>;
+}
+
+typedef AnimIcon = {
+	var animIcon:Bool;
+	var idle:Null<String>;
+	var lose:Null<String>;
 }
 
 class WeekData
@@ -49,6 +56,8 @@ class WeekData
 	public var hideFreeplay:Bool;
 	public var difficulties:String;
 
+	public var icons:Null<Array<Null<AnimIcon>>>;
+
 	public var fileName:String;
 
 	public static function createWeekFile():WeekFile
@@ -69,7 +78,24 @@ class WeekData
 			hiddenUntilUnlocked: false,
 			hideStoryMode: false,
 			hideFreeplay: false,
-			difficulties: ''
+			difficulties: '',
+			icons: [
+				{
+					animIcon: false,
+					idle: null,
+					lose: null
+				},
+				{
+					animIcon: false,
+					idle: null,
+					lose: null
+				},
+				{
+					animIcon: false,
+					idle: null,
+					lose: null
+				}
+			]
 		};
 		return weekFile;
 	}
@@ -89,6 +115,13 @@ class WeekData
 		hideStoryMode = weekFile.hideStoryMode;
 		hideFreeplay = weekFile.hideFreeplay;
 		difficulties = weekFile.difficulties;
+		if (weekFile.icons == null)
+		{
+			weekFile.icons = [];
+			for (i in 0...songs.length)
+				weekFile.icons.push({animIcon: false, idle: null, lose: null});
+		}
+		icons = weekFile.icons;
 
 		this.fileName = fileName;
 	}

@@ -697,6 +697,7 @@ class WeekEditorFreeplayState extends MusicBeatState
 	}
 
 	var UI_box:FlxUITabMenu;
+	var UI_iconBox:FlxUITabMenu;
 	var blockPressWhileTypingOn:Array<FlxUIInputText> = [];
 
 	function addEditorBox()
@@ -707,8 +708,8 @@ class WeekEditorFreeplayState extends MusicBeatState
 		UI_box.x = FlxG.width - UI_box.width - 100;
 		UI_box.y = FlxG.height - UI_box.height - 60;
 		UI_box.scrollFactor.set();
-
-		UI_box.selected_tab_id = 'Week';
+		
+		UI_box.selected_tab_id = 'Freeplay';
 		addFreeplayUI();
 		add(UI_box);
 
@@ -756,19 +757,25 @@ class WeekEditorFreeplayState extends MusicBeatState
 		}
 	}
 
+	var hideFreeplayCheckbox:FlxUICheckBox;
 	var bgColorStepperR:FlxUINumericStepper;
 	var bgColorStepperG:FlxUINumericStepper;
 	var bgColorStepperB:FlxUINumericStepper;
+
+	var inputTexts:Array<FlxUIInputText>;
 	var iconInputText:FlxUIInputText;
+	var hasAnimatedIcon:FlxUICheckBox;
+	var animIconIdleName:FlxUIInputText;
+	var animIconLosingName:FlxUIInputText;
 
 	function addFreeplayUI()
 	{
 		var tab_group = new FlxUI(null, UI_box);
 		tab_group.name = "Freeplay";
 
-		bgColorStepperR = new FlxUINumericStepper(10, 40, 20, 255, 0, 255, 0);
-		bgColorStepperG = new FlxUINumericStepper(80, 40, 20, 255, 0, 255, 0);
-		bgColorStepperB = new FlxUINumericStepper(150, 40, 20, 255, 0, 255, 0);
+		bgColorStepperR = new FlxUINumericStepper(10, 20, 20, 255, 0, 255, 0);
+		bgColorStepperG = new FlxUINumericStepper(80, 20, 20, 255, 0, 255, 0);
+		bgColorStepperB = new FlxUINumericStepper(150, 20, 20, 255, 0, 255, 0);
 
 		var copyColor:FlxButton = new FlxButton(10, bgColorStepperR.y + 25, "Copy Color", function()
 		{
@@ -803,17 +810,38 @@ class WeekEditorFreeplayState extends MusicBeatState
 			}
 		});
 
-		iconInputText = new FlxUIInputText(10, bgColorStepperR.y + 70, 100, '', 8);
+		iconInputText = new FlxUIInputText(10, bgColorStepperR.y + 90, 100, '', 8);
 
-		var hideFreeplayCheckbox:FlxUICheckBox = new FlxUICheckBox(10, iconInputText.y + 30, null, null, "Hide Week from Freeplay?", 100);
+		hideFreeplayCheckbox = new FlxUICheckBox(10, iconInputText.y + 30, null, null, "Hide Week from Freeplay?", 100);
 		hideFreeplayCheckbox.checked = weekFile.hideFreeplay;
 		hideFreeplayCheckbox.callback = function()
 		{
 			weekFile.hideFreeplay = hideFreeplayCheckbox.checked;
 		};
 
+		hasAnimatedIcon = new FlxUICheckBox(120, hideFreeplayCheckbox.y, null, null, "Is Animated Icon?", 100);
+		hasAnimatedIcon.checked = weekFile.icons[curSelected].animIcon;
+		hasAnimatedIcon.callback = function()
+		{
+			weekFile.icons[curSelected].animIcon = hasAnimatedIcon.checked;
+			animIconCallback(hasAnimatedIcon.checked);
+		};
+
+		animIconIdleName = new FlxUIInputText(120, iconInputText.y - 18, 100, '', 8);
+		animIconIdleName.callback = function(value:String, idk:String) {
+			weekFile.icons[curSelected].idle = animIconIdleName.text;
+			animIconCallback(hasAnimatedIcon.checked);
+		};
+		animIconLosingName = new FlxUIInputText(120, iconInputText.y, 100, '', 8);
+		animIconLosingName.callback = function(value:String, idk:String) {
+			weekFile.icons[curSelected].lose = animIconLosingName.text;
+			animIconCallback(hasAnimatedIcon.checked);
+		};
+
+
 		tab_group.add(new FlxText(10, bgColorStepperR.y - 18, 0, 'Selected background Color R/G/B:'));
 		tab_group.add(new FlxText(10, iconInputText.y - 18, 0, 'Selected icon:'));
+		tab_group.add(new FlxText(75, iconInputText.y - 36, 0, 'Animated Icon Names (Idle/Losing)'));
 		tab_group.add(bgColorStepperR);
 		tab_group.add(bgColorStepperG);
 		tab_group.add(bgColorStepperB);
@@ -821,7 +849,54 @@ class WeekEditorFreeplayState extends MusicBeatState
 		tab_group.add(pasteColor);
 		tab_group.add(iconInputText);
 		tab_group.add(hideFreeplayCheckbox);
+		tab_group.add(hasAnimatedIcon);
+		tab_group.add(animIconIdleName);
+		tab_group.add(animIconLosingName);
+		inputTexts = [iconInputText, animIconIdleName, animIconLosingName];
 		UI_box.addGroup(tab_group);
+	}
+
+	function animIconCallback(value:Bool = false)
+	{
+		var leHealthIcon:HealthIcon = iconArray[curSelected];
+
+		if (value)
+			{
+				try
+				{
+					@:privateAccess{ leHealthIcon.char = ''; } // Stupid bugfix pt.2
+					leHealthIcon.changeIcon(iconInputText.text);
+					leHealthIcon.frames = Paths.getSparrowAtlas(leHealthIcon.imageFile);
+					leHealthIcon.animation.addByPrefix('idle', weekFile.icons[curSelected].idle, 24, true);
+					leHealthIcon.animation.addByPrefix('losing', weekFile.icons[curSelected].lose, 24, true);
+					leHealthIcon.animation.play('idle');
+					leHealthIcon.offset.set(0, 0);
+					@:privateAccess {
+						leHealthIcon.iconOffsets = [0, 0];
+					}
+
+					if (!hasAnimatedIcon.checked)
+						{ // Stupid bugfix.
+							@:privateAccess{ leHealthIcon.char = ''; } // Stupid bugfix pt.2
+							leHealthIcon.changeIcon(iconInputText.text);
+							leHealthIcon.animation.play(iconInputText.text);
+						}
+						
+				}
+				catch(e:Dynamic)
+				{
+					trace('Icon does not have an XML!');
+					@:privateAccess{ leHealthIcon.char = ''; } // Stupid bugfix pt.2
+					leHealthIcon.changeIcon(iconInputText.text);
+					leHealthIcon.animation.play(iconInputText.text);
+				}
+			}
+			else
+			{
+				@:privateAccess{ leHealthIcon.char = ''; } // Stupid bugfix pt.2
+				leHealthIcon.changeIcon(iconInputText.text);
+				leHealthIcon.animation.play(iconInputText.text);
+			}
 	}
 
 	function updateBG()
@@ -870,6 +945,13 @@ class WeekEditorFreeplayState extends MusicBeatState
 		bgColorStepperR.value = Math.round(weekFile.songs[curSelected][2][0]);
 		bgColorStepperG.value = Math.round(weekFile.songs[curSelected][2][1]);
 		bgColorStepperB.value = Math.round(weekFile.songs[curSelected][2][2]);
+		hasAnimatedIcon.checked = weekFile.icons[curSelected].animIcon;
+		if (weekFile.icons[curSelected].idle == null)
+			weekFile.icons[curSelected].idle = '';
+		if (weekFile.icons[curSelected].lose == null)
+			weekFile.icons[curSelected].lose = '';
+		animIconIdleName.text = weekFile.icons[curSelected].idle;
+		animIconLosingName.text = weekFile.icons[curSelected].lose;
 		updateBG();
 	}
 
@@ -885,14 +967,35 @@ class WeekEditorFreeplayState extends MusicBeatState
 			return;
 		}
 
+		for (text in inputTexts)
+		{
+			if (text.hasFocus)
+				{
+					FlxG.sound.muteKeys = [];
+					FlxG.sound.volumeDownKeys = [];
+					FlxG.sound.volumeUpKeys = [];
+					break;
+				}
+		}
 		if (iconInputText.hasFocus)
 		{
-			FlxG.sound.muteKeys = [];
-			FlxG.sound.volumeDownKeys = [];
-			FlxG.sound.volumeUpKeys = [];
 			if (FlxG.keys.justPressed.ENTER)
 			{
 				iconInputText.hasFocus = false;
+			}
+		}
+		else if (animIconIdleName.hasFocus)
+		{
+			if (FlxG.keys.justPressed.ENTER)
+			{
+				animIconIdleName.hasFocus = false;
+			}
+		}
+		else if (animIconLosingName.hasFocus)
+		{
+			if (FlxG.keys.justPressed.ENTER)
+			{
+				animIconLosingName.hasFocus = false;
 			}
 		}
 		else

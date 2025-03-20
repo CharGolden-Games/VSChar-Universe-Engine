@@ -99,6 +99,10 @@ class FreeplayState extends MusicBeatState
 			var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
 			var leSongs:Array<String> = [];
 			var leChars:Array<String> = [];
+			if (leWeek.icons == null)
+				leWeek.icons = [];
+			for (song in 0...leWeek.songs.length)
+				leWeek.icons.push({animIcon: false, idle: null, lose: null});
 
 			for (j in 0...leWeek.songs.length)
 			{
@@ -107,14 +111,18 @@ class FreeplayState extends MusicBeatState
 			}
 
 			WeekData.setDirectoryFromWeek(leWeek);
+			var songNum:Int = -1;
 			for (song in leWeek.songs)
 			{
+				songNum++;
 				var colors:Array<Int> = song[2];
 				if (colors == null || colors.length < 3)
 				{
 					colors = [146, 113, 253];
 				}
-				addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
+				if (leWeek.icons[songNum] == null)
+					leWeek.icons[songNum] = {animIcon: false, idle: null, lose: null};
+				addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]), leWeek.icons[songNum]);
 			}
 		}
 		WeekData.loadTheFirstEnabledMod();
@@ -211,6 +219,7 @@ class FreeplayState extends MusicBeatState
 
 			Paths.currentModDirectory = songs[i].folder;
 			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
+			checkForAnimIcon(icon, i);
 			icon.sprTracker = songText;
 			icon.ID = i;
 			grpIcons.add(icon);
@@ -330,6 +339,45 @@ class FreeplayState extends MusicBeatState
 		super.create();
 	}
 
+	function checkForAnimIcon(leHealthIcon:HealthIcon, index:Int)
+	{
+		var value = songs[index].icons.animIcon;
+		if (value)
+			{
+				try
+				{
+					@:privateAccess{ leHealthIcon.char = ''; } // Stupid bugfix pt.2
+					leHealthIcon.changeIcon(songs[index].songCharacter);
+					leHealthIcon.frames = Paths.getSparrowAtlas(leHealthIcon.imageFile);
+					leHealthIcon.animation.addByPrefix('idle', songs[index].icons.idle, 24, true);
+					leHealthIcon.animation.addByPrefix('losing', songs[index].icons.lose, 24, true);
+					leHealthIcon.animation.play('idle');
+					leHealthIcon.offset.set(0, 0);
+					@:privateAccess {
+						leHealthIcon.iconOffsets = [0, 0];
+					}
+
+					if (!value)
+						{ // Stupid bugfix.
+							@:privateAccess{ leHealthIcon.char = ''; } // Stupid bugfix pt.2
+							leHealthIcon.changeIcon(songs[index].songCharacter);
+						}
+						
+				}
+				catch(e:Dynamic)
+				{
+					trace('Icon does not have an XML!');
+					@:privateAccess{ leHealthIcon.char = ''; } // Stupid bugfix pt.2
+					leHealthIcon.changeIcon(songs[index].songCharacter);
+				}
+			}
+			else
+			{
+				@:privateAccess{ leHealthIcon.char = ''; } // Stupid bugfix pt.2
+				leHealthIcon.changeIcon(songs[index].songCharacter);
+			}
+	}
+
 	function checkForSongsThatMatch(?start:String = '')
 	{
 		var foundSongs:Int = 0;
@@ -390,8 +438,14 @@ class FreeplayState extends MusicBeatState
 				leChars.push(leWeek.songs[j][1]);
 			}
 			WeekData.setDirectoryFromWeek(leWeek);
+			if (leWeek.icons == null)
+				leWeek.icons = [];
+			for (song in 0...leWeek.songs.length)
+				leWeek.icons.push({animIcon: false, idle: null, lose: null});
+			var songNum:Int = -1;
 			for (song in leWeek.songs)
 			{
+				songNum++;
 				var colors:Array<Int> = song[2];
 				if (colors == null || colors.length < 3)
 				{
@@ -402,10 +456,10 @@ class FreeplayState extends MusicBeatState
 					var songName = song[0].toLowerCase();
 					var s = start.toLowerCase();
 					if (songName.indexOf(s) != -1)
-						addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
+						addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]), leWeek.icons[songNum]);
 				}
 				else
-					addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2])); // ??????????
+					addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]), leWeek.icons[songNum]); // ??????????
 			}
 		}
 		regenList();
@@ -418,9 +472,9 @@ class FreeplayState extends MusicBeatState
 		super.closeSubState();
 	}
 
-	public function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int)
+	public function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int, ?icons:Null<AnimIcon>)
 	{
-		songs.push(new SongMetadata(songName, weekNum, songCharacter, color));
+		songs.push(new SongMetadata(songName, weekNum, songCharacter, color, icons));
 	}
 
 	function weekIsLocked(name:String):Bool
@@ -729,7 +783,7 @@ class FreeplayState extends MusicBeatState
 			else if (controls.RESET)
 			{
 				persistentUpdate = false;
-				openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
+				openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter, songs[curSelected].icons));
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 			}
 		}
@@ -898,14 +952,16 @@ class SongMetadata
 	public var songCharacter:String = "";
 	public var color:Int = -7179779;
 	public var folder:String = "";
+	public var icons:Null<AnimIcon>;
 
-	public function new(song:String, week:Int, songCharacter:String, color:Int)
+	public function new(song:String, week:Int, songCharacter:String, color:Int, ?icons:Null<AnimIcon>)
 	{
 		this.songName = song;
 		this.week = week;
 		this.songCharacter = songCharacter;
 		this.color = color;
 		this.folder = Paths.currentModDirectory;
+		this.icons = icons;
 		if (this.folder == null)
 			this.folder = '';
 	}
