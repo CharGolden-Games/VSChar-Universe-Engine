@@ -545,6 +545,12 @@ class WeekEditorState extends MusicBeatState
 			if (rawJson != null)
 			{
 				loadedWeek = cast Json.parse(rawJson);
+				if (loadedWeek.icons == null)
+				{
+					loadedWeek.icons = [];
+					for (song in loadedWeek.songs)
+						loadedWeek.icons.push({animIcon: false, idle: null, lose: null});
+				}
 				if (loadedWeek.weekCharacters != null && loadedWeek.weekName != null) // Make sure it's really a week
 				{
 					var cutName:String = _file.name.substr(0, _file.name.length - 5);
