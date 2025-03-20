@@ -1,3 +1,5 @@
+package stages.base.objects;
+
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.FlxG;
