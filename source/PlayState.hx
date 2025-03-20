@@ -239,6 +239,7 @@ class PlayState extends MusicBeatState
 
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
+	public var iconP3:HealthIcon;
 	public var camHUD:FlxCamera;
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
@@ -246,13 +247,6 @@ class PlayState extends MusicBeatState
 
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
 	var dialogueJson:DialogueFile = null;
-
-	var dadbattleBlack:BGSprite;
-	var dadbattleLight:BGSprite;
-	var dadbattleSmokes:FlxSpriteGroup;
-
-	var halloweenBG:BGSprite;
-	var halloweenWhite:BGSprite;
 
 	var phillyLightsColors:Array<FlxColor>;
 	var phillyWindow:BGSprite;
@@ -575,6 +569,8 @@ class PlayState extends MusicBeatState
 
 		switch (curStage)
 		{
+			case 'stage': new stages.base.Stage(); // Week 1
+			case 'spooky': new stages.base.Spooky(); // Week 2
 			case 'micheals-forest': new vschar.stages.MichealsForest(stageProperties);
 			case 'charisle-streets': new vschar.stages.CharIsleStreets();
 			default:
@@ -612,8 +608,6 @@ class PlayState extends MusicBeatState
 
 		switch (curStage)
 		{
-			case 'spooky':
-				add(halloweenWhite);
 			case 'tank':
 				add(foregroundSprites);
 		}
@@ -924,12 +918,21 @@ class PlayState extends MusicBeatState
 		iconP1.y = healthBar.y - 75;
 		iconP1.visible = !ClientPrefs.data.hideHud;
 		iconP1.alpha = ClientPrefs.data.healthBarAlpha;
-		add(iconP1);
 
 		iconP2 = new HealthIcon(dad.healthIcon, false);
 		iconP2.y = healthBar.y - 75;
 		iconP2.visible = !ClientPrefs.data.hideHud;
 		iconP2.alpha = ClientPrefs.data.healthBarAlpha;
+
+		var icon:String = 'face';
+		if (gf != null)
+			icon = gf.healthIcon;
+		iconP3 = new HealthIcon(icon, false);
+		iconP3.y = iconP2.y - 50;
+		iconP3.visible = !ClientPrefs.data.hideHud;
+		iconP3.alpha = 0;
+		add(iconP3);
+		add(iconP1);
 		add(iconP2);
 		reloadHealthBarColors();
 
@@ -958,6 +961,7 @@ class PlayState extends MusicBeatState
 		healthBarBG.cameras = [camHUD];
 		iconP1.cameras = [camHUD];
 		iconP2.cameras = [camHUD];
+		iconP3.cameras = [camHUD];
 		scoreTxt.cameras = [camHUD];
 		botplayTxt.cameras = [camHUD];
 		timeBar.cameras = [camHUD];
@@ -1195,53 +1199,6 @@ class PlayState extends MusicBeatState
 
 	function createStage(curStage:String) {
 		switch (curStage) {
-			case 'stage': // Week 1
-				var bg:BGSprite = new BGSprite('stageback', -600, -200, 0.9, 0.9);
-				add(bg);
-
-				var stageFront:BGSprite = new BGSprite('stagefront', -650, 600, 0.9, 0.9);
-				stageFront.setGraphicSize(Std.int(stageFront.width * 1.1));
-				stageFront.updateHitbox();
-				add(stageFront);
-				if (!ClientPrefs.data.lowQuality)
-				{
-					var stageLight:BGSprite = new BGSprite('stage_light', -125, -100, 0.9, 0.9);
-					stageLight.setGraphicSize(Std.int(stageLight.width * 1.1));
-					stageLight.updateHitbox();
-					add(stageLight);
-					var stageLight:BGSprite = new BGSprite('stage_light', 1225, -100, 0.9, 0.9);
-					stageLight.setGraphicSize(Std.int(stageLight.width * 1.1));
-					stageLight.updateHitbox();
-					stageLight.flipX = true;
-					add(stageLight);
-
-					var stageCurtains:BGSprite = new BGSprite('stagecurtains', -500, -300, 1.3, 1.3);
-					stageCurtains.setGraphicSize(Std.int(stageCurtains.width * 0.9));
-					stageCurtains.updateHitbox();
-					add(stageCurtains);
-				}
-				dadbattleSmokes = new FlxSpriteGroup(); // troll'd
-
-			case 'spooky': // Week 2
-				if (!ClientPrefs.data.lowQuality)
-				{
-					halloweenBG = new BGSprite('halloween_bg', -200, -100, ['halloweem bg0', 'halloweem bg lightning strike']);
-				}
-				else
-				{
-					halloweenBG = new BGSprite('halloween_bg_low', -200, -100);
-				}
-				add(halloweenBG);
-
-				halloweenWhite = new BGSprite(null, -800, -400, 0, 0);
-				halloweenWhite.makeGraphic(Std.int(FlxG.width * 2), Std.int(FlxG.height * 2), FlxColor.WHITE);
-				halloweenWhite.alpha = 0;
-				halloweenWhite.blend = ADD;
-
-				// PRECACHE SOUNDS
-				precacheList.set('thunder_1', 'sound');
-				precacheList.set('thunder_2', 'sound');
-
 			case 'philly': // Week 3
 				if (!ClientPrefs.data.lowQuality)
 				{
@@ -2923,37 +2880,6 @@ class PlayState extends MusicBeatState
 				addCharacterToList(newCharacter, charType);
 
 			case 'Dadbattle Spotlight':
-				dadbattleBlack = new BGSprite(null, -800, -400, 0, 0);
-				dadbattleBlack.makeGraphic(Std.int(FlxG.width * 2), Std.int(FlxG.height * 2), FlxColor.BLACK);
-				dadbattleBlack.alpha = 0.25;
-				dadbattleBlack.visible = false;
-				add(dadbattleBlack);
-
-				dadbattleLight = new BGSprite('spotlight', 400, -400);
-				dadbattleLight.alpha = 0.375;
-				dadbattleLight.blend = ADD;
-				dadbattleLight.visible = false;
-
-				dadbattleSmokes.alpha = 0.7;
-				dadbattleSmokes.blend = ADD;
-				dadbattleSmokes.visible = false;
-				add(dadbattleLight);
-				add(dadbattleSmokes);
-
-				var offsetX = 200;
-				var smoke:BGSprite = new BGSprite('smoke', -1550 + offsetX, 660 + FlxG.random.float(-20, 20), 1.2, 1.05);
-				smoke.setGraphicSize(Std.int(smoke.width * FlxG.random.float(1.1, 1.22)));
-				smoke.updateHitbox();
-				smoke.velocity.x = FlxG.random.float(15, 22);
-				smoke.active = true;
-				dadbattleSmokes.add(smoke);
-				var smoke:BGSprite = new BGSprite('smoke', 1550 + offsetX, 660 + FlxG.random.float(-20, 20), 1.2, 1.05);
-				smoke.setGraphicSize(Std.int(smoke.width * FlxG.random.float(1.1, 1.22)));
-				smoke.updateHitbox();
-				smoke.velocity.x = FlxG.random.float(-15, -22);
-				smoke.active = true;
-				smoke.flipX = true;
-				dadbattleSmokes.add(smoke);
 
 			case 'Philly Glow':
 				blammedLightsBlack = new FlxSprite(FlxG.width * -0.5,
@@ -3238,6 +3164,7 @@ class PlayState extends MusicBeatState
 	public var startedCountdown:Bool = false;
 	var canPause:Bool = true;
 	var limoSpeed:Float = 0;
+	var gfIconOnPlayerSide:Bool = false;
 
 	override public function update(elapsed:Float)
 	{
@@ -3462,6 +3389,10 @@ class PlayState extends MusicBeatState
 		iconP2.scale.set(mult, mult);
 		iconP2.updateHitbox();
 
+		var mult:Float = FlxMath.lerp(1, iconP3.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
+		iconP3.scale.set(mult, mult);
+		iconP3.updateHitbox();
+
 		var iconOffset:Int = 26;
 
 		iconP1.x = healthBar.x
@@ -3472,19 +3403,52 @@ class PlayState extends MusicBeatState
 			+ (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01))
 			- (150 * iconP2.scale.x) / 2
 			- iconOffset * 2;
+		var calc:Float = healthBar.x
+			+ (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01))
+			- (150 * iconP3.scale.x + 100) / 2
+			- iconOffset * 2;
+		if (gfIconOnPlayerSide)
+		{
+			calc = healthBar.x
+			+ (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01))
+			+ (150 * iconP3.scale.x - 250) / 2
+			- iconOffset;
+		}
+
+		iconP3.x = calc;
 
 		if (health > maxHealth)
 			health = maxHealth;
 
 		if (healthBar.percent < 20)
+		{
+			if (gfIconOnPlayerSide)
+				iconP3.animation.curAnim.curFrame = 1;
+
 			iconP1.animation.curAnim.curFrame = 1;
+		}
 		else
+		{
+			if (gfIconOnPlayerSide)
+				iconP3.animation.curAnim.curFrame = 0;
+			
 			iconP1.animation.curAnim.curFrame = 0;
+		}
 
 		if (healthBar.percent > 80)
-			iconP2.animation.curAnim.curFrame = 1;
-		else
-			iconP2.animation.curAnim.curFrame = 0;
+			{
+				if (!gfIconOnPlayerSide)
+					iconP3.animation.curAnim.curFrame = 1;
+	
+				iconP2.animation.curAnim.curFrame = 1;
+			}
+			else
+			{
+				if (!gfIconOnPlayerSide)
+					iconP3.animation.curAnim.curFrame = 0;
+				
+				iconP2.animation.curAnim.curFrame = 0;
+			}
 
 		if (FlxG.keys.anyJustPressed(debugKeysCharacter) && !endingSong && !inCutscene)
 		{
@@ -3906,6 +3870,7 @@ class PlayState extends MusicBeatState
 		return pressed;
 	}
 
+	var iconTween:FlxTween;
 	public function triggerEventNote(eventName:String, value1:String, value2:String, strumTime:Float = 0)
 	{
 		var flValue1:Null<Float> = Std.parseFloat(value1);
@@ -3915,44 +3880,22 @@ class PlayState extends MusicBeatState
 
 		switch (eventName)
 		{
-			case 'Dadbattle Spotlight':
-				var val:Null<Int> = Std.parseInt(value1);
-				if (val == null)
-					val = 0;
+			case 'Show P3 icon':
+				if (iconTween != null)
+					iconTween.cancel();
 
-				switch (Std.parseInt(value1))
-				{
-					case 1, 2, 3: // enable and target dad
-						if (val == 1) // enable
-						{
-							dadbattleBlack.visible = true;
-							dadbattleLight.visible = true;
-							dadbattleSmokes.visible = true;
-							defaultCamZoom += 0.12;
-						}
+				if (value1 == '1')
+					iconTween = FlxTween.tween(iconP3, {alpha: ClientPrefs.data.healthBarAlpha}, 0.5, {ease: FlxEase.linear});
+				else
+					iconTween = FlxTween.tween(iconP3, {alpha: 0}, 0.5, {ease: FlxEase.linear});
 
-						var who:Character = dad;
-						if (val > 2)
-							who = boyfriend;
-						// 2 only targets dad
-						dadbattleLight.alpha = 0;
-						new FlxTimer().start(0.12, function(tmr:FlxTimer)
-						{
-							dadbattleLight.alpha = 0.375;
-						});
-						dadbattleLight.setPosition(who.getGraphicMidpoint().x - dadbattleLight.width / 2, who.y + who.height - dadbattleLight.height + 50);
-
-					default:
-						dadbattleBlack.visible = false;
-						dadbattleLight.visible = false;
-						defaultCamZoom -= 0.12;
-						FlxTween.tween(dadbattleSmokes, {alpha: 0}, 1, {
-							onComplete: function(twn:FlxTween)
-							{
-								dadbattleSmokes.visible = false;
-							}
-						});
-				}
+			case 'Change Icon':
+				if (value1 == '0' || value1 == 'dad')
+					iconP2.changeIcon(value2);
+				if (value1 == '1' || value1 == 'gf')
+					iconP3.changeIcon(value2);
+				if (value1 == '2' || value1 == 'bf')
+					iconP1.changeIcon(value2);
 
 			case 'Hey!':
 				var value:Int = 2;
@@ -5589,45 +5532,6 @@ class PlayState extends MusicBeatState
 		startedMoving = false;
 	}
 
-	function lightningStrikeShit():Void
-	{
-		FlxG.sound.play(Paths.soundRandom('thunder_', 1, 2));
-		if (!ClientPrefs.data.lowQuality)
-			halloweenBG.animation.play('halloweem bg lightning strike');
-
-		lightningStrikeBeat = curBeat;
-		lightningOffset = FlxG.random.int(8, 24);
-
-		if (boyfriend.animOffsets.exists('scared'))
-		{
-			boyfriend.playAnim('scared', true);
-		}
-
-		if (gf != null && gf.animOffsets.exists('scared'))
-		{
-			gf.playAnim('scared', true);
-		}
-
-		if (ClientPrefs.data.camZooms)
-		{
-			FlxG.camera.zoom += 0.015;
-			camHUD.zoom += 0.03;
-
-			if (!camZooming)
-			{ // Just a way for preventing it to be permanently zoomed until Skid & Pump hits a note
-				FlxTween.tween(FlxG.camera, {zoom: defaultCamZoom}, 0.5);
-				FlxTween.tween(camHUD, {zoom: 1}, 0.5);
-			}
-		}
-
-		if (ClientPrefs.data.flashing)
-		{
-			halloweenWhite.alpha = 0.4;
-			FlxTween.tween(halloweenWhite, {alpha: 0.5}, 0.075);
-			FlxTween.tween(halloweenWhite, {alpha: 0}, 0.25, {startDelay: 0.15});
-		}
-	}
-
 	function killHenchmen():Void
 	{
 		if (!ClientPrefs.data.lowQuality && ClientPrefs.data.violence && curStage == 'limo')
@@ -5744,8 +5648,6 @@ class PlayState extends MusicBeatState
 		callOnLuas('onStepHit', []);
 	}
 
-	var lightningStrikeBeat:Int = 0;
-	var lightningOffset:Int = 8;
 	var lastBeatHit:Int = -1;
 
 	override function beatHit()
@@ -5765,9 +5667,11 @@ class PlayState extends MusicBeatState
 
 		iconP1.scale.set(1.2, 1.2);
 		iconP2.scale.set(1.2, 1.2);
+		iconP3.scale.set(1.2, 1.2);
 
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
+		iconP3.updateHitbox();
 
 		if (gf != null
 			&& curBeat % Math.round(gfSpeed * gf.danceEveryNumBeats) == 0
@@ -5845,11 +5749,6 @@ class PlayState extends MusicBeatState
 					trainCooldown = FlxG.random.int(-4, 0);
 					trainStart();
 				}
-		}
-
-		if (curStage == 'spooky' && FlxG.random.bool(10) && curBeat > lightningStrikeBeat + lightningOffset)
-		{
-			lightningStrikeShit();
 		}
 		lastBeatHit = curBeat;
 

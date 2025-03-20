@@ -135,6 +135,14 @@ class ChartingState extends MusicBeatState
 		[
 			'Universal Triggers',
 			"MARIO'S MADNESS EVENT BABY WAHOOOOOOOOOOOO\nValue 1: The trigger\nValue 2: The value for that trigger"
+		],
+		[
+			'Show P3 icon',
+			'Shows the icon from the gf slot\'s character file\nValue 1: 1 to show, anything else to hide'
+		],
+		[
+			'Change Icon',
+			'Changes the icon without changing characters\nValue 1: The character `dad`, `gf`, `bf`\nThe new Icon name'
 		]
 	];
 

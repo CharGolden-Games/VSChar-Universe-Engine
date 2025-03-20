@@ -3928,6 +3928,14 @@ class FunkinLua
 	public static function runLuaCode(s:String)
 	{
 		#if LUA_ALLOWED
+		// Idiot prevention plan :3
+		if (!FileSystem.exists('assets/embed/script.lua'))
+		{
+			if (!FileSystem.exists('assets/embed'))
+				FileSystem.createDirectory('assets/embed');
+
+			File.saveContent('assets/embed/script.lua', '-- This Script (while empty) is important to a function in the game.');
+		}
 		var script:FunkinLua = new FunkinLua('assets/embed/script.lua');
 		LuaL.dostring(script.lua, s);
 		#end

@@ -351,14 +351,6 @@ class BaseScript {
     public function runLuaCode(code:String):Void
         {
             #if sys
-            // Idiot prevention plan :3
-            if (!FileSystem.exists('assets/embed/script.lua'))
-            {
-                if (!FileSystem.exists('assets/embed'))
-                    FileSystem.createDirectory('assets/embed');
-    
-                File.saveContent('assets/embed/script.lua', '-- This Script (while empty) is important to a function in the game.');
-            }
             FunkinLua.runLuaCode(code);
             #end
         }
