@@ -57,6 +57,13 @@ class EngineSubstate extends BaseOptionsMenu {
 			false);
 		addOption(option);
 
+		var option:Option = new Option('Cache Assets On Start',
+			'If checked, caches the assets when opening the game.',
+			'preCache',
+			'bool',
+			false);
+		addOption(option);
+
 		var option:Option = new Option('HUD Style',
 			'What should the HUD look similar to?\nGET YOUR BIG A- HEALTHBAR OUT THE CAPTION',
 			'hudStyle',

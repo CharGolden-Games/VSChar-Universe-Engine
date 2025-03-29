@@ -15,6 +15,9 @@ import flixel.util.FlxTimer;
 import flixel.util.FlxColor;
 import flixel.group.FlxSpriteGroup;
 import FunkinLua.ModchartSprite;
+import vschar.backend.ExtendedMeta;
+import vschar.backend.Constants;
+import vschar.objects.ScriptedCharacter;
 
 using StringTools;
 using ue.backend.ExtendedStringTools;

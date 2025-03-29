@@ -79,13 +79,12 @@ class BaseStage extends FlxBasic
 
 	public var defaultCamZoom(get, set):Float;
 	public var camFollow(get, never):FlxObject;
-	public var properties:Null<StagePropertiesFile>;
+	public var properties:Null<StagePropertiesFile> = null;
 	public var subStage(get, never):String;
 
-	public function new(?properties:Null<StagePropertiesFile> = null)
+	public function new()
 	{
 		this.game = MusicBeatState.getState();
-		this.properties = properties;
 		if(this.game == null)
 		{
 			FlxG.log.warn('Invalid state for the stage added!');
@@ -132,41 +131,6 @@ class BaseStage extends FlxBasic
 	function add(object:FlxBasic) game.add(object);
 	function remove(object:FlxBasic) game.remove(object);
 	function insert(position:Int, object:FlxBasic) game.insert(position, object);
-	/**
-	 * Using the current stagename this function makes and adds a sprite to current state instance, then returns that sprite.
-	 * @param x 
-	 * @param y 
-	 * @param image The image (or color to use.)
-	 * @param width 
-	 * @param height 
-	 * @return BGSprite
-	 */
-	public function newSprite(x:Float, y:Float, image:String, ?width:Float, ?height:Float):BGSpriteAlt
-	{
-		var stage:Null<String> = null;
-		if (game.curStage != null)
-			stage = game.curStage;
-
-		if(properties != null)
-		{
-			if (subStage.trim() != '')
-			{
-				for (version in properties.versions)
-				{
-					if (version.name == subStage && version.path != null)
-						image = version.path + '/$image';
-					trace(image);
-				}
-			}
-			else
-			{
-				trace('Skipping sub stage check, song does not use sub stage!');
-			}
-		}
-		var sprite:BGSpriteAlt = new BGSpriteAlt(x, y, stage).newSprite(image, width, height);
-		add(sprite);
-		return sprite;
-	}
 	
 	public function addBehindGF(obj:FlxBasic) insert(members.indexOf(game.gfGroup), obj);
 	public function addBehindBF(obj:FlxBasic) insert(members.indexOf(game.boyfriendGroup), obj);

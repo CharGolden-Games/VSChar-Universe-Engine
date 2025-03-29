@@ -10,4 +10,8 @@ import flixel.sound.FlxSound;
 import flixel.FlxSprite;
 import stages.base.objects.PhillyGlow.PhillyGlowParticle;
 import stages.base.objects.PhillyGlow.PhillyGlowGradient;
+import flixel.math.FlxMath;
+import flixel.util.FlxTimer;
+
+using StringTools;
 #end

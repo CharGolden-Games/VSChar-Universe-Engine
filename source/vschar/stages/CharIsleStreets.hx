@@ -1,5 +1,7 @@
 package vschar.stages;
 
+import BaseStage.Countdown;
+
 class CharIsleStreets extends BaseStage
 {
     var curBop:Int = 1;
@@ -10,6 +12,8 @@ class CharIsleStreets extends BaseStage
     var sky:FlxSprite;
 
     var basePath:String = 'vschar_stages/streets/images';
+    var songAssetArtist(get, null):String;
+    function get_songAssetArtist():String return ExtendedMeta.get('songAssetArtist');
 
     override function create() {
         super.create();
@@ -39,6 +43,18 @@ class CharIsleStreets extends BaseStage
 
     override function startSong() {
         super.startSong();
+
+        charBop();
+
+        if (!songAssetArtist.contains('Char')) // In case a song has assets done not by me, but still uses this BG.
+        {
+            ExtendedMeta.set('songAssetArtist', songAssetArtist + '\nChar [Stage Assets]');
+            ExtendedMeta.updateTitle();
+        }
+    }
+
+    override function countdownTick(count:Countdown, num:Int) {
+        super.countdownTick(count, num);
 
         charBop();
     }

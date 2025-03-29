@@ -43,6 +43,8 @@ import flixel.util.FlxAxes;
 import vlc.MP4Handler;
 #end
 import flixel.addons.display.FlxBackdrop;
+import vschar.backend.PreloadAssets.CacheAssetState;
+import vschar.backend.PreloadAssets.ConfigState;
 
 using StringTools;
 
@@ -215,8 +217,20 @@ class TitleState extends MusicBeatState
 			FlxTransitionableState.skipNextTransOut = true;
 			MusicBeatState.switchState(new OfficialLauncherState()); // comment this line if you wanna remove the officiallauncherstate!
 		}
+		else if (!ConfigState.leftState && FlxG.save.data.preCache == null)
+		{
+			FlxTransitionableState.skipNextTransIn = true;
+			FlxTransitionableState.skipNextTransOut = true;
+			MusicBeatState.switchState(new ConfigState());
+		}
 		else
 		{
+			if (!CacheAssetState.leftState && ClientPrefs.data.preCache)
+			{
+				FlxTransitionableState.skipNextTransIn = true;
+				FlxTransitionableState.skipNextTransOut = true;
+				MusicBeatState.switchState(new CacheAssetState());
+			}
 			#if desktop
 			if (!DiscordClient.isInitialized)
 			{

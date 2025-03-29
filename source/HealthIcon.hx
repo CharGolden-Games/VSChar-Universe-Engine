@@ -34,7 +34,7 @@ class HealthIcon extends FlxSprite
 		else changeIcon('bf');
 	}
 
-	private var iconOffsets:Array<Float> = [0, 0];
+	private var iconOffsets:Array<Float> = [0, 0, 0];
 	public function changeIcon(char:String) {
 		if(this.char != char) {
 			var name:String = 'icons/' + char;
@@ -43,12 +43,21 @@ class HealthIcon extends FlxSprite
 			var file:Dynamic = Paths.image(name);
 
 			loadGraphic(file); //Load stupidly first for getting the file size
-			loadGraphic(file, true, Math.floor(width / 2), Math.floor(height)); //Then load it fr
-			iconOffsets[0] = (width - 150) / 2;
-			iconOffsets[1] = (width - 150) / 2;
+			var amountOfFrames:Int = Math.round(width / height);
+			//trace('result of amount Of Frames for $name: $amountOfFrames');
+			var width2 = width;
+			loadGraphic(file, true, Math.floor(width / amountOfFrames), Math.floor(height)); // actually load it now.
+			var framesArray:Array<Int> = [];
+			for (i in 0...amountOfFrames)
+			{
+				iconOffsets[i] = (width - 150) / amountOfFrames;
+				framesArray.insert(Std.int(1 * i), i); // theoretically it'll do this, 1 * 0 = 0, 1 * 1 = 1, etc.
+			}
+			//trace('the frames array is: $framesArray');
+			
 			updateHitbox();
 
-			animation.add(char, [0, 1], 0, false, isPlayer);
+			animation.add(char, framesArray, 0, false, isPlayer);
 			animation.play(char);
 			this.char = char;
 

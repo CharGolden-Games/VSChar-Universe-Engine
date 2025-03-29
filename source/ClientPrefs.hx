@@ -85,6 +85,10 @@ class SaveVariables
 	public var floorRating:Bool = false;
 	public var forceTimeBar:Bool = false;
 	public var badsShitsBreakCombo:Bool = false;
+	public var char_curSkin:String = 'default';
+	public var plexi_curSkin:String = 'default';
+	public var trevor_curSkin:String = 'default';
+	public var preCache:Bool = false;
 
 	//offical launcherl mao
 	public var officialLauncher:Bool = true;
@@ -229,6 +233,9 @@ class ClientPrefs
 			}
 		}
 
+		if (FlxG.updateFramerate != FlxG.drawFramerate)
+			FlxG.updateFramerate = FlxG.drawFramerate;
+		
 		if (data.framerate > FlxG.drawFramerate) {
 			FlxG.drawFramerate = data.framerate;
 			FlxG.updateFramerate = data.framerate;
@@ -236,6 +243,7 @@ class ClientPrefs
 			FlxG.drawFramerate = data.framerate;
 			FlxG.updateFramerate = data.framerate;
 		}
+
 
 		if (FlxG.save.data.gameplaySettings != null)
 		{

@@ -5,8 +5,11 @@ import vschar.backend.scripting.vschar_scripts.CharOptions.RotBop;
 import vschar.backend.scripting.vschar_scripts.CharOptions.HudType;
 import vschar.backend.scripting.vschar_scripts.CharOptions.BFasOpp;
 import vschar.backend.scripting.vschar_scripts.CharOptions.ExtendHealthbar;
+import vschar.backend.scripting.vschar_scripts.CharOptions.VCIconBop;
+
 import ue.uescripts.Force.Fire;
 import ue.UEScript;
+import ue.uescripts.Options.IconBop;
 
 class VSCharScript extends UEScript {
 
@@ -14,6 +17,9 @@ class VSCharScript extends UEScript {
         super.onCreatePost();
 
         Fire.baseTitle = ExtendedMeta.updateTitle();
+
+        PlayState.instance.healthBar.x += 4;
+        PlayState.instance.healthBar.y += 4;
     }
 
     public override function getForcedScripts():Array<BaseScript> {
@@ -31,6 +37,8 @@ class VSCharScript extends UEScript {
             array.push(new RotBop());
         if (hudStyle != 'Universe Engine')
             array.push(new HudType());
+        if (UEiconBop)
+            array.push(new VCIconBop());
 
         return array;
     }

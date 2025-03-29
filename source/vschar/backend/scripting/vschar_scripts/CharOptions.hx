@@ -228,8 +228,7 @@ class HudType extends BaseScript
                     game.timeTxt.visible = false;
                 }
     
-                PlayState.instance.healthBar.createFilledBar(0xFFFF0000, 0xFF00FF00);
-                PlayState.instance.healthBar.updateBar();
+                PlayState.instance.healthBar.changeColors(0xFFFF0000, 0xFF00FF00);
                 PlayState.instance.scoreTxt.size = 16;
                 PlayState.instance.scoreTxt.text = 'Score: 0';
                 PlayState.instance.scoreTxt.fieldWidth = FlxG.width - 400;
@@ -250,7 +249,7 @@ class HudType extends BaseScript
                     }
                 }
                 PlayState.ratingStuff = vsCharRatingStuff;
-                PlayState.instance.timeBar.createFilledBar(0xFF000000, 0xFFFFAA44);
+                PlayState.instance.timeBar.createFilledBar(0xFFEE6285, 0xFFFFAA44);
                 PlayState.instance.timeBar.updateBar();
                 funnyMissText = new FlxText(0, 0, FlxG.width, "you fucking SUCK!\n(Ya missed bud)");
                 funnyMissText.setFormat(Paths.font('vcr.ttf'), 60, 0xFFFFFFFF, CENTER, OUTLINE, 0xFF000000);
@@ -266,8 +265,7 @@ class HudType extends BaseScript
                 ratingTxt.setFormat(Paths.font('vcr.ttf'), 20, 0xFFFFFFFF, LEFT, OUTLINE, 0xFF000000);
                 ratingTxt.screenCenter(Y);
                 ratingTxt.cameras = [camHUD];
-                PlayState.instance.healthBar.createFilledBar(0xFFFF0000, 0xFF00FF00);
-                PlayState.instance.healthBar.updateBar();
+                PlayState.instance.healthBar.changeColors(0xFFFF0000, 0xFF00FF00);
                 add(ratingTxt);
 
                 // Kade Engine don't got no timebar.
@@ -592,8 +590,7 @@ class HudType extends BaseScript
             switch (hudStyle)
             {
                 case "Funkin'" | "Kade Engine":
-                    PlayState.instance.healthBar.createFilledBar(0xFFFF0000, 0xFF00FF00);
-                    PlayState.instance.healthBar.updateBar();
+                    PlayState.instance.healthBar.changeColors(0xFFFF0000, 0xFF00FF00);
             }
         }
     }
@@ -642,13 +639,111 @@ class ExtendHealthbar extends BaseScript
         PlayState.instance.healthBar.changeMax(4);
         PlayState.instance.healthBar.scaleHealthBar(1.5);
         PlayState.instance.healthBar.screenCenter(X);
-        PlayState.instance.healthBar.x += 4;
-        PlayState.instance.healthBar.y += 4;
         PlayState.instance.healthBarBG.scale.set(1.5, 1);
         PlayState.instance.healthBarBG.updateHitbox();
         PlayState.instance.healthBarBG.screenCenter(X);
-        PlayState.instance.health = 2;
+        health = 2;
         PlayState.instance.lerpHealth = 2;
+    }
+}
+
+class VCIconBop extends ue.uescripts.Options.IconBop
+{
+    public function new()
+    {
+        super();
+
+        name = 'VS Char Icon Bop';
+    }
+    // Tweens
+        // iconP3
+    var iconP3ANG:FlxTween;
+    var iconP3_1x:FlxTween;
+    var iconP3_1y:FlxTween;
+    var iconP3_2x:FlxTween;
+    var iconP3_2y:FlxTween;
+
+    override function onCreatePost() {
+        super.onCreatePost();
+
+        UEScript.removeScript('IconBop');
+    }
+
+    override function cancelTweens() {
+        super.cancelTweens();
+
+        if (iconP3ANG != null)
+            iconP3ANG.cancel();
+
+        if (iconP3_1x != null)
+            iconP3_1x.cancel();
+        if (iconP3_1y != null)
+            iconP3_1y.cancel();
+        
+        if (iconP3_2x != null)
+            iconP3_2x.cancel();
+        if (iconP3_2y != null)
+            iconP3_2y.cancel();
+    }
+
+    override function pauseTweens() {
+        super.pauseTweens();
+
+        if (iconP3ANG != null)
+            iconP3ANG.active = false;
+
+        if (iconP3_1x != null)
+            iconP3_1x.active = false;
+        if (iconP3_1y != null)
+            iconP3_1y.active = false;
+        
+        if (iconP3_2x != null)
+            iconP3_2x.active = false;
+        if (iconP3_2y != null)
+            iconP3_2y.active = false;
+    }
+
+    override function resumeTweens() {
+        super.resumeTweens();
+
+        if (iconP3ANG != null)
+            iconP3ANG.active = true;
+
+        if (iconP3_1x != null)
+            iconP3_1x.active = true;
+        if (iconP3_1y != null)
+            iconP3_1y.active = true;
+        
+        if (iconP3_2x != null)
+            iconP3_2x.active = true;
+        if (iconP3_2y != null)
+            iconP3_2y.active = true;
+    }
+
+    override function beat1() {
+        super.beat1();
+
+        game.iconP3.angle = funnies2;
+        iconP3ANG = FlxTween.tween(game.iconP3, {angle: 0}, funnies, {ease: FlxEase.expoOut});
+        
+        game.iconP3.scale.x = nuhuhx;
+        game.iconP3.scale.y = nuhuhy;
+        
+        iconP3_1x = FlxTween.tween(game.iconP3.scale, {x: 1}, funnies64, {ease: FlxEase.expoOut});
+        iconP3_1y = FlxTween.tween(game.iconP3.scale, {y: 1}, funnies64, {ease: FlxEase.expoOut});
+    }
+
+    override function beat2() {
+        super.beat2();
+
+        game.iconP3.angle = -funnies2;
+        iconP3ANG = FlxTween.tween(game.iconP3, {angle: 0}, funnies, {ease: FlxEase.expoOut});
+        
+        game.iconP3.scale.x = nuhuhx;
+        game.iconP3.scale.y = nuhuhy;
+        
+        iconP3_1x = FlxTween.tween(game.iconP3.scale, {x: 1}, funnies64, {ease: FlxEase.expoOut});
+        iconP3_1y = FlxTween.tween(game.iconP3.scale, {y: 1}, funnies64, {ease: FlxEase.expoOut});
     }
 }
 
@@ -675,7 +770,7 @@ class BFasOpp extends BaseScript
             health -= healthCalc(id);
 
         var pullTable:Array<Float> = [0.1, 0.6, 0.9, 1, 0.7];
-        if (hudStyle == 'Kade Engine' || hudStyle == 'VS Char')
+        if ((hudStyle == 'Kade Engine' || hudStyle == 'VS Char') && health <= 1)
             pullTable = [0.7, 0.9, 1, 0.1, 0.1]; // Give ya an easier time for these styles
         fauxComboPopup(isSustainNote, ranIntWeighted(1, 5, pullTable));
     }

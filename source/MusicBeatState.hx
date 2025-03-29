@@ -1,5 +1,6 @@
 package;
 
+import vschar.objects.ScriptedCharacter;
 import vschar.backend.ExtendedMeta;
 import Conductor.BPMChangeEvent;
 import flixel.FlxG;
@@ -39,9 +40,18 @@ class MusicBeatState extends modchart.modcharting.ModchartMusicBeatState
 		if (PlayState.instance != null)
 		{
 			if (getState() != PlayState.instance){
-				ExtendedMeta.set('songArtist', '');
-				ExtendedMeta.set('songAssetArtist', '');
-				ExtendedMeta.set('curSong', '');
+				if (ExtendedMeta.get('songArtist') != '')
+					ExtendedMeta.set('songArtist', '');
+
+				if (ExtendedMeta.get('songAssetArtist') != '')
+					ExtendedMeta.set('songAssetArtist', '');
+				
+				if (ExtendedMeta.get('curSong') != '')
+					ExtendedMeta.set('curSong', '');
+			}
+			else
+			{
+				ExtendedMeta.initialize(); // Reset them variables.
 			}
 		}
 		camBeat = FlxG.camera;
@@ -177,6 +187,7 @@ class MusicBeatState extends modchart.modcharting.ModchartMusicBeatState
 	}
 
 	public var stages:Array<BaseStage> = [];
+	public var curScriptedCharacters:CurScriptedCharacters;
 	public function beatHit():Void
 	{
 		//trace('Beat: ' + curBeat);
@@ -210,4 +221,74 @@ class MusicBeatState extends modchart.modcharting.ModchartMusicBeatState
 				if(stage != null && stage.exists && stage.active)
 					func(stage);
 		}
+
+	function scriptedCharFunc(func:ScriptedCharacter->Void)
+	{
+		if (curScriptedCharacters != null)
+		{
+			curScriptedCharacters.allFunc(func);
+		}
+	}
+}
+
+class CurScriptedCharacters
+{
+	public var bf:ScriptedCharacter;
+	public var gf:ScriptedCharacter;
+	public var dad:ScriptedCharacter;
+
+	public function new(?preloadBF:String, ?preloadGF:String, ?preloadDad:String)
+	{
+		if (preloadBF != null)
+		{
+			bf = new ScriptedCharacter(preloadBF, true);
+		}
+
+		if (preloadGF != null)
+		{
+			gf = new ScriptedCharacter(preloadGF, true);
+		}
+
+		if (preloadDad != null)
+		{
+			dad = new ScriptedCharacter(preloadDad, true);
+		}
+	}
+
+	public function initializeScriptedCharacter(char:String, type:String = 'bf')
+	{
+		switch(char)
+		{
+			case 'char':
+				switch (type)
+				{
+					case 'bf':
+						bf = new vschar.characters.Char(type);
+					case 'gf':
+						gf = new vschar.characters.Char(type);
+					case 'dad':
+						dad = new vschar.characters.Char(type);
+				}
+			default:
+				switch (type)
+				{
+					case 'bf':
+						bf = null;
+					case 'gf':
+						gf = null;
+					case 'dad':
+						dad = null;
+				}
+		}
+	}
+
+	public function allFunc(func:ScriptedCharacter->Void)
+	{
+		if (bf != null)
+			func(bf);
+		if (gf != null)
+			func(gf);
+		if (dad != null)
+			func(dad);
+	}
 }

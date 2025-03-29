@@ -53,6 +53,7 @@ import hscript.Expr;
 import Discord;
 import Discord.DiscordClient;
 #end
+import vschar.backend.ExtendedMeta;
 
 using StringTools;
 
@@ -658,6 +659,14 @@ class FunkinLua
 				PlayState.instance.callOnLuas(funcName, args, ignoreStops, exclusions);
 			});
 
+		Lua_helper.add_callback(lua, 'setMeta', function(key:String, value:String, noReset:Bool = false)
+		{
+			if (noReset)
+				ExtendedMeta.set(key, value);	
+			else
+				ExtendedMeta.set(key, value, true);
+		});
+		Lua_helper.add_callback(lua, 'getMeta', function(key:String) return ExtendedMeta.get(key, true, true));
 		Lua_helper.add_callback(lua, "callScript", function(?luaFile:String, ?funcName:String, ?args:Array<Dynamic>)
 		{
 			if (luaFile == null)
