@@ -183,7 +183,7 @@ class ExtendedMeta {
         var splitVer = text.split('|');
 
         var finalString = '${splitVer[0]} - v${splitVer[1]}';
-        if (verOnly)
+        if (!verOnly)
             return finalString;
         else
             return splitVer[1];

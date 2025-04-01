@@ -2698,10 +2698,52 @@ class PlayState extends MusicBeatState
 		generatedMusic = true;
 	}
 
+	function addNoteskinToList(value:String, affects:Int)
+	{
+		if (affects == 1)
+		{
+			for (strumNote in playerStrums.members)
+			{
+				strumNote.textureMap.set(value, Paths.getSparrowAtlas(value));
+			}
+		}
+		else if (affects == 0)
+		{
+			for (strumNote in opponentStrums.members)
+			{
+				strumNote.textureMap.set(value, Paths.getSparrowAtlas(value));
+			}
+		}
+		else
+		{
+			for (strumNote in playerStrums.members)
+			{
+				strumNote.textureMap.set(value, Paths.getSparrowAtlas(value));
+			}
+			for (strumNote in opponentStrums.members)
+			{
+				strumNote.textureMap.set(value, Paths.getSparrowAtlas(value));
+			}
+		}
+	}
+
 	function eventPushed(event:EventNote)
 	{
 		switch (event.event)
 		{
+			case 'Change Noteskin':
+				var affects:Int = 0;
+
+				switch (event.value1.toLowerCase())
+				{
+					case 'player' | '1':
+						affects = 1;
+					case 'both' | '2':
+						affects = 2;
+				}
+
+				var skin:String = event.value2;
+				addNoteskinToList(skin, affects);
 			case 'Change Character':
 				var charType:Int = 0;
 				switch (event.value1.toLowerCase())
@@ -3637,6 +3679,33 @@ class PlayState extends MusicBeatState
 					iconP3.changeIcon(value2);
 				if (value1 == '2' || value1 == 'bf')
 					iconP1.changeIcon(value2);
+
+			case 'Change Noteskin':
+				var affects:Int = 0;
+
+				switch (value1.toLowerCase())
+				{
+					case 'player' | '1':
+						affects = 1;
+					case 'both' | '2':
+						affects = 2;
+				}
+
+				var skin:String = value2;
+				if (affects == 1 || affects == 2)
+				{
+					for (strumNote in playerStrums.members)
+					{
+						strumNote.texture = skin;
+					}
+				}
+				if (affects == 0 || affects == 2)
+				{
+					for (strumNote in opponentStrums.members)
+					{
+						strumNote.texture = skin;
+					}
+				}
 
 			case 'Hey!':
 				var value:Int = 2;

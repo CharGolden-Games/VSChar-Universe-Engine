@@ -26,6 +26,7 @@ class StrumNote extends FlxSkewedSprite
 	private var player:Int;
 
 	public var texture(default, set):String = null;
+	public var textureMap:Map<String, FlxAtlasFrames> = new Map<String, FlxAtlasFrames>();
 
 	private function set_texture(value:String):String
 	{
@@ -117,7 +118,10 @@ class StrumNote extends FlxSkewedSprite
 		}
 		else
 		{
-			frames = Paths.getSparrowAtlas(texture);
+			if (textureMap.exists(texture))
+				frames = textureMap[texture];
+			else
+				frames = Paths.getSparrowAtlas(texture);
 			animation.addByPrefix('green', 'arrowUP');
 			animation.addByPrefix('blue', 'arrowDOWN');
 			animation.addByPrefix('purple', 'arrowLEFT');

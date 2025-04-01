@@ -37,12 +37,13 @@ class UEGameOptions extends BaseOptionsMenu
 			'Universe',
 			'FunkinParadise',
 			"AAC V4",
-			'VS Impostor V4',
+			// The following were included with UE but aren't mine to use!
+			/* 'VS Impostor V4',
 			'VS Shaggy',
 			'VS Nonsense V2',
 			'DNB Old',
 			'Stay Funky',
-			'Marked Engine',
+			'Marked Engine', */
 			'IdiotXD',
 			'Normal Collections',
 			'Daveberry'
@@ -78,7 +79,8 @@ class UEGameOptions extends BaseOptionsMenu
 		var option:Option = new Option('Fancy Menus', "Makes the menus just more clean", 'fm', 'bool', true);
 		addOption(option);
 
-		var option:Option = new Option('Silly Bounce', "Makes the dots behind the main menu bounce", 'sillyBob', 'bool', true);
+		// Mod has seperate MainMenuState.
+		/*var option:Option = new Option('Silly Bounce', "Makes the dots behind the main menu bounce", 'sillyBob', 'bool', true);
 		addOption(option);
 
 		var option:Option = new Option('Disable Second Page', "Disables the second page on the main menu.", 'disable2ndpage', 'bool', false);
@@ -88,7 +90,7 @@ class UEGameOptions extends BaseOptionsMenu
 		addOption(option);
 
 		var option:Option = new Option('Move Credits and Mods', "Moves the Credits and Mods to Options.", 'moveCreditMods', 'bool', false);
-		addOption(option);
+		addOption(option);*/
 
 		super();
 	}

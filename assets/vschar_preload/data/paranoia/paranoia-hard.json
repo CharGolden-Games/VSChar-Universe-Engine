@@ -405,6 +405,11 @@
 						"Alt Idle Animation",
 						"BF",
 						"-alt"
+					],
+					[
+						"Change Character",
+						"BF",
+						"char_cryinglilbitch"
 					]
 				]
 			],

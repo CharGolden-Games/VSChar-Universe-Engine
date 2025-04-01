@@ -143,6 +143,10 @@ class ChartingState extends MusicBeatState
 		[
 			'Change Icon',
 			'Changes the icon without changing characters\nValue 1: The character `dad`, `gf`, `bf`\nThe new Icon name'
+		],
+		[
+			'Change Noteskin',
+			'Changes the Noteskin for the Strum Notes\nValue 1: 1 for the player\'s notes, 2 for both, anything else for opponent\nValue 2: What to change it to.'
 		]
 	];
 

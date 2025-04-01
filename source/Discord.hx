@@ -86,11 +86,14 @@ class DiscordClient
 			endTimestamp = startTimestamp + endTimestamp;
 		}
 
+		var version:String = MainMenuState.ueVersion;
+		if (ClientPrefs.data.vsCharCustomizations)
+			version = vschar.backend.ExtendedMeta.get('charEngineVersion', true);
 		DiscordRpc.presence({
 			details: details,
 			state: state,
 			largeImageKey: 'icon',
-			largeImageText: "Engine Version: " + MainMenuState.ueVersion,
+			largeImageText: "Engine Version: " + version,
 			smallImageKey : smallImageKey,
 			// Obtained times are in milliseconds so they are divided so Discord can use it
 			startTimestamp : Std.int(startTimestamp / 1000),

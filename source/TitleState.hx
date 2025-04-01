@@ -101,7 +101,6 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
-		DiscordClient.changePresence("In the Intro", null);
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
 
@@ -148,8 +147,10 @@ class TitleState extends MusicBeatState
 
 		ClientPrefs.loadPrefs();
 		
+		DiscordClient.changePresence("In the Intro", null);
+		
 		if (ClientPrefs.data.vsCharCustomizations)
-			openfl.Lib.application.window.title = "Friday Night Funkin': Funkin' with Char!";
+			DiscordClient.changeID('1274071752926036120');
 
 		Highscore.load();
 
