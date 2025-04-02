@@ -3019,12 +3019,57 @@ class PlayState extends MusicBeatState
 	var canPause:Bool = true;
 	var gfIconOnPlayerSide:Bool = false;
 
+	var imageTweenIn:FlxTween;
+	var imageTweenOut:FlxTween;
+	var killl:FlxSprite;
+	var killText:FlxText;
+	function tweenInImage()
+	{
+		if (imageTweenIn != null || imageTweenOut != null)
+		{
+			return;
+		}
+
+		killl = new FlxSprite().loadGraphic(Paths.image('funny/EXECUTE_HIM'));
+		killl.scrollFactor.set();
+		killl.setGraphicSize(-1, FlxG.height);
+		killl.updateHitbox();
+		killl.screenCenter();
+		killl.cameras = [camHUD];
+		killl.alpha = 0;
+		add(killl);
+
+		killText = new FlxText(0, 0, FlxG.width, 'WE ARE GOING TO KILL HIM');
+		killText.setFormat(Paths.font('vcr.ttf'), 30, 0xFFFFFFFF, CENTER, OUTLINE, 0xFF000000);
+		killText.cameras = [camHUD];
+		killText.alpha = 0;
+		add(killText);
+
+		imageTweenIn = FlxTween.tween(killl, {alpha: 1}, 3, {ease: FlxEase.quadOut, onComplete: function(twn:FlxTween){
+			imageTweenOut = FlxTween.tween(killl, {alpha: 0}, 10, {ease: FlxEase.quadOut, onComplete: function(twn:FlxTween){
+				killl.destroy();
+				killText.destroy();
+				imageTweenIn = null;
+				imageTweenOut = null;
+			}});
+		}});
+	}
+
 	override public function update(elapsed:Float)
 	{
 		/*if (FlxG.keys.justPressed.NINE)
 			{
 				iconP1.swapOldIcon();
 		}*/
+		if (killText != null)
+		{
+			if (killl != null)
+				killText.alpha = killl.alpha;
+		}
+		if (FlxG.keys.justPressed.SPACE && SONG.song.toLowerCase() == 'paranoia')
+		{
+			tweenInImage();
+		}
 		callOnLuas('onUpdate', [elapsed]);
 		scripter.onUpdate(elapsed);
 

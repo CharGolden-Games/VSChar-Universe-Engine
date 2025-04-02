@@ -91,8 +91,8 @@ class ExtendedMeta {
             meta.set('psychVer', '0.6.3');
             meta.set('ueVer', '0.5.5');
 
-            meta.set('vsCharVersion', 'Unreleased [0.1b-Dev]');
-            meta.set('charEngineVersion', 'Unreleased [inDev]');
+            meta.set('vsCharVersion', '0.1-af');
+            meta.set('charEngineVersion', '0.1-af');
 
             meta.set('ExtendedMetaJsonVer', '1.0.2');
             meta.set('LuaCallbackVer', 'Revision 1.1');

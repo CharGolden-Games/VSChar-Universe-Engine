@@ -35,6 +35,7 @@ class SelectThing extends MusicBeatState
 
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
+	public static var vsCharMenu:Bool = false;
 
 	function openSelectedSubstate(label:String)
 	{
@@ -156,6 +157,10 @@ class SelectThing extends MusicBeatState
 					StageData.loadDirectory(PlayState.SONG);
 					LoadingState.loadAndSwitchState(new PlayState());
 					FlxG.sound.music.volume = 0;
+				}
+				else if (vsCharMenu)
+				{
+					MusicBeatState.switchState(new vschar.states.CustomMainMenu());
 				}
 				else if (ClientPrefs.data.fm)
 				{

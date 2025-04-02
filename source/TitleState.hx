@@ -1,5 +1,6 @@
 package;
 
+import vschar.states.WarnState;
 import vschar.backend.ExtendedMeta;
 #if desktop
 import Discord.DiscordClient;
@@ -217,6 +218,13 @@ class TitleState extends MusicBeatState
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
 			MusicBeatState.switchState(new OfficialLauncherState()); // comment this line if you wanna remove the officiallauncherstate!
+		}
+		else if (!WarnState.leftState)
+		{
+			FlxTransitionableState.skipNextTransIn = true;
+			FlxTransitionableState.skipNextTransOut = true;
+			MusicBeatState.switchState(new WarnState());
+
 		}
 		else if (!ConfigState.leftState && FlxG.save.data.preCache == null)
 		{
@@ -674,14 +682,15 @@ class TitleState extends MusicBeatState
 				// FlxG.sound.music.stop();
 				new FlxTimer().start(1, function(tmr:FlxTimer)
 				{
-					if (ClientPrefs.data.fm)
+					/* if (ClientPrefs.data.fm)
 					{
 						MusicBeatState.switchState(new CoolMenuState());
 					}
 					else
 					{
 						MusicBeatState.switchState(new MainMenuState());
-					}
+					} */
+					MusicBeatState.switchState(new vschar.states.CustomMainMenu());
 					closedState = true;
 				});
 				// FlxG.sound.play(Paths.music('titleShoot'), 0.7);

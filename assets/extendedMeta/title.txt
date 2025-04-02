@@ -1,1 +1,1 @@
-Friday Night Funkin': VS Char [Takeover DEMO] | VS Char v{vsCharVersion} {curSong} {curArtist} {curAssetArtist}
+Friday Night Funkin': VS Char [APRIL FOOLS] {curSong} {curArtist} {curAssetArtist}
