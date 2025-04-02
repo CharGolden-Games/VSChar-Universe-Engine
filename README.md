@@ -14,9 +14,9 @@
 
 - Description: `After x years in development hopefully it will be worth the wait`
 
-- Version: v`Unreleased`
+- Version: v`0.1-af`
 
-- DOR: `N/A`
+- DOR: `4/1/25`
 
 ### Engine Details:
 
@@ -26,9 +26,9 @@
 
 - Based On: `Universe Engine 0.5.5 | Psych 0.6.3`
 
-- Version: v`Unreleased`
+- Version: v`0.1-af`
 
-- DOR: `N/A`
+- DOR: `4/1/25`
 
 # Assets License
 
