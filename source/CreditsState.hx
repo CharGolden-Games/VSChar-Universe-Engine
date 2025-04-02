@@ -40,6 +40,7 @@ class CreditsState extends MusicBeatState
 	var offsetThing:Float = -75;
 
 	var pisspoop:Array<Array<String>>;
+	public static var vsCharMenu:Bool = false;
 
 	override function create()
 	{
@@ -104,6 +105,9 @@ class CreditsState extends MusicBeatState
 		{
 			pisspoop = [
 				// Name - Icon name - Description - Link - BG Color
+				['VS Char DEMO'],
+				['CharGoldenYT',				'char',				"Coder, Artist\nYou'll see me again down there with the UE credits lmao :3c",	'https://bsky.app/profile/chargoldenyt.bsky.social',			'FFA600'],
+				['cosmichaos1129',				'cosmer',			"Suggested the final video link for the custom main menu\nAlso made the art for Micel's up pose",						'https://ko-fi.com/cosmichaos1129/commissions',					'8767CA'],
 				['Universe Engine DEVs'],
 				['Video Bot',					'videobot',			'First DEV, In charge of the HX files',											'https://linktr.ee/videobot',									'14FFFF'],
 				['BaranMuzu',					'baranmuzu',		'Second DEV, In charge of the LUA files and other',								'https://linktr.ee/baranmuzu',									'BE9877'],
@@ -280,6 +284,8 @@ class CreditsState extends MusicBeatState
 				FlxG.sound.play(Paths.sound('cancelMenu'));
 				if (ClientPrefs.data.moveCreditMods)
 					MusicBeatState.switchState(new options.SelectThing());
+				else if (vsCharMenu)
+					MusicBeatState.switchState(new vschar.states.CustomMainMenu());
 				else if (ClientPrefs.data.fm)
 					MusicBeatState.switchState(new CoolMenuState());
 				else

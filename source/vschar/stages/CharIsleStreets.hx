@@ -39,6 +39,17 @@ class CharIsleStreets extends BaseStage
 
     override function createPost() {
         super.createPost();
+
+        if (PlayState.SONG.song.toLowerCase() == 'paranoia')
+        {
+            pBop.visible = false;
+            gf.visible = false;
+        }
+
+        if (gf.curCharacter == 'plexi')
+        {
+            pBop.visible = false;
+        }
     }
 
     override function startSong() {
@@ -101,5 +112,17 @@ class CharIsleStreets extends BaseStage
             pBop.animation.play('hey', true);
         }
         */
+
+        if (eventName == 'Change Character')
+        {
+            if (value2 == 'plexi')
+            {
+                pBop.visible = false;
+            }
+            else
+            {
+                pBop.visible = true;
+            }
+        }
     }
 }

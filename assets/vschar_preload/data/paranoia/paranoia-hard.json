@@ -219,16 +219,6 @@
 				]
 			],
 			[
-				99724.1379310344,
-				[
-					[
-						"Change Character",
-						"Dad",
-						"vDialog2"
-					]
-				]
-			],
-			[
 				99827.5862068965,
 				[
 					[
@@ -379,22 +369,17 @@
 				]
 			],
 			[
-				107689.655172414,
-				[
-					[
-						"Change Character",
-						"Dad",
-						"vGF2"
-					]
-				]
-			],
-			[
 				107793.103448276,
 				[
 					[
 						"Change Character",
 						"Dad",
-						"vGF2"
+						"pexi"
+					],
+					[
+						"Change Character",
+						"BF",
+						"char_cryinglilbitch"
 					]
 				]
 			],
@@ -405,11 +390,6 @@
 						"Alt Idle Animation",
 						"BF",
 						"-alt"
-					],
-					[
-						"Change Character",
-						"BF",
-						"char_cryinglilbitch"
 					]
 				]
 			],
@@ -609,7 +589,7 @@
 					[
 						"Change Character",
 						"Dad",
-						"mrv2"
+						"micel"
 					]
 				]
 			],
@@ -10307,7 +10287,7 @@
 				"mustHitSection": true
 			}
 		],
-		"player2": "spirit",
+		"player2": "micel",
 		"player3": "gf",
 		"song": "Paranoia",
 		"stage": "charisle-streets",

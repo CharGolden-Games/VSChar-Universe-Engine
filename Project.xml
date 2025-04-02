@@ -55,7 +55,7 @@
 	<!--
 		Comment this next line out if you don't want to see traces that could be annoying while debugging release builds
 	-->
-	<define name="ANNOYING_TRACES" />
+	<!-- <define name="ANNOYING_TRACES" /> -->
 
 	<define name="PSYCH" />
 	<define name="PSYCHVERSION" value="0.6.3"/>

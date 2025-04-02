@@ -93,7 +93,7 @@ class GalleryState extends MusicBeatState {
             }
             if (controls.BACK)
             {
-                MusicBeatState.switchState(new CustomFreeplayState());
+                MusicBeatState.switchState(new CustomMainMenu());
             }
         }
     }
