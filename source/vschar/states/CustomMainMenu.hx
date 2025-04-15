@@ -252,6 +252,8 @@ class CustomMainMenu extends MusicBeatState
 			hideFreeplay: false,
 			difficulties: 'hard'
         }, 'aprilFoolsEmbeddedWeek.json'));
+        CoolUtil.difficulties = ['hard'];
+        PlayState.storyDifficulty = 0;
         
         LoadingState.loadAndSwitchState(new PlayState(), true);
     }
